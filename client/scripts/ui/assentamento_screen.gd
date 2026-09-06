@@ -36,6 +36,18 @@ const COR_TINTA := Color(0.937, 0.925, 0.882)
 ## sujidade, nao como grao de papel.
 @export_range(0.0, 1.0) var grao := 0.12
 
+## Desliga a gravura e mostra os modelos como o Godot os mostraria — cinza
+## liso, iluminado pelo ambiente do editor. Nao e como o app fica: e para
+## se arrumar a nganga a ver as formas, e so depois voltar a ligar.
+##
+## Fora do editor nao ha ambiente nem luz de motor nenhuma, entao com isto
+## desligado a cena corre preta. E um auxiliar de bancada, nao um modo.
+@export var mostrar_gravura := true:
+	set(valor):
+		mostrar_gravura = valor
+		if is_inside_tree():
+			_vestir()
+
 ## Desliga o bruxuleio. Ligado por omissao fora do editor; no editor a luz
 ## fica quieta, para nao pulsar enquanto se arruma a nganga.
 @export var bruxulear := true
@@ -84,13 +96,22 @@ func _vestir() -> void:
 			if caixa.size != Vector3.ZERO:
 				_luzes.append(Vector3(
 					caixa.get_center().x, caixa.end.y + 0.012, caixa.get_center().z))
-	_montar_chamas()
+	if mostrar_gravura:
+		_montar_chamas()
+	else:
+		while not _chamas.is_empty():
+			_chamas.pop_back().queue_free()
 
 	var chao := get_node_or_null("Chao")
 	for malha in _malhas(self):
+		if not mostrar_gravura:
+			malha.material_override = null
+			continue
 		if malha.material_override == null or not malha.material_override is ShaderMaterial:
 			malha.material_override = _material()
 		var m: ShaderMaterial = malha.material_override
+		if m == null:
+			continue
 		m.set_shader_parameter("resposta",
 			resposta_do_chao if chao != null and chao.is_ancestor_of(malha) or malha == chao else 1.0)
 
