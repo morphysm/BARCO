@@ -1,11 +1,15 @@
-## Escreve a cena do `assentamento` a partir da tabela de arranjo, uma vez
-## so, para que dai em diante ela se ajuste no editor e nao no codigo.
+## Escreve a cena do `assentamento` DE RAIZ, a partir da tabela abaixo.
 ##
-## Rodar:
-##   godot --headless --path client --script res://tools/gerar_cena_assentamento.gd
+## DESTRUTIVO. Apaga tudo o que estiver na cena — incluindo o arranjo feito
+## a mao no editor, que e o trabalho de quem monta a nganga. Por isso nao
+## corre sem `--refazer`:
 ##
-## Depois disto a tabela deixa de mandar: quem manda e a cena. Mexer numa
-## peca e arrasta-la no editor e gravar.
+##   godot --headless --path client --script res://tools/gerar_cena_assentamento.gd -- --refazer
+##
+## Para acrescentar ou mudar uma peca de sitio SEM perder o resto, o que se
+## usa e `por_peca.gd`, que so mexe num no.
+##
+## Depois da primeira escrita, quem manda e a cena e nao esta tabela.
 extends SceneTree
 
 const CENA := "res://scenes/assentamento.tscn"
@@ -30,6 +34,17 @@ const NGANGA := [
 
 
 func _initialize() -> void:
+	if not OS.get_cmdline_user_args().has("--refazer"):
+		var quantas := _quantas_pecas()
+		printerr("RECUSADO: isto reescreve %s de raiz e apaga o arranjo que la esta"
+				% CENA)
+		if quantas >= 0:
+			printerr("  a cena tem neste momento %d pecas, que se perderiam" % quantas)
+		printerr("  para mexer numa peca sem perder o resto: tools/por_peca.gd")
+		printerr("  para refazer mesmo assim: acrescentar  -- --refazer")
+		quit(1)
+		return
+
 	var raiz := Node3D.new()
 	raiz.name = "Assentamento"
 	raiz.set_script(load("res://scripts/ui/assentamento_screen.gd"))
@@ -100,6 +115,23 @@ func _initialize() -> void:
 ## `global_transform`: num script de SceneTree o global nao se propaga, e
 ## pedi-lo devolve identidade com um erro por cada malha. Assim a medida e
 ## a mesma dentro e fora da arvore.
+## Quantas pecas estao na cena que existe, para o aviso dizer o que se
+## perderia. -1 se ainda nao ha cena.
+func _quantas_pecas() -> int:
+	if not ResourceLoader.exists(CENA):
+		return -1
+	var cena: PackedScene = load(CENA)
+	if cena == null:
+		return -1
+	var estado := cena.get_state()
+	var n := 0
+	for i in estado.get_node_count():
+		var pai := estado.get_node_path(i, true)
+		if String(pai) == "." and estado.get_node_name(i) not in ["Camara", "Chao"]:
+			n += 1
+	return n
+
+
 func _caixa_local(no: Node3D) -> AABB:
 	var total := AABB()
 	var primeiro := true

@@ -76,6 +76,23 @@ traco — e por ali que se ve se algum traco do desenho se perdeu.
 O vetorizador mede. **A ordem dos tracos e doutrina**, e por enquanto sai
 numa ordem de leitura, de cima para baixo, a corrigir a mao.
 
+## O `assentamento`
+
+O arranjo da nganga esta em `client/scenes/assentamento.tscn` e ajusta-se
+no editor: cada peca e um no, arrasta-se e grava-se.
+
+```sh
+# acrescentar ou mudar UMA peca de sitio, sem tocar no resto
+godot --headless --path client --script res://tools/por_peca.gd -- MODELO x y z tamanho giro [vela]
+
+# ver um modelo sozinho e grande, para conferir o que a decimacao lhe fez
+godot --path client --script res://tools/ver_modelo.gd --resolution 700x700 -- black_rose
+```
+
+> **`tools/gerar_cena_assentamento.gd` reescreve a cena de raiz e apaga o
+> arranjo feito a mao.** Recusa-se a correr sem `-- --refazer`. Para mexer
+> numa peca, o que se usa e `por_peca.gd`.
+
 O passo 1 mede. O passo 2 reduz. Nenhum dos dois decide **a ordem dos
 tracos** nem **onde o `ponto` se ramifica entre as `faces`** — isso e
 doutrina, e esta escrito a mao em `tools/gerar_ponto_aranha.gd`.
