@@ -48,7 +48,12 @@ ALVOS = {
 	# Decimar destroi as normais de origem, mas isso resolve-se refazendo o
 	# sombreado suave a seguir (ver `refazer_sombreado`). O que nao se pode
 	# e deixar normais partidas: era isso o salpicado.
-	"black_rose": 20000,
+	# Nao se decima. A 40 mil ainda ficavam folhas com buracos; inteira
+	# custa mais 1,9 MB e fica inteira.
+	"black_rose": 999999,
+	# 1.000.000 -> 15 mil comia o bordao todo. Um objeto digitalizado com
+	# reentrancias nao aguenta 98,5% de corte.
+	"stick_de_exu": 120000,
 }
 
 ## Modelos que precisam de mais textura que os 256 px do costume.
@@ -59,7 +64,11 @@ ALVOS = {
 ## A rosa nao pode ser aliviada na geometria — traz normais proprias, e
 ## soldar ou decimar apaga-as. O unico sitio onde ainda se pode poupar sao
 ## as texturas, e 256 chegam: o que a estragava nunca foi a resolucao.
-TEXTURAS = {}
+## Modelos que precisam de mais textura que os 256 px do costume.
+TEXTURAS = {
+	# Uma nota le-se de perto: a 256 px fica um borrao esverdeado.
+	"one_dollar_bill": 1024,
+}
 
 ## Modelos a quem se tira o mapa de rugosidade, ficando com um valor fixo.
 ##

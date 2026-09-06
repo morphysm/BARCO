@@ -1,25 +1,25 @@
 [gd_scene format=3 uid="uid://bg5dr4y22da7d"]
 
 [ext_resource type="Script" uid="uid://cgd6vt3qbxct6" path="res://scripts/ui/assentamento_screen.gd" id="1_natrv"]
-[ext_resource type="PackedScene" uid="uid://bqked5ff8vluu" path="res://resources/modelos/cauldron.glb" id="2_5gom5"]
-[ext_resource type="PackedScene" uid="uid://b3sm4m5pkis0a" path="res://resources/modelos/galhos.glb" id="3_g7fst"]
-[ext_resource type="PackedScene" uid="uid://cc4q14ct1mweh" path="res://resources/modelos/horse_bone.glb" id="4_xakwp"]
-[ext_resource type="PackedScene" uid="uid://bp7sr8xf3blbg" path="res://resources/modelos/rusty_chains.glb" id="5_dkeok"]
-[ext_resource type="PackedScene" uid="uid://bqr2u4ixrum27" path="res://resources/modelos/skull_para_caveira.glb" id="6_lb37t"]
-[ext_resource type="PackedScene" uid="uid://2o8lrry2w7v0" path="res://resources/modelos/vela_preta.glb" id="7_bb8c7"]
-[ext_resource type="PackedScene" uid="uid://d1h5qybvaai0q" path="res://resources/modelos/vela_vermlha.glb" id="8_3no75"]
-[ext_resource type="PackedScene" uid="uid://cc52claeujwvw" path="res://resources/modelos/vela_branca.glb" id="9_5j7es"]
-[ext_resource type="PackedScene" uid="uid://dtgbeqniieglw" path="res://resources/modelos/knife.glb" id="10_1vv23"]
-[ext_resource type="PackedScene" uid="uid://pgqsbf7hdpb4" path="res://resources/modelos/black_rose.glb" id="11_5b10g"]
-[ext_resource type="PackedScene" uid="uid://dobdh3obsi35v" path="res://resources/modelos/chili_pepper.glb" id="12_5401n"]
-[ext_resource type="PackedScene" uid="uid://b4vuikefon4af" path="res://resources/modelos/bottle_to_paloo.glb" id="13_t6q11"]
-[ext_resource type="PackedScene" uid="uid://gyoupgyxwbbo" path="res://resources/modelos/baphomet_head.glb" id="15_g7fst"]
-[ext_resource type="PackedScene" uid="uid://b3hltmg2k5xd1" path="res://resources/modelos/sangue.glb" id="15_xakwp"]
-[ext_resource type="PackedScene" uid="uid://j1mrsx2h72c7" path="res://resources/modelos/one_dollar_bill.glb" id="16_xakwp"]
-[ext_resource type="PackedScene" uid="uid://cxbxjjg5fbciq" path="res://resources/modelos/aranha.glb" id="17_dkeok"]
-[ext_resource type="PackedScene" uid="uid://cprtbt2rpcpud" path="res://resources/modelos/tridente.glb" id="18_lb37t"]
-[ext_resource type="PackedScene" uid="uid://n1lg3pgk7a57" path="res://resources/modelos/pedra_preta.glb" id="19_bb8c7"]
-[ext_resource type="PackedScene" uid="uid://dk15cnocq66mx" path="res://resources/modelos/stick_de_exu.glb" id="20_3no75"]
+[ext_resource type="PackedScene" uid="uid://c6rdosju1ys8f" path="res://resources/modelos/cauldron.glb" id="2_5gom5"]
+[ext_resource type="PackedScene" uid="uid://djur3uqlhqh3i" path="res://resources/modelos/galhos.glb" id="3_g7fst"]
+[ext_resource type="PackedScene" uid="uid://do6bbibkp8h3u" path="res://resources/modelos/horse_bone.glb" id="4_xakwp"]
+[ext_resource type="PackedScene" uid="uid://3skhlkyp7mrg" path="res://resources/modelos/rusty_chains.glb" id="5_dkeok"]
+[ext_resource type="PackedScene" uid="uid://uebelayu7ksv" path="res://resources/modelos/skull_para_caveira.glb" id="6_lb37t"]
+[ext_resource type="PackedScene" uid="uid://thsousi0y3hd" path="res://resources/modelos/vela_preta.glb" id="7_bb8c7"]
+[ext_resource type="PackedScene" uid="uid://d36qk6votuvmg" path="res://resources/modelos/vela_vermlha.glb" id="8_3no75"]
+[ext_resource type="PackedScene" uid="uid://b5wvxd8xu0ddk" path="res://resources/modelos/vela_branca.glb" id="9_5j7es"]
+[ext_resource type="PackedScene" uid="uid://c1aba1o1212st" path="res://resources/modelos/knife.glb" id="10_1vv23"]
+[ext_resource type="PackedScene" uid="uid://cht524hhoil7s" path="res://resources/modelos/black_rose.glb" id="11_5b10g"]
+[ext_resource type="PackedScene" uid="uid://c265p5mauose8" path="res://resources/modelos/chili_pepper.glb" id="12_5401n"]
+[ext_resource type="PackedScene" uid="uid://dfrxvrev72288" path="res://resources/modelos/bottle_to_paloo.glb" id="13_t6q11"]
+[ext_resource type="PackedScene" uid="uid://d1qvwnnefex4y" path="res://resources/modelos/baphomet_head.glb" id="15_g7fst"]
+[ext_resource type="PackedScene" uid="uid://b4k4u0x5qv4pl" path="res://resources/modelos/sangue.glb" id="15_xakwp"]
+[ext_resource type="PackedScene" uid="uid://dyv5gwgcidfl8" path="res://resources/modelos/one_dollar_bill.glb" id="16_xakwp"]
+[ext_resource type="PackedScene" uid="uid://d4anvvmqn8ge7" path="res://resources/modelos/aranha.glb" id="17_dkeok"]
+[ext_resource type="PackedScene" uid="uid://dlwpqgyskbfpg" path="res://resources/modelos/tridente.glb" id="18_lb37t"]
+[ext_resource type="PackedScene" uid="uid://db7sws8xvvgry" path="res://resources/modelos/pedra_preta.glb" id="19_bb8c7"]
+[ext_resource type="PackedScene" uid="uid://c5nspxccxhwuw" path="res://resources/modelos/stick_de_exu.glb" id="20_3no75"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3no75"]
 albedo_color = Color(0.06, 0.055, 0.05, 1)
@@ -33,10 +33,11 @@ subdivide_depth = 64
 script = ExtResource("1_natrv")
 queda_da_luz = 2.211
 alcance_da_luz = 1.136
-forca_da_luz = 0.049
+forca_da_luz = 0.052
+luz_de_bancada = 0.205
 
 [node name="Camara" type="Camera3D" parent="." unique_id=304538616]
-transform = Transform3D(0.0140885115, -0.4339911, 0.900807, -0.026638288, 0.90041375, 0.43421826, -0.99954593, -0.030113444, 0.0011247136, 1.455099, 0.88891673, 0.053041875)
+transform = Transform3D(-0.13259183, -0.41138098, 0.9017678, -0.030587897, 0.91106564, 0.41112506, -0.9906986, 0.026928663, -0.13338313, 1.4331161, 0.8884066, -0.16424498)
 projection = 1
 current = true
 size = 1.15
@@ -54,13 +55,16 @@ transform = Transform3D(0.32137966, 0, 0, 0, 0.32137966, 0, 0, 0, 0.32137966, 0,
 transform = Transform3D(0.16157685, 0, 0.075344525, -0.07470692, 0.023144271, 0.1602095, -0.009781193, -0.17677167, 0.020975836, 0.0017342716, 0.3187232, -0.012362421)
 
 [node name="galhos2" parent="." unique_id=342142352 instance=ExtResource("3_g7fst")]
-transform = Transform3D(0.16157685, 0, 0.075344525, -0.07470692, 0.023144271, 0.1602095, -0.009781193, -0.17677167, 0.020975836, 0.0017342716, 0.3187232, 0.10378224)
+transform = Transform3D(0.14521798, 0.087537825, 0.055070326, -0.089679204, 0.059303585, 0.14221315, 0.051509716, -0.14354126, 0.09233925, 0.0017342716, 0.3187232, 0.053716093)
 
 [node name="galhos3" parent="." unique_id=936610995 instance=ExtResource("3_g7fst")]
-transform = Transform3D(0.16157685, 0, 0.075344525, -0.07470692, 0.023144271, 0.1602095, -0.009781193, -0.17677167, 0.020975836, 0.0017342716, 0.3187232, -0.072448134)
+transform = Transform3D(0.16157685, 0, 0.075344525, -0.07470692, 0.023144271, 0.1602095, -0.009781193, -0.17677167, 0.020975836, 0.0017342716, 0.3187232, -0.043852456)
+
+[node name="galhos4" parent="." unique_id=1809522529 instance=ExtResource("3_g7fst")]
+transform = Transform3D(0.041126154, 0.01819514, 0.17251506, -0.17319596, 0.014303644, 0.039779834, -0.009781193, -0.17677167, 0.020975834, 0.052432194, 0.3201956, 0.08729346)
 
 [node name="horse_bone" parent="." unique_id=856933843 instance=ExtResource("4_xakwp")]
-transform = Transform3D(0.0653307, 0, -0.054818965, -0.051465493, -0.029370755, -0.06133419, -0.018879155, 0.08006609, -0.0224993, 0.0056555755, 0.35403898, 0.0019304119)
+transform = Transform3D(0.0653307, 0, -0.054818965, -0.051465493, -0.029370755, -0.06133419, -0.018879155, 0.08006609, -0.0224993, 0.0056555755, 0.35405514, 0.0019304119)
 
 [node name="rusty_chains" parent="." unique_id=2020464425 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.023266522, 3.1172728e-10, 0.16822048, 0.0058060214, 0.16972066, -0.00080302916, -0.16812027, 0.0058612917, 0.023252662, 0.54588664, 0.03695175, -0.0023003407)
@@ -78,7 +82,7 @@ transform = Transform3D(0.16797315, 0.01956296, 0.015548827, -0.015296784, 0.164
 transform = Transform3D(0.081088394, -0.01943393, 0.14794075, 0.011557238, 0.16868746, 0.015824603, -0.14876345, 0.0025120135, 0.08186935, -0.38831425, 0.038644165, -0.13553557)
 
 [node name="rusty_chains8" parent="." unique_id=1097210222 instance=ExtResource("5_dkeok")]
-transform = Transform3D(0.011004431, -0.025011549, 0.16760907, -0.019112034, 0.16670725, 0.026131798, -0.16838376, -0.020556334, 0.007987764, -0.40387255, 0.05986795, 0.19813679)
+transform = Transform3D(0.011004431, -0.025011547, 0.16760905, 0.009672435, 0.16778088, 0.024402153, -0.16918865, 0.007965136, 0.012296742, -0.40387255, 0.046841294, 0.19813679)
 
 [node name="rusty_chains9" parent="." unique_id=1522458708 instance=ExtResource("5_dkeok")]
 transform = Transform3D(-0.0931076, -0.01198841, 0.14151578, -0.0005428304, 0.16924447, 0.013980284, -0.14202163, 0.007212565, -0.09282941, -0.2605005, 0.062444553, 0.4376006)
@@ -96,7 +100,7 @@ transform = Transform3D(0.10525257, -0.014833082, 0.13244373, 0.0030514896, 0.16
 transform = Transform3D(0.16965038, 0.0019216146, -0.007383831, -0.0002458261, 0.16563886, 0.037458807, 0.0076258443, -0.037410293, 0.1654744, 0.30745667, 0.08773488, 0.45150295)
 
 [node name="skull_para_caveira" parent="." unique_id=258562617 instance=ExtResource("6_lb37t")]
-transform = Transform3D(0.008043322, -0.028281197, 0.069114156, -0.001748954, 0.069423504, 0.028611323, -0.07465609, -0.00467334, 0.0067759706, -0.0825935, 0.49465406, 0.029138424)
+transform = Transform3D(-0.008123987, -0.0032279785, 0.074598044, -0.016884308, 0.073174104, 0.0013276044, -0.072733805, -0.016625967, -0.008640402, -0.051282078, 0.494654, 0.013212137)
 
 [node name="vela_preta" parent="." unique_id=44924634 groups=["vela"] instance=ExtResource("7_bb8c7")]
 transform = Transform3D(0.00043494612, 0, 0, 0, 0.00043494612, 0, 0, 0, 0.00043494612, 0.25987613, 0.077349626, 0.08999999)
@@ -108,10 +112,10 @@ transform = Transform3D(0.007331052, 0, 0, 0, 0.007331052, 0, 0, 0, 0.007331052,
 transform = Transform3D(1.001136, 0, 0, 0, 1.001136, 0, 0, 0, 1.001136, 0.22034633, 0.00029892864, -0.1807172)
 
 [node name="knife" parent="." unique_id=886172802 instance=ExtResource("10_1vv23")]
-transform = Transform3D(0.00802552, 0.039678223, 0.09143974, -0.022455402, 0.09009721, -0.037124783, -0.09711511, -0.017553708, 0.016140673, 0.060277, 0.3658615, 0.0031899065)
+transform = Transform3D(0.00308443, 0.057110183, 0.08202994, -0.016480355, 0.08123632, -0.055937976, -0.098584406, -0.011793464, 0.01191764, 0.08224398, 0.33299428, 0.007254895)
 
 [node name="chili_pepper" parent="." unique_id=1393072689 instance=ExtResource("12_5401n")]
-transform = Transform3D(0.015825648, 0, 0.015825648, 0, 0.022380847, 0, -0.015825648, 0, 0.015825648, 0.23741877, 0.012249127, 0.13088147)
+transform = Transform3D(0.015825648, 0, 0.015825648, 0, 0.022380847, 0, -0.015825648, 0, 0.015825648, 0.23741877, 0.012249127, 0.1419708)
 
 [node name="bottle_to_paloo" parent="." unique_id=741873284 instance=ExtResource("13_t6q11")]
 transform = Transform3D(0.11028902, 0, 0.019446932, 0, 0.111990415, 0, -0.019446932, 0, 0.11028902, 0.36, -0.00052884535, 0.21351665)
@@ -120,7 +124,7 @@ transform = Transform3D(0.11028902, 0, 0.019446932, 0, 0.111990415, 0, -0.019446
 transform = Transform3D(0.006102062, -0.07575371, 0.094449155, -0.0029542735, 0.0944477, 0.075943425, -0.12103941, -0.006124268, 0.0029079567, 0.28196365, 0.05051513, -0.0033055544)
 
 [node name="black_rose" parent="." unique_id=1059206588 instance=ExtResource("11_5b10g")]
-transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, 0.20764208, -0.017981768)
+transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.02037274, 0.20764208, -0.017981768)
 
 [node name="black_rose2" parent="." unique_id=1211782080 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, -0.075699, -0.2522284)
@@ -135,10 +139,10 @@ transform = Transform3D(0.38166815, -0.11092022, 0.26949435, -0.27795723, -0.005
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, -0.050565273, 0.2213423)
 
 [node name="black_rose6" parent="." unique_id=1734616949 instance=ExtResource("11_5b10g")]
-transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, 0.23871341, -0.017981768)
+transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.017111458, 0.23871341, -0.0063339323)
 
 [node name="black_rose7" parent="." unique_id=978856805 instance=ExtResource("11_5b10g")]
-transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, 0.25852785, -0.08457423)
+transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.021051027, 0.25852785, -0.09284407)
 
 [node name="sangue" parent="." unique_id=818275365 instance=ExtResource("15_xakwp")]
 transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0.26846415, 0.03421158, 0.009409614)
@@ -168,7 +172,7 @@ transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697,
 transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697, 0, 0.29377177, 0.26751274, 0.0031344574, 0.38926718)
 
 [node name="aranha" parent="." unique_id=2118962358 groups=["anda"] instance=ExtResource("17_dkeok")]
-transform = Transform3D(-0.0001781154, 0.0021142657, 0.0005100553, 0.0004622271, 0.0005368699, -0.0020640055, -0.002125234, -6.0429782e-05, -0.0004916578, 0.032858267, 0.33121908, 0.0071037672)
+transform = Transform3D(-0.0001781154, 0.0021142657, 0.0005100553, 0.0004622271, 0.0005368699, -0.0020640055, -0.002125234, -6.0429782e-05, -0.0004916578, 0.033608183, 0.3643389, 0.0010551997)
 
 [node name="tridente" parent="." unique_id=1974266223 instance=ExtResource("18_lb37t")]
 transform = Transform3D(0.00033236452, -3.5514454e-06, 3.5112742e-05, 1.6015747e-05, 0.0003115011, -0.000120092795, -3.1448584e-05, 0.00012110398, 0.00030992983, 0.06427026, 0.30274087, 0.053025976)
