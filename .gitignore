@@ -13,3 +13,6 @@ capturas/
 # Python
 __pycache__/
 *.pyc
+
+# Builds
+build/
