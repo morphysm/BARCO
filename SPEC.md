@@ -201,9 +201,22 @@ what carries the person through it.
 Current stroke counts: `Exu Caveira` 143, `Rosa Negra` 58,
 `Exu Aranha` 72.
 
-The vectoriser measures. **Stroke order is doctrine**, not measurement —
-it currently comes out in reading order, top to bottom, to be corrected by
-hand.
+The vectoriser measures. **Stroke order is doctrine**, not measurement.
+A.C. set it: **top to bottom, left to right.** It governs two things,
+and neither comes out of the drawing — both come out of the contour
+walker, which starts wherever it happens to start:
+
+1. **Which stroke comes first.** Strokes are ordered by where they begin:
+   higher first, and left first among strokes that begin at the same
+   height. "Same height" is a band of 3% of the sigil's height, so a
+   one-pixel difference never outranks being further left.
+2. **Where each stroke begins.** A stroke starts at its higher end, or at
+   its left end when both ends are level. This matters as much as the
+   order: the Fréchet distance walks two paths in step, so a segment
+   stored against the direction the person draws it scores far away on a
+   perfect trace.
+
+`tools/extrair_sigilo.py` applies both (`endireitar`, `chave_de_leitura`).
 
 All signatures of one `irmandade` live in a single reference space, so one
 finger trace means the same thing against every member.

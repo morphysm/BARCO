@@ -14,8 +14,10 @@ Como funciona:
   4. suaviza e reamostra cada traco
 
 O que ele NAO faz, porque nao e medida e sim doutrina:
-  - a ordem dos tracos (SPEC.md §4.1: "in a required order"). Sai numa
-    ordem de leitura, de cima para baixo, para ser corrigida a mao.
+  - a ordem dos tracos e o sentido de cada um (SPEC.md §4.1: "in a
+    required order"). Doutrina de A.C.: de cima para baixo, da esquerda
+    para a direita — vale para qual traco vem primeiro e para onde cada
+    traco comeca.
 
 Uso:
     python3 tools/extrair_sigilo.py ENTRADA.png [--saida DIR] [--min-px N]
@@ -341,6 +343,31 @@ def sobrepor(tamanho, tracos, destino):
     im.save(destino)
 
 
+def endireitar(traco):
+    """Poe o traco a comecar em cima, e a esquerda em caso de empate.
+
+    O sentido nao e detalhe: a distancia de Frechet compara ponto a ponto
+    ao longo do caminho, entao um traco guardado ao contrario do que a
+    pessoa risca da distancia grande num risco perfeito.
+    """
+    a, b = traco[0], traco[-1]
+    if (b[1], b[0]) < (a[1], a[0]):     # (y, x): mais acima, depois mais a esquerda
+        return traco[::-1].copy()
+    return traco
+
+
+def chave_de_leitura(caixa, tolerancia=0.03):
+    """Ordena os tracos por onde COMECAM: de cima para baixo, da esquerda
+    para a direita.
+
+    A altura entra em bandas e nao ao pixel. Sem isso, dois tracos que
+    comecam a mesma altura ordenavam-se por uma diferenca de um pixel em
+    vez de pela esquerda, e a ordem mudava conforme o desenho.
+    """
+    banda = max(1.0, tolerancia * (caixa["y1"] - caixa["y0"]))
+    return lambda p: (round(p[0][1] / banda), p[0][0])
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("entrada")
@@ -364,13 +391,16 @@ def main():
         if comprimento(pts) < args.min_px:
             continue
         tracos.append(reamostrar(suavizar(pts)))
-    # Ordem de leitura, de cima para baixo. E so um ponto de partida: a
-    # ordem obrigatoria do `ponto` e doutrina, nao medida.
-    tracos.sort(key=lambda p: (round(p[:, 1].min() / 24), p[0][0]))
 
     ys, xs = np.nonzero(tinta)
     caixa = {"x0": int(xs.min()), "x1": int(xs.max()),
              "y0": int(ys.min()), "y1": int(ys.max())}
+
+    # Doutrina de A.C.: de cima para baixo, da esquerda para a direita.
+    # Governa DUAS coisas, e nenhuma sai do desenho — saem do
+    # percorredor de contornos, que comeca onde calha.
+    tracos = [endireitar(t) for t in tracos]
+    tracos.sort(key=chave_de_leitura(caixa))
     with open(os.path.join(args.saida, "tracos.json"), "w") as f:
         json.dump({"origem": os.path.basename(args.entrada), "caixa": caixa,
                    "px_vermelhos": int(vermelho.sum()),
