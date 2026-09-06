@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="Irmandade" format=3]
+[gd_resource type="Resource" script_class="Irmandade" format=3 uid="uid://coslitwncx282"]
 
-[ext_resource type="Script" path="res://scripts/resources/entidade.gd" id="1_rtcg5"]
-[ext_resource type="Script" path="res://scripts/resources/face.gd" id="2_vnfby"]
-[ext_resource type="Script" path="res://scripts/resources/ponto_data.gd" id="3_ngyqs"]
-[ext_resource type="Script" path="res://scripts/resources/irmandade.gd" id="4_5yob4"]
+[ext_resource type="Script" uid="uid://3lfbfyddsg82" path="res://scripts/resources/entidade.gd" id="1_rtcg5"]
+[ext_resource type="Script" uid="uid://co7ibkw5725xj" path="res://scripts/resources/face.gd" id="2_vnfby"]
+[ext_resource type="Script" uid="uid://dlfofd120qqis" path="res://scripts/resources/ponto_data.gd" id="3_ngyqs"]
+[ext_resource type="Script" uid="uid://cdp7fue87emjq" path="res://scripts/resources/irmandade.gd" id="4_5yob4"]
 
 [sub_resource type="Curve2D" id="Curve2D_ryis3"]
 _data = {

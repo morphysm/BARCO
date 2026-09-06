@@ -24,6 +24,18 @@ const COR_TINTA := Color(0.937, 0.925, 0.882)
 ## Brilho de cada chama.
 @export_range(0.0, 2.0) var brilho_da_vela := 0.55
 
+## Ate onde a chama de uma vela chega. Curto de mais e cada objeto cai
+## abaixo do primeiro sulco da trama e vira silhueta preta — foi assim
+## que a nganga ficou ilegivel.
+@export_range(0.05, 1.0) var alcance_da_vela := 0.30
+
+## Distancia entre os sulcos da gravura. Maior = trama mais fina.
+@export_range(0.03, 0.40) var trama := 0.15
+
+## Ruido por cima da trama. Pouco: em cima da hachura le-se como
+## sujidade, nao como grao de papel.
+@export_range(0.0, 1.0) var grao := 0.12
+
 ## Desliga o bruxuleio. Ligado por omissao fora do editor; no editor a luz
 ## fica quieta, para nao pulsar enquanto se arruma a nganga.
 @export var bruxulear := true
@@ -118,6 +130,9 @@ func _aplicar_luz(energias: PackedFloat32Array) -> void:
 			m.set_shader_parameter("luz_pos", posicoes)
 			m.set_shader_parameter("luz_energia", energias)
 			m.set_shader_parameter("luzes", _luzes.size())
+			m.set_shader_parameter("alcance", alcance_da_vela)
+			m.set_shader_parameter("passo", trama)
+			m.set_shader_parameter("grao", grao)
 
 
 func _malhas(raiz: Node) -> Array[MeshInstance3D]:

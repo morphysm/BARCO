@@ -18,10 +18,10 @@ uniform int luzes = 1;
 // Uma vela alcanca um palmo, nao um quarto inteiro. Com um alcance
 // grande demais a queda deixa de existir e o chao todo fica aceso — o
 // oposto do que se quer.
-uniform float alcance = 0.18;
+uniform float alcance = 0.30;
 uniform vec4 cor_tinta : source_color = vec4(0.937, 0.925, 0.882, 1.0);
 uniform float passo = 0.15;       // espacamento da hachura, em pixeis
-uniform float grao : hint_range(0.0, 1.0) = 0.45;
+uniform float grao : hint_range(0.0, 1.0) = 0.12;
 
 // Quanto a superficie responde a luz. O chao leva menos que os objetos:
 // e uma extensao grande e de frente para as chamas, e com a mesma
@@ -69,7 +69,7 @@ void fragment() {
 	luz = clamp(luz * resposta, 0.0, 1.0);
 
 	float t = trama(FRAGCOORD.xy, luz);
-	float g = mix(1.0, ruido(floor(FRAGCOORD.xy * 0.8)) * 1.5, grao);
+	float g = 1.0 - grao * ruido(floor(FRAGCOORD.xy * 0.5));
 	// Opaco de proposito: onde nao ha tinta fica preto, que e o fundo.
 	// Assim nao ha transparencia para ordenar.
 	ALBEDO = cor_tinta.rgb * clamp(t * g, 0.0, 1.0);
