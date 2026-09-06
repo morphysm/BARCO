@@ -17,12 +17,18 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="Barco"
 config/description="Aplicativo ritual. Vende-se o ato, nunca o resultado."
 run/main_scene="res://scenes/risco.tscn"
+; O executavel do cenario: mesma pasta, mesmos ficheiros, outra cena de
+; arranque. Ligado pela funcionalidade "cenario" no preset de exportacao.
+run/main_scene.cenario="res://scenes/assentamento_cenario.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [display]
 
 window/size/viewport_width=1080
 window/size/viewport_height=1920
+; O app e um telefone ao alto; o cenario e uma janela de secretaria.
+window/size/viewport_width.cenario=720
+window/size/viewport_height.cenario=900
 window/stretch/mode="canvas_items"
 
 [input_devices]

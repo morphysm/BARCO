@@ -115,6 +115,22 @@ So depende de `client/resources/modelos/` e, se a gravura for ligada, de
 `client/shaders/gravura.gdshader`. A camara vem com a mesma pose e com
 `current` ligado: instanciando-o dentro de outra cena, desliga-se.
 
+Ha tambem um executavel so do cenario, em `build/assentamento/` (fora do
+git, que sao 165 MB): binario, atalho `.desktop`, `.mp4` e `.gif`. O
+preset chama-se `Assentamento (Linux)` e liga a funcionalidade `cenario`,
+que em `project.godot` troca a cena de arranque e o tamanho da janela.
+`export_presets.cfg` esta no `.gitignore`, entao o preset e local.
+
+```sh
+godot --headless --path client --export-release "Assentamento (Linux)"
+
+# refazer o video (precisa de display)
+godot --path client --script res://tools/filmar_assentamento.gd \
+      --resolution 720x900 --fixed-fps 30
+ffmpeg -y -framerate 30 -i capturas/filme/%04d.png \
+       -c:v libx264 -pix_fmt yuv420p -crf 18 build/assentamento/assentamento.mp4
+```
+
 Nao esta travado, e nao acompanha o fundamento sozinho — se a nganga
 mudar, esta copia refaz-se a mao.
 
