@@ -15,8 +15,9 @@
 [ext_resource type="PackedScene" path="res://resources/modelos/bottle_to_paloo.glb" id="13_t6q11"]
 [ext_resource type="PackedScene" path="res://resources/modelos/baphomet_head.glb" id="15_g7fst"]
 [ext_resource type="PackedScene" path="res://resources/modelos/sangue.glb" id="15_xakwp"]
+[ext_resource type="PackedScene" path="res://resources/modelos/one_dollar_bill.glb" id="16_xakwp"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5gom5"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g7fst"]
 albedo_color = Color(0.06, 0.055, 0.05, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l7rw8"]
@@ -39,7 +40,7 @@ size = 1.15
 
 [node name="Chao" type="MeshInstance3D" parent="." unique_id=1482930216]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9192696e-05, 0, -0.0018177032)
-material_override = SubResource("StandardMaterial3D_5gom5")
+material_override = SubResource("StandardMaterial3D_g7fst")
 mesh = SubResource("PlaneMesh_l7rw8")
 
 [node name="cauldron" type="Node3D" parent="." unique_id=112582217 instance=ExtResource("2_5gom5")]
@@ -112,7 +113,7 @@ transform = Transform3D(0.015825648, 0, 0.015825648, 0, 0.022380847, 0, -0.01582
 transform = Transform3D(0.11028902, 0, 0.019446932, 0, 0.111990415, 0, -0.019446932, 0, 0.11028902, 0.36, -0.00052884535, 0.21351665)
 
 [node name="baphomet_head" type="Node3D" parent="." unique_id=1372496663 instance=ExtResource("15_g7fst")]
-transform = Transform3D(0.0059280377, -0.10112028, 0.06660366, 0.00896474, 0.06686695, 0.10072211, -0.12075179, 0, 0.010747475, 0.28196365, 0.025679082, -0.0033055544)
+transform = Transform3D(0.0058318665, -0.10182932, 0.06552315, 0.009027599, 0.065782145, 0.10142836, -0.120751806, 5.7485533e-10, 0.010747476, 0.28196365, 0.025679082, -0.0033055544)
 
 [node name="black_rose" type="Node3D" parent="." unique_id=1059206588 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, 0.20764208, -0.017981768)
@@ -124,7 +125,7 @@ transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532
 transform = Transform3D(0.43521762, 0, -0.20294534, 0.02908078, 0.47525388, 0.062363926, 0.200851, -0.068810984, 0.43072626, -0.018179975, -0.027958602, 0.18402332)
 
 [node name="black_rose4" type="Node3D" parent="." unique_id=537122177 instance=ExtResource("11_5b10g")]
-transform = Transform3D(0.43521762, 0, -0.20294534, 0.2024769, -0.032608386, 0.43421307, -0.0137808975, -0.4791011, -0.02955323, 0.3989556, -0.0008227825, 0.08984755)
+transform = Transform3D(0.4266037, -0.08110198, -0.20501915, 0.2024769, -0.032608382, 0.43421304, -0.08725542, -0.47218668, 0.005227764, 0.4055623, -0.0052007437, 0.15897341)
 
 [node name="black_rose5" type="Node3D" parent="." unique_id=2023454263 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, -0.050565273, 0.2213423)
@@ -136,4 +137,10 @@ transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, 0.25852785, -0.08457423)
 
 [node name="sangue" type="Node3D" parent="." unique_id=818275365 instance=ExtResource("15_xakwp")]
-transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 0.28995323, 0.0030006215, 0.01)
+transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0.26846415, 0.0030006215, -0.002919294)
+
+[node name="sangue2" type="Node3D" parent="." unique_id=1083451159 instance=ExtResource("15_xakwp")]
+transform = Transform3D(0.14, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0.07515472, 0.0030006215, 0.04270032)
+
+[node name="one_dollar_bill" type="Node3D" parent="." unique_id=1694586584 instance=ExtResource("16_xakwp")]
+transform = Transform3D(0.39638525, 0, -0.12879337, 0, 0.4167841, 0, 0.12879337, 0, 0.39638525, 0.3, 0.0031344574, 0.3)
