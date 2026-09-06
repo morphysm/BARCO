@@ -1,6 +1,68 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/ui/assentamento_screen.gd" id="1_assentamento"]
+[ext_resource type="Script" path="res://scripts/ui/assentamento_screen.gd" id="1_natrv"]
+[ext_resource type="PackedScene" path="res://resources/modelos/cauldron.glb" id="2_5gom5"]
+[ext_resource type="PackedScene" path="res://resources/modelos/galhos.glb" id="3_g7fst"]
+[ext_resource type="PackedScene" path="res://resources/modelos/horse_bone.glb" id="4_xakwp"]
+[ext_resource type="PackedScene" path="res://resources/modelos/rusty_chains.glb" id="5_dkeok"]
+[ext_resource type="PackedScene" path="res://resources/modelos/skull_para_caveira.glb" id="6_lb37t"]
+[ext_resource type="PackedScene" path="res://resources/modelos/vela_preta.glb" id="7_bb8c7"]
+[ext_resource type="PackedScene" path="res://resources/modelos/vela_vermlha.glb" id="8_3no75"]
+[ext_resource type="PackedScene" path="res://resources/modelos/vela_branca.glb" id="9_5j7es"]
+[ext_resource type="PackedScene" path="res://resources/modelos/knife.glb" id="10_1vv23"]
+[ext_resource type="PackedScene" path="res://resources/modelos/black_rose.glb" id="11_5b10g"]
+[ext_resource type="PackedScene" path="res://resources/modelos/chili_pepper.glb" id="12_5401n"]
+[ext_resource type="PackedScene" path="res://resources/modelos/bottle_to_paloo.glb" id="13_t6q11"]
 
-[node name="Assentamento" type="Node3D"]
-script = ExtResource("1_assentamento")
+[sub_resource type="PlaneMesh" id="PlaneMesh_l7rw8"]
+size = Vector2(3, 3)
+subdivide_width = 64
+subdivide_depth = 64
+
+[node name="Assentamento" type="Node3D" unique_id=1329397399]
+script = ExtResource("1_natrv")
+
+[node name="Camara" type="Camera3D" parent="." unique_id=304538616]
+transform = Transform3D(1, 0, 0, 0, 0.7880108, 0.6156615, 0, -0.6156615, 0.7880108, 0.1, 0.78, 0.95)
+projection = 1
+current = true
+size = 1.15
+
+[node name="Chao" type="MeshInstance3D" parent="." unique_id=1482930216]
+mesh = SubResource("PlaneMesh_l7rw8")
+
+[node name="cauldron" type="Node3D" parent="." unique_id=112582217 instance=ExtResource("2_5gom5")]
+transform = Transform3D(0.32137966, 0, 0, 0, 0.32137966, 0, 0, 0, 0.32137966, 0, -2.8560056e-05, 1.4901161e-08)
+
+[node name="galhos" type="Node3D" parent="." unique_id=335609428 instance=ExtResource("3_g7fst")]
+transform = Transform3D(0.16157685, 0, 0.075344525, 0, 0.17828034, 0, -0.075344525, 0, 0.16157685, -0.06111504, 0.30092376, -0.012362421)
+
+[node name="horse_bone" type="Node3D" parent="." unique_id=856933843 instance=ExtResource("4_xakwp")]
+transform = Transform3D(0.0653307, 0, -0.054818965, 0, 0.085283175, 0, 0.054818965, 0, 0.0653307, 0.044828, 0.21944785, 0.0019304119)
+
+[node name="rusty_chains" type="Node3D" parent="." unique_id=2020464425 instance=ExtResource("5_dkeok")]
+transform = Transform3D(0.16403535, 0, 0.04395314, 0, 0.16982189, 0, -0.04395314, 0, 0.16403535, 0.00017289817, 0.017550852, 0.05017596)
+
+[node name="skull_para_caveira" type="Node3D" parent="." unique_id=258562617 instance=ExtResource("6_lb37t")]
+transform = Transform3D(0.065045856, 0, 0.03755424, 0, 0.07510848, 0, -0.03755424, 0, 0.065045856, -0.30039412, 0.07549501, 0.09919462)
+
+[node name="vela_preta" type="Node3D" parent="." unique_id=44924634 groups=["vela"] instance=ExtResource("7_bb8c7")]
+transform = Transform3D(0.00043494612, 0, 0, 0, 0.00043494612, 0, 0, 0, 0.00043494612, 0.25987613, 0.077349626, 0.08999999)
+
+[node name="vela_vermlha" type="Node3D" parent="." unique_id=1465869822 groups=["vela"] instance=ExtResource("8_3no75")]
+transform = Transform3D(0.007331052, 0, 0, 0, 0.007331052, 0, 0, 0, 0.007331052, -0.26949698, 0.22000068, -0.099999964)
+
+[node name="vela_branca" type="Node3D" parent="." unique_id=1951123402 groups=["vela"] instance=ExtResource("9_5j7es")]
+transform = Transform3D(1.001136, 0, 0, 0, 1.001136, 0, 0, 0, 1.001136, 0.22034633, 0.00029892864, -0.1807172)
+
+[node name="knife" type="Node3D" parent="." unique_id=886172802 instance=ExtResource("10_1vv23")]
+transform = Transform3D(0.034202017, 0, 0.09396926, 0, 0.1, 0, -0.09396926, 0, 0.034202017, -0.16, 0.0078017497, 0.26)
+
+[node name="black_rose" type="Node3D" parent="." unique_id=91935552 instance=ExtResource("11_5b10g")]
+transform = Transform3D(0.2673922, 0, -0.09732279, 0, 0.2845528, 0, 0.09732279, 0, 0.2673922, 0.13738954, 0.0032863717, 0.25155994)
+
+[node name="chili_pepper" type="Node3D" parent="." unique_id=1393072689 instance=ExtResource("12_5401n")]
+transform = Transform3D(0.015825648, 0, 0.015825648, 0, 0.022380847, 0, -0.015825648, 0, 0.015825648, -0.056419857, 0.035573557, 0.30448875)
+
+[node name="bottle_to_paloo" type="Node3D" parent="." unique_id=741873284 instance=ExtResource("13_t6q11")]
+transform = Transform3D(0.11028902, 0, 0.019446932, 0, 0.111990415, 0, -0.019446932, 0, 0.11028902, 0.36, -0.00052884535, 0.26)
