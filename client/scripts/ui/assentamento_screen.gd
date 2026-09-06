@@ -91,10 +91,15 @@ const COR_TINTA := Color(0.937, 0.925, 0.882)
 ## Forca de cada vela.
 @export_range(0.0, 8.0) var forca_da_luz := 0.45
 
-## Luz de reserva, para um `assentamento` sem vela nenhuma nao ser um ecra
-## preto. Visitar um `assentamento` e sempre gratis (SPEC.md §10.1), entao
-## tem de se poder ver que la esta alguma coisa — mal, mas ver.
+## Luz de reserva no app, para um `assentamento` sem vela nenhuma nao ser
+## um ecra preto. Visitar e sempre gratis (SPEC.md §10.1), entao tem de se
+## poder ver que la esta alguma coisa — mal, mas ver.
 @export_range(0.0, 0.5) var luz_de_reserva := 0.16
+
+## Luz no EDITOR. Nada a ver com a do app: aqui e uma bancada, e uma
+## bancada as escuras nao serve para arrumar coisa nenhuma. So o app fica
+## no escuro a espera de que se acenda uma vela.
+@export_range(0.0, 2.0) var luz_de_bancada := 0.75
 
 ## Desliga o bruxuleio. Ligado por omissao fora do editor; no editor a luz
 ## fica quieta, para nao pulsar enquanto se arruma a nganga.
@@ -292,7 +297,12 @@ func _montar_chamas() -> void:
 ## Escuro a serio: fundo preto e nada de luz ambiente. A unica luz da cena
 ## sao as velas.
 func _montar_ambiente() -> void:
-	if get_node_or_null("Ambiente") != null:
+	var ja := get_node_or_null("Ambiente")
+	if ja != null:
+		# No editor a luz de bancada pode mudar no inspetor: acompanhar.
+		if Engine.is_editor_hint() and ja is WorldEnvironment:
+			var f := luz_de_bancada
+			ja.environment.ambient_light_color = Color(f, f * 0.92, f * 0.84)
 		return
 	var amb := WorldEnvironment.new()
 	amb.name = "Ambiente"
@@ -300,7 +310,8 @@ func _montar_ambiente() -> void:
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color.BLACK
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(luz_de_reserva, luz_de_reserva * 0.92, luz_de_reserva * 0.84)
+	var f: float = luz_de_bancada if Engine.is_editor_hint() else luz_de_reserva
+	env.ambient_light_color = Color(f, f * 0.92, f * 0.84)
 	env.ambient_light_energy = 1.0
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	amb.environment = env
