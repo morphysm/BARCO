@@ -122,8 +122,12 @@ var _escrita: TextEdit
 var _lista: Label
 var _folhas: HBoxContainer
 
-## Onde os papeis pousam dentro do caldeirao.
-const BOCA := Vector3(0.0, 0.33, 0.02)
+## Nome do no em que os pedidos se espetam. Como na tradicao: o papel vai
+## na lanca, nao pousado no fundo da panela.
+##
+## O tridente e LIDO, nunca movido: e fundamento travado. Se ele mudar de
+## sitio, os papeis acompanham-no sozinhos.
+const LANCA := "tridente"
 
 ## O gesto de depor (GDD §5.2, SPEC.md §8.1): pega-se numa `oferenda` na
 ## tira de baixo e arrasta-se ate ao sitio. O que se arrasta ja e o proprio
@@ -202,9 +206,24 @@ func _por_papel(p: Pedido) -> void:
 	var papel := Papel.new(p)
 	# Sem `owner`: os papeis nao se gravam na cena travada.
 	add_child(papel)
-	papel.position = BOCA + Vector3(
-		randf_range(-0.05, 0.05), randf_range(0.0, 0.03), randf_range(-0.04, 0.04))
+	papel.position = _na_lanca(_papeis.size())
+	papel.rotation_degrees = Vector3(0, randf_range(-14.0, 14.0), randf_range(-5.0, 5.0))
 	_papeis.append(papel)
+
+
+## Onde espetar o enesimo papel: junto as pontas do tridente, cada um um
+## pouco mais abaixo, como quem vai enfiando papeis na mesma lanca.
+func _na_lanca(indice: int) -> Vector3:
+	var lanca := get_node_or_null(NodePath(LANCA))
+	if lanca == null or not lanca is Node3D:
+		return Vector3(0.0, 0.40, 0.05)
+	var caixa := _caixa_mundo(lanca)
+	if caixa.size == Vector3.ZERO:
+		return Vector3(0.0, 0.40, 0.05)
+	var centro := caixa.get_center()
+	# Abaixo das pontas, a descer com cada papel novo.
+	var altura: float = caixa.end.y - 0.055 - float(indice) * 0.035
+	return Vector3(centro.x, maxf(altura, caixa.position.y + 0.02), centro.z)
 
 
 ## Poe um pedido a arder. Sete dias, e nao ha como o tirar de la.

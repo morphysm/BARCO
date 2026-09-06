@@ -42,14 +42,15 @@ func _ready() -> void:
 
 	_quad = MeshInstance3D.new()
 	var q := QuadMesh.new()
-	q.size = Vector2(0.16, 0.107)
+	q.size = Vector2(0.115, 0.077)
 	_quad.mesh = q
 	var m := ShaderMaterial.new()
 	m.shader = load("res://shaders/papel.gdshader")
 	m.set_shader_parameter("escrito", _vista.get_texture())
 	_quad.material_override = m
-	# Deitado, como um papel pousado, com uma volta para nao ficar certinho.
-	_quad.rotation_degrees = Vector3(-90, 17, 0)
+	# De pe: o papel esta espetado na lanca, nao pousado. Ligeiramente
+	# tombado para tras, como papel enfiado num ferro.
+	_quad.rotation_degrees = Vector3(-9, 0, 0)
 	add_child(_quad)
 	set_process(true)
 
