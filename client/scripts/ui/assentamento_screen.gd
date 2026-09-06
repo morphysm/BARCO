@@ -36,6 +36,20 @@ const COR_TINTA := Color(0.937, 0.925, 0.882)
 ## sujidade, nao como grao de papel.
 @export_range(0.0, 1.0) var grao := 0.12
 
+## Angulo da trama do chao, em graus, contra a dos objetos. Se forem
+## iguais, uma peca pousada no chao nao tem aresta que a separe dele.
+##
+## Angulos muito longe de zero fazem a trama bater com a grelha de pixeis
+## e adensar — a trama e presa ao pixel, e isso ainda esta por resolver.
+@export_range(0.0, 90.0) var angulo_do_chao := 22.0
+
+## Trama do chao contra a dos objetos. Mais larga no chao: a diferenca de
+## calibre separa tanto como a de angulo, e sem bater na grelha de pixeis.
+@export_range(0.2, 1.5) var calibre_do_chao := 0.55
+
+## Contorno nas pecas: numa gravura e o contorno que separa as coisas.
+@export_range(0.0, 1.0) var contorno := 0.85
+
 ## Desliga a gravura e mostra os modelos como o Godot os mostraria — cinza
 ## liso, iluminado pelo ambiente do editor. Nao e como o app fica: e para
 ## se arrumar a nganga a ver as formas, e so depois voltar a ligar.
@@ -145,6 +159,7 @@ func _material() -> ShaderMaterial:
 
 func _aplicar_luz(energias: PackedFloat32Array) -> void:
 	var posicoes := PackedVector3Array(_luzes)
+	var chao := get_node_or_null("Chao")
 	for malha in _malhas(self):
 		var m := malha.material_override
 		if m is ShaderMaterial:
@@ -152,8 +167,11 @@ func _aplicar_luz(energias: PackedFloat32Array) -> void:
 			m.set_shader_parameter("luz_energia", energias)
 			m.set_shader_parameter("luzes", _luzes.size())
 			m.set_shader_parameter("alcance", alcance_da_vela)
-			m.set_shader_parameter("passo", trama)
 			m.set_shader_parameter("grao", grao)
+		var e_chao: bool = malha == chao
+		m.set_shader_parameter("angulo", deg_to_rad(angulo_do_chao) if e_chao else 0.0)
+		m.set_shader_parameter("passo", trama * calibre_do_chao if e_chao else trama)
+		m.set_shader_parameter("contorno", 0.0 if e_chao else contorno)
 
 
 func _malhas(raiz: Node) -> Array[MeshInstance3D]:

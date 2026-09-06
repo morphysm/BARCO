@@ -23,6 +23,16 @@ uniform vec4 cor_tinta : source_color = vec4(0.937, 0.925, 0.882, 1.0);
 uniform float passo = 0.15;       // espacamento da hachura, em pixeis
 uniform float grao : hint_range(0.0, 1.0) = 0.12;
 
+// Angulo da trama, em radianos. O chao leva um angulo diferente dos
+// objetos: com a mesma trama nos dois, uma faca pousada no chao nao tem
+// aresta nenhuma que a separe do chao e desaparece dentro dele.
+uniform float angulo = 0.0;
+
+// Contorno: quanto o buril carrega onde a superficie vira de lado. E o
+// que da forma a uma peca pequena — numa gravura e o contorno que separa
+// as coisas, nao o tom.
+uniform float contorno : hint_range(0.0, 1.0) = 0.0;
+
 // Quanto a superficie responde a luz. O chao leva menos que os objetos:
 // e uma extensao grande e de frente para as chamas, e com a mesma
 // resposta ofusca a nganga que devia estar a mostrar.
@@ -68,7 +78,19 @@ void fragment() {
 	}
 	luz = clamp(luz * resposta, 0.0, 1.0);
 
-	float t = trama(FRAGCOORD.xy, luz);
+	// A trama roda com `angulo`: o chao leva um angulo, os objetos outro,
+	// e e essa diferenca que da aresta a uma peca pousada no chao.
+	float ca = cos(angulo);
+	float sa = sin(angulo);
+	vec2 s = vec2(FRAGCOORD.x * ca - FRAGCOORD.y * sa,
+			FRAGCOORD.x * sa + FRAGCOORD.y * ca);
+	float t = trama(s, luz);
+	// NORMAL vem em espaco de vista: com z perto de zero a superficie
+	// esta de perfil para a camara, que e onde cai o contorno.
+	float virada = 1.0 - abs(NORMAL.z);
+	// So onde ha alguma luz — nao se contorna o que esta no escuro.
+	t = max(t, contorno * smoothstep(0.55, 0.92, virada) * step(0.04, luz));
+
 	float g = 1.0 - grao * ruido(floor(FRAGCOORD.xy * 0.5));
 	// Opaco de proposito: onde nao ha tinta fica preto, que e o fundo.
 	// Assim nao ha transparencia para ordenar.
