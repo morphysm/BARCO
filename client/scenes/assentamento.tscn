@@ -17,8 +17,9 @@
 [ext_resource type="PackedScene" path="res://resources/modelos/sangue.glb" id="15_xakwp"]
 [ext_resource type="PackedScene" path="res://resources/modelos/one_dollar_bill.glb" id="16_xakwp"]
 [ext_resource type="PackedScene" path="res://resources/modelos/aranha.glb" id="17_dkeok"]
+[ext_resource type="PackedScene" path="res://resources/modelos/tridente.glb" id="18_lb37t"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xakwp"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dkeok"]
 albedo_color = Color(0.06, 0.055, 0.05, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l7rw8"]
@@ -28,21 +29,20 @@ subdivide_depth = 64
 
 [node name="Assentamento" type="Node3D" unique_id=1329397399]
 script = ExtResource("1_natrv")
-brilho_da_vela = 0.053
-alcance_da_vela = 0.225
 queda_da_luz = 2.211
-alcance_da_luz = 0.551
-forca_da_luz = 0.022
+alcance_da_luz = 1.136
+forca_da_luz = 0.049
 
 [node name="Camara" type="Camera3D" parent="." unique_id=304538616]
-transform = Transform3D(1, 0, 0, 0, 0.7880108, 0.6156615, 0, -0.6156615, 0.7880108, 0.1, 0.78, 0.95)
+transform = Transform3D(0.0140885115, -0.4339911, 0.900807, -0.026638288, 0.90041375, 0.43421826, -0.99954593, -0.030113444, 0.0011247136, 1.455099, 0.88891673, 0.053041875)
 projection = 1
 current = true
 size = 1.15
+near = 0.005
 
 [node name="Chao" type="MeshInstance3D" parent="." unique_id=1482930216]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9192696e-05, 0, -0.0018177032)
-material_override = SubResource("StandardMaterial3D_xakwp")
+material_override = SubResource("StandardMaterial3D_dkeok")
 mesh = SubResource("PlaneMesh_l7rw8")
 
 [node name="cauldron" type="Node3D" parent="." unique_id=112582217 instance=ExtResource("2_5gom5")]
@@ -70,10 +70,10 @@ transform = Transform3D(0.10810512, 0.010792901, -0.13052301, -0.018036585, 0.16
 transform = Transform3D(0.1604357, 0.016830187, -0.05307158, -0.018036583, 0.16885847, -0.00097587117, 0.052673813, 0.0065586055, 0.16131312, 0.12241489, 0.05986795, -0.39389646)
 
 [node name="rusty_chains6" type="Node3D" parent="." unique_id=1886534631 instance=ExtResource("5_dkeok")]
-transform = Transform3D(0.16912082, 0.014371967, -0.0055721495, -0.015296783, 0.16404909, -0.04115029, 0.0019002054, 0.041482314, 0.16466653, -0.20070663, 0.0761213, -0.35055232)
+transform = Transform3D(0.16797315, 0.01956296, 0.015548827, -0.015296784, 0.16404907, -0.041150287, -0.01976066, 0.039301734, 0.16402544, -0.20070663, 0.0761213, -0.35055232)
 
 [node name="rusty_chains7" type="Node3D" parent="." unique_id=771338089 instance=ExtResource("5_dkeok")]
-transform = Transform3D(0.081088394, -0.01943393, 0.14794075, 0.011557238, 0.16868746, 0.015824603, -0.14876345, 0.0025120135, 0.08186935, -0.38831425, 0.07131091, -0.14693332)
+transform = Transform3D(0.081088394, -0.01943393, 0.14794075, 0.011557238, 0.16868746, 0.015824603, -0.14876345, 0.0025120135, 0.08186935, -0.38831425, 0.038644165, -0.13553557)
 
 [node name="rusty_chains8" type="Node3D" parent="." unique_id=1097210222 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.011004431, -0.025011549, 0.16760907, -0.019112034, 0.16670725, 0.026131798, -0.16838376, -0.020556334, 0.007987764, -0.40387255, 0.05986795, 0.19813679)
@@ -166,4 +166,7 @@ transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697,
 transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697, 0, 0.29377177, 0.26751274, 0.0031344574, 0.38926718)
 
 [node name="aranha" type="Node3D" parent="." unique_id=2118962358 instance=ExtResource("17_dkeok")]
-transform = Transform3D(0.0018898416, 0, -0.0010911006, 0, 0.0021822012, 0, 0.0010911006, 0, 0.0018898416, 0.12948516, 0.2566822, 0.040891733)
+transform = Transform3D(-0.0001781154, 0.0021142657, 0.0005100553, 0.0004622271, 0.0005368699, -0.0020640055, -0.002125234, -6.0429782e-05, -0.0004916578, 0.032858267, 0.33121908, 0.0071037672)
+
+[node name="tridente" type="Node3D" parent="." unique_id=1974266223 instance=ExtResource("18_lb37t")]
+transform = Transform3D(0.00032430486, 0, -8.0858284e-05, 0, 0.00033423302, 0, 8.0858284e-05, 0, 0.00032430486, 0.0699813, 0.18521617, 0.07007499)
