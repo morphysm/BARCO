@@ -104,6 +104,20 @@ As tres ferramentas que escrevem na cena recusam-se a correr:
 `por_peca.gd` e `marcar_grupo.gd` pedem `-- --destravar`,
 `gerar_cena_assentamento.gd` pede `-- --refazer` e reescreve tudo de raiz.
 
+### Levar o `assentamento` para outro sitio
+
+`client/scenes/assentamento_cenario.tscn` e a mesma nganga sem ritual
+nenhum: as 52 pecas onde estao, as velas a dar luz, o chao e o ambiente
+escuro. Nao tem `depor`, nem `pedidos` a arder, nem menu, nem registo em
+disco — e cenario, para instanciar noutra cena ou noutro jogo.
+
+So depende de `client/resources/modelos/` e, se a gravura for ligada, de
+`client/shaders/gravura.gdshader`. A camara vem com a mesma pose e com
+`current` ligado: instanciando-o dentro de outra cena, desliga-se.
+
+Nao esta travado, e nao acompanha o fundamento sozinho — se a nganga
+mudar, esta copia refaz-se a mao.
+
 O que se acrescenta por cima do fundamento sao `depositos` — `depor()` no
 script do `assentamento` — e esses nunca tocam nesta cena. Sao de quem os
 depoe, ficam onde foram postos, e nao se tiram (GDD §2).
