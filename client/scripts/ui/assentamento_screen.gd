@@ -89,7 +89,7 @@ const COR_TINTA := Color(0.937, 0.925, 0.882)
 @export_range(0.1, 3.0) var alcance_da_luz := 0.5
 
 ## Forca de cada vela.
-@export_range(0.0, 8.0) var forca_da_luz := 0.45
+@export_range(0.0, 8.0) var forca_da_luz := 0.26
 
 ## Luz de reserva no app, para um `assentamento` sem vela nenhuma nao ser
 ## um ecra preto. Visitar e sempre gratis (SPEC.md §10.1), entao tem de se
@@ -313,7 +313,10 @@ func _montar_ambiente() -> void:
 	var f: float = luz_de_bancada if Engine.is_editor_hint() else luz_de_reserva
 	env.ambient_light_color = Color(f, f * 0.92, f * 0.84)
 	env.ambient_light_energy = 1.0
-	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.tonemap_mode = Environment.TONE_MAPPER_ACES
+	# Sem isto o que esta ao pe de uma chama queima para branco chapado —
+	# e uma rosa negra encostada a tres velas deixa de ser negra.
+	env.tonemap_white = 3.0
 	amb.environment = env
 	add_child(amb)
 
