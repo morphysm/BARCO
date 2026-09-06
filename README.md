@@ -132,7 +132,18 @@ ffmpeg -y -framerate 30 -i capturas/filme/%04d.png \
 ```
 
 Nao esta travado, e nao acompanha o fundamento sozinho — se a nganga
-mudar, esta copia refaz-se a mao.
+mudar, esta copia refaz-se a mao. Acrescentar-lhe uma peca faz-se no
+editor, ou por `por_peca.gd`, que agora escolhe a cena:
+
+```sh
+# uma peca nova so no cenario — nao pede --destravar, nao e fundamento
+godot --headless --path client --script res://tools/por_peca.gd -- \
+      --cena cenario MODELO x y z tamanho giro [vela]
+
+# uma SEGUNDA copia de um modelo que ja la esta precisa de nome proprio
+godot --headless --path client --script res://tools/por_peca.gd -- \
+      --cena cenario --nome black_rose8 black_rose -0.13 0 0.24 0.11 40
+```
 
 O que se acrescenta por cima do fundamento sao `depositos` — `depor()` no
 script do `assentamento` — e esses nunca tocam nesta cena. Sao de quem os

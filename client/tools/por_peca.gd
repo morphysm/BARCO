@@ -8,48 +8,102 @@
 ## zero, este carrega a que la esta e so lhe junta um no. E o que permite
 ## acrescentar uma peca depois de a nganga ja ter sido arrumada a mao no
 ## editor, sem deitar esse trabalho fora.
+##
+## Por omissao escreve no FUNDAMENTO, que esta travado. Para escrever na
+## copia de cenario — que nao e autoral e nao esta travada:
+##
+##   ... -- --cena cenario MODELO x y z tamanho giro
+##
+## O no fica com o nome do modelo, e por isso por o mesmo modelo duas
+## vezes muda a peca de sitio em vez de acrescentar outra. Para uma
+## segunda copia, dar-lhe um nome:
+##
+##   ... -- --nome black_rose8 black_rose x y z tamanho giro
+##
+## As duas cenas sao independentes de proposito: a copia nao arrasta atras
+## o codigo do ritual, e por isso tambem nao acompanha o fundamento
+## sozinha. Uma peca que va para as duas poe-se duas vezes.
 extends SceneTree
 
-const CENA := "res://scenes/assentamento.tscn"
+const FUNDAMENTO := "res://scenes/assentamento.tscn"
+const CENARIO := "res://scenes/assentamento_cenario.tscn"
+
+var _cena := FUNDAMENTO
 
 
 func _initialize() -> void:
+	var a := OS.get_cmdline_user_args()
+	a.erase("--destravar")
+
+	var nome := ""
+	var j := a.find("--nome")
+	if j != -1:
+		if j + 1 >= a.size():
+			printerr("--nome precisa de um nome")
+			quit(1)
+			return
+		nome = a[j + 1]
+		a.remove_at(j + 1)
+		a.remove_at(j)
+
+	var i := a.find("--cena")
+	if i != -1:
+		if i + 1 >= a.size():
+			printerr("--cena precisa de um nome: fundamento | cenario")
+			quit(1)
+			return
+		match a[i + 1]:
+			"cenario": _cena = CENARIO
+			"fundamento": _cena = FUNDAMENTO
+			_:
+				printerr("cena desconhecida: ", a[i + 1], " (fundamento | cenario)")
+				quit(1)
+				return
+		a.remove_at(i + 1)
+		a.remove_at(i)
+
 	# O fundamento esta TRAVADO. A cena e autoral: e o vaso que faz este
 	# `assentamento` ser o daquela entidade, e nao se mexe por engano.
 	# Quem depoe acrescenta por `depor()`; isto aqui altera o fundamento.
-	if not OS.get_cmdline_user_args().has("--destravar"):
+	#
+	# O cenario nao: e uma copia para levar para outro sitio, e mexer nela
+	# nao altera o `assentamento` de ninguem.
+	if _cena == FUNDAMENTO and not OS.get_cmdline_user_args().has("--destravar"):
 		printerr("RECUSADO: o fundamento esta travado (ver scenes/assentamento.travado)")
 		printerr("  para alterar mesmo assim: acrescentar  -- --destravar")
 		printerr("  depois de alterar: python3 tools/verificar_fundamento.py --regravar")
+		printerr("  para mexer so na copia de cenario:  -- --cena cenario ...")
 		quit(1)
 		return
 
-	var a := OS.get_cmdline_user_args()
 	if a.size() >= 2 and a[1] == "tirar":
-		_tirar(a[0])
+		_tirar(nome if nome != "" else a[0])
 		return
 	if a.size() < 6:
-		printerr("uso: -- MODELO x y z tamanho giro [vela]  |  -- MODELO tirar")
+		printerr("uso: [--cena fundamento|cenario] [--nome NO] MODELO x y z tamanho giro [vela]")
+		printerr("     [--cena fundamento|cenario] MODELO tirar")
 		quit(1)
 		return
 	var modelo := a[0]
+	if nome == "":
+		nome = modelo
 	var onde := Vector3(float(a[1]), float(a[2]), float(a[3]))
 	var tamanho := float(a[4])
 	var giro := float(a[5])
 	var e_vela := a.size() > 6 and a[6] == "vela"
 
-	var raiz: Node3D = load(CENA).instantiate()
+	var raiz: Node3D = load(_cena).instantiate()
 	root.add_child(raiz)
 
 	# Se a peca ja la estiver, sai e volta a entrar no sitio novo. Assim o
 	# mesmo comando serve para acrescentar e para mudar de lugar.
-	var antiga := raiz.get_node_or_null(NodePath(modelo))
+	var antiga := raiz.get_node_or_null(NodePath(nome))
 	if antiga != null:
 		raiz.remove_child(antiga)
 		antiga.free()
 
 	var no: Node3D = load("res://resources/modelos/%s.glb" % modelo).instantiate()
-	no.name = modelo
+	no.name = nome
 	raiz.add_child(no)
 	no.owner = raiz
 	no.rotation_degrees = Vector3(0, giro, 0)
@@ -67,9 +121,9 @@ func _initialize() -> void:
 
 	var empacotada := PackedScene.new()
 	assert(empacotada.pack(raiz) == OK)
-	assert(ResourceSaver.save(empacotada, CENA) == OK)
-	print("acrescentado %s em (%.2f, %.2f, %.2f), tamanho %.2f" % [
-		modelo, onde.x, onde.y, onde.z, tamanho])
+	assert(ResourceSaver.save(empacotada, _cena) == OK)
+	print("acrescentado %s (%s) em (%.2f, %.2f, %.2f), tamanho %.2f  ->  %s" % [
+		nome, modelo, onde.x, onde.y, onde.z, tamanho, _cena.get_file()])
 	raiz.free()
 	quit()
 
@@ -77,7 +131,7 @@ func _initialize() -> void:
 ## Tira uma peca do fundamento. Isto e do vaso, nao dos `depositos`: o que
 ## alguem depoe nunca se tira (GDD §2).
 func _tirar(nome: String) -> void:
-	var raiz: Node3D = load(CENA).instantiate()
+	var raiz: Node3D = load(_cena).instantiate()
 	root.add_child(raiz)
 	var no := raiz.get_node_or_null(NodePath(nome))
 	if no == null:
@@ -88,8 +142,8 @@ func _tirar(nome: String) -> void:
 	no.free()
 	var e := PackedScene.new()
 	assert(e.pack(raiz) == OK)
-	assert(ResourceSaver.save(e, CENA) == OK)
-	print("tirado: ", nome)
+	assert(ResourceSaver.save(e, _cena) == OK)
+	print("tirado de %s: %s" % [_cena.get_file(), nome])
 	raiz.free()
 	quit()
 
