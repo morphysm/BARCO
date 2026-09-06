@@ -210,8 +210,11 @@ func _por_papel(p: Pedido) -> void:
 	var papel := Papel.new(p)
 	# Sem `owner`: os papeis nao se gravam na cena travada.
 	add_child(papel)
+	# Limpar os que ja arderam antes de contar: senao o proximo papel
+	# entrava sempre mais abaixo, mesmo com a lanca vazia.
+	_papeis = _papeis.filter(func(x): return x != null and is_instance_valid(x))
 	papel.position = _na_lanca(_papeis.size())
-	papel.rotation_degrees = Vector3(0, randf_range(-14.0, 14.0), randf_range(-5.0, 5.0))
+	papel.rotation_degrees = Vector3(0, randf_range(-38.0, 38.0), randf_range(-7.0, 7.0))
 	_papeis.append(papel)
 
 
@@ -225,9 +228,14 @@ func _na_lanca(indice: int) -> Vector3:
 	if caixa.size == Vector3.ZERO:
 		return Vector3(0.0, 0.40, 0.05)
 	var centro := caixa.get_center()
-	# Abaixo das pontas, a descer com cada papel novo.
-	var altura: float = caixa.end.y - 0.055 - float(indice) * 0.035
-	return Vector3(centro.x, maxf(altura, caixa.position.y + 0.02), centro.z)
+	# Abaixo das pontas, a descer com cada papel novo. Um papel tem 7,7 cm
+	# de alto: descer so 3,5 cm punha-os todos no mesmo sitio, a brigarem
+	# pela mesma profundidade. Descem mais, e cada um entra ligeiramente ao
+	# lado, como papeis enfiados a pressa no mesmo ferro.
+	var altura: float = caixa.end.y - 0.05 - float(indice) * 0.062
+	var lado := Vector3(
+		randf_range(-0.016, 0.016), 0.0, randf_range(-0.014, 0.014))
+	return Vector3(centro.x, maxf(altura, caixa.position.y + 0.02), centro.z) + lado
 
 
 ## Poe um pedido a arder. Sete dias, e nao ha como o tirar de la.

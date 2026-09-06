@@ -33,10 +33,17 @@ float macio(vec2 p) {
 }
 
 void fragment() {
+	// O papel ve-se dos dois lados. Visto por tras, o escrito sairia ao
+	// contrario — espelhar o UV faz com que se leia de qualquer angulo.
+	vec2 uv = UV;
+	if (!FRONT_FACING) {
+		uv.x = 1.0 - uv.x;
+	}
+
 	// Come de fora para dentro: as bordas ardem primeiro.
-	vec2 ao_centro = abs(UV - 0.5) * 2.0;
+	vec2 ao_centro = abs(uv - 0.5) * 2.0;
 	float borda = max(ao_centro.x, ao_centro.y);
-	float mapa = borda * 0.75 + macio(UV * 7.0) * 0.25;
+	float mapa = borda * 0.75 + macio(uv * 7.0) * 0.25;
 
 	// O limiar vai de fora (1.0) para dentro (0.0) conforme consome.
 	float limiar = 1.0 - consumido * 1.15;
@@ -44,7 +51,7 @@ void fragment() {
 		discard;                       // ja e cinza: nao ha nada
 	}
 
-	vec4 tinta = texture(escrito, UV);
+	vec4 tinta = texture(escrito, uv);
 	vec3 cor = mix(cor_papel.rgb, tinta.rgb, tinta.a);
 
 	// Junto a fronteira: brasa e depois carvao.
