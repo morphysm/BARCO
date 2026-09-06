@@ -262,6 +262,12 @@ func _montar_tira() -> void:
 	tira.add_theme_constant_override("separation", 8)
 	folha.add_child(tira)
 
+	# Entrada visivel para os pedidos. O ESC continua a servir, mas ninguem
+	# adivinha uma tecla que nao esta escrita em lado nenhum.
+	var escrever := Pagina.botao("pedido", 17)
+	escrever.pressed.connect(_alternar_menu)
+	tira.add_child(escrever)
+
 	for caminho in _oferendas_disponiveis():
 		var o: Oferenda = load(caminho)
 		if o == null:
@@ -341,6 +347,15 @@ func _montar_menu() -> void:
 	_menu.add_child(_folhas)
 
 
+func _alternar_menu() -> void:
+	if _menu == null:
+		return
+	_menu.visible = not _menu.visible
+	if _menu.visible:
+		_actualizar_lista()
+		_escrita.grab_focus()
+
+
 func _deitar_ao_caldeirao() -> void:
 	acender_pedido(_escrita.text)
 	_escrita.text = ""
@@ -410,10 +425,7 @@ func _input(evento: InputEvent) -> void:
 	if Engine.is_editor_hint():
 		return
 	if evento.is_action_pressed("ui_cancel") and _menu != null:
-		_menu.visible = not _menu.visible
-		if _menu.visible:
-			_actualizar_lista()
-			_escrita.grab_focus()
+		_alternar_menu()
 		get_viewport().set_input_as_handled()
 		return
 	if _na_mao == null:
