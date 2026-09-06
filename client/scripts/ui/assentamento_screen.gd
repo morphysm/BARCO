@@ -288,47 +288,68 @@ func _montar_menu() -> void:
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_menu.add_child(fundo)
 
-	var titulo := Pagina.texto("escrever um pedido", 30)
+	var titulo := Pagina.texto("escreva o que tu quer", 30)
 	titulo.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	titulo.offset_top = 70
+	titulo.offset_top = 62
 	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_menu.add_child(titulo)
 
+	# O campo E o papel: cor de papel, tinta escura. Uma caixa preta e
+	# vazia no meio do escuro nao diz a ninguem que se escreve ali.
 	_escrita = TextEdit.new()
 	_escrita.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_escrita.offset_top = 130
-	_escrita.offset_bottom = 320
-	_escrita.offset_left = 56
-	_escrita.offset_right = -56
+	_escrita.offset_top = 118
+	_escrita.offset_bottom = 316
+	_escrita.offset_left = 52
+	_escrita.offset_right = -52
 	_escrita.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
-	_escrita.add_theme_font_size_override("font_size", 22)
-	_escrita.add_theme_color_override("font_color", Pagina.TINTA)
-	# Sem sugestao nenhuma no campo: o app nao insinua o que se pede
-	# (CONTENT_pt.md §2).
-	var caixa := StyleBoxFlat.new()
-	caixa.bg_color = Color(0, 0, 0, 0)
-	caixa.border_color = Pagina.TINTA
-	caixa.set_border_width_all(1)
-	caixa.set_corner_radius_all(0)
-	caixa.content_margin_left = 14
-	caixa.content_margin_top = 12
+	_escrita.add_theme_font_size_override("font_size", 24)
+	_escrita.add_theme_color_override("font_color", Color(0.12, 0.10, 0.09))
+	_escrita.add_theme_color_override("caret_color", Color(0.12, 0.10, 0.09))
+	_escrita.add_theme_color_override("font_placeholder_color", Color(0.42, 0.38, 0.34))
+	_escrita.add_theme_color_override("selection_color", Color(0.62, 0.56, 0.44))
+	# Diz ONDE se escreve, nunca O QUE se escreve: o app nao insinua o que
+	# se pede (CONTENT_pt.md §2).
+	_escrita.placeholder_text = "escreva aqui"
+	var papel := StyleBoxFlat.new()
+	papel.bg_color = Color(0.86, 0.82, 0.72)
+	papel.border_color = Color(0.62, 0.57, 0.47)
+	papel.set_border_width_all(1)
+	papel.set_corner_radius_all(0)
+	papel.content_margin_left = 18
+	papel.content_margin_right = 18
+	papel.content_margin_top = 16
+	papel.content_margin_bottom = 16
 	for estado in ["normal", "focus", "read_only"]:
-		_escrita.add_theme_stylebox_override(estado, caixa)
+		_escrita.add_theme_stylebox_override(estado, papel)
 	_menu.add_child(_escrita)
 
+	# Num HBox e nao por offsets: com PRESET_TOP_WIDE o offset_left conta
+	# a partir da esquerda e o offset_right a partir da direita, e misturar
+	# os dois punha os botoes um por cima do outro.
+	var botoes := HBoxContainer.new()
+	botoes.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	botoes.offset_top = 332
+	botoes.offset_bottom = 386
+	botoes.offset_left = 52
+	botoes.offset_right = -52
+	botoes.add_theme_constant_override("separation", 12)
+	_menu.add_child(botoes)
+
 	var deitar := Pagina.botao("deitar ao caldeirao", 22)
-	deitar.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	deitar.offset_top = 340
-	deitar.offset_bottom = 392
-	deitar.offset_left = 56
-	deitar.offset_right = -56
+	deitar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	deitar.pressed.connect(_deitar_ao_caldeirao)
-	_menu.add_child(deitar)
+	botoes.add_child(deitar)
+
+	# Sair sem depender de saber que o ESC serve para isso.
+	var fechar := Pagina.botao("voltar", 22)
+	fechar.pressed.connect(_alternar_menu)
+	botoes.add_child(fechar)
 
 	_lista = Pagina.texto("", 19)
 	_lista.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_lista.offset_top = 414
-	_lista.offset_bottom = 452
+	_lista.offset_top = 408
+	_lista.offset_bottom = 446
 	_lista.offset_left = 56
 	_lista.offset_right = -56
 	_lista.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -338,7 +359,7 @@ func _montar_menu() -> void:
 	# papel a decompor-se, nao ler uma percentagem.
 	_folhas = HBoxContainer.new()
 	_folhas.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_folhas.offset_top = 460
+	_folhas.offset_top = 452
 	_folhas.offset_bottom = 700
 	_folhas.offset_left = 40
 	_folhas.offset_right = -40
@@ -371,7 +392,7 @@ func _actualizar_lista() -> void:
 	for p in _pedidos:
 		if not p.acabou():
 			vivos += 1
-	_lista.text = "%d no caldeirao" % vivos if vivos > 0 else ""
+	_lista.text = "no caldeirao, a arder" if vivos > 0 else ""
 
 	if _folhas == null:
 		return
