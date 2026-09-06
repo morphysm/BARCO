@@ -89,9 +89,24 @@ godot --headless --path client --script res://tools/por_peca.gd -- MODELO x y z 
 godot --path client --script res://tools/ver_modelo.gd --resolution 700x700 -- black_rose
 ```
 
-> **`tools/gerar_cena_assentamento.gd` reescreve a cena de raiz e apaga o
-> arranjo feito a mao.** Recusa-se a correr sem `-- --refazer`. Para mexer
-> numa peca, o que se usa e `por_peca.gd`.
+### O fundamento esta travado
+
+A nganga esta montada. `client/scenes/assentamento.tscn` e autoral: e o
+vaso que faz este `assentamento` ser o daquela entidade, e nao se mexe por
+engano.
+
+```sh
+python3 tools/verificar_fundamento.py             # confere que nao mudou
+python3 tools/verificar_fundamento.py --regravar  # aceitar um estado novo
+```
+
+As tres ferramentas que escrevem na cena recusam-se a correr:
+`por_peca.gd` e `marcar_grupo.gd` pedem `-- --destravar`,
+`gerar_cena_assentamento.gd` pede `-- --refazer` e reescreve tudo de raiz.
+
+O que se acrescenta por cima do fundamento sao `depositos` — `depor()` no
+script do `assentamento` — e esses nunca tocam nesta cena. Sao de quem os
+depoe, ficam onde foram postos, e nao se tiram (GDD §2).
 
 O passo 1 mede. O passo 2 reduz. Nenhum dos dois decide **a ordem dos
 tracos** nem **onde o `ponto` se ramifica entre as `faces`** — isso e
