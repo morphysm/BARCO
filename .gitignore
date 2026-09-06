@@ -1,0 +1,15 @@
+# Godot
+client/.godot/
+client/android/
+export_presets.cfg
+*.translation
+
+# Saidas locais do tools/capturar_risco.gd
+capturas/
+
+# Sistema
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc

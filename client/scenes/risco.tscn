@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/risco_screen.gd" id="1_risco"]
+[ext_resource type="Resource" path="res://resources/irmandades/calunga_pequena.tres" id="2_irmandade"]
+
+[node name="Risco" type="Node2D"]
+script = ExtResource("1_risco")
+irmandade = ExtResource("2_irmandade")

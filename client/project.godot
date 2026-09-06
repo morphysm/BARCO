@@ -1,0 +1,29 @@
+; Barco — cliente Godot
+; Ver SPEC.md §2 (stack) e AGENTS.md (invariantes).
+
+config_version=5
+
+[application]
+
+config/name="Barco"
+config/description="Aplicativo ritual. Vende-se o ato, nunca o resultado."
+run/main_scene="res://scenes/risco.tscn"
+config/features=PackedStringArray("4.4", "GL Compatibility")
+
+[display]
+
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
+textures/canvas_textures/default_texture_filter=1
