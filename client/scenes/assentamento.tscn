@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" path="res://resources/modelos/aranha.glb" id="17_dkeok"]
 [ext_resource type="PackedScene" path="res://resources/modelos/tridente.glb" id="18_lb37t"]
 [ext_resource type="PackedScene" path="res://resources/modelos/pedra_preta.glb" id="19_bb8c7"]
+[ext_resource type="PackedScene" path="res://resources/modelos/stick_de_exu.glb" id="20_3no75"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lb37t"]
 albedo_color = Color(0.06, 0.055, 0.05, 1)
@@ -177,3 +178,6 @@ transform = Transform3D(0.0003323833, 0, 3.5114725e-05, -5.055938e-06, 0.0003307
 
 [node name="pedra_preta" type="Node3D" parent="." unique_id=2113714227 instance=ExtResource("19_bb8c7")]
 transform = Transform3D(0.053411447, 0, 0.019440176, 0, 0.056839276, 0, -0.019440176, 0, 0.053411447, -0.12738359, 0.061760858, 0.29262894)
+
+[node name="stick_de_exu" type="Node3D" parent="." unique_id=2066493327 instance=ExtResource("20_3no75")]
+transform = Transform3D(0.005333822, 0, 0.0024872024, 0, 0.005885222, 0, -0.0024872024, 0, 0.005333822, 0.09931725, 0.25931564, -0.07833131)
