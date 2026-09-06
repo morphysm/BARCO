@@ -56,6 +56,17 @@ def triangulos():
     return total
 
 
+def animado():
+    """Um modelo com esqueleto ou accoes nao se decima.
+
+    A decimacao por colapso junta vertices, e os pesos que prendem cada
+    vertice ao osso nao sobrevivem a isso: a aranha andaria aos solavancos
+    ou nao andaria de todo. Um bicho de catorze mil triangulos tambem nao
+    precisa de corte nenhum.
+    """
+    return len(bpy.data.actions) > 0 or any(o.type == "ARMATURE" for o in bpy.data.objects)
+
+
 def sem_chaves_de_forma():
     """Fora as shape keys: o modificador nao se aplica com elas, e nada no
     `assentamento` anima."""
@@ -111,7 +122,11 @@ def main():
         destino = os.path.join(saida, nome)
         limpar()
         bpy.ops.import_scene.gltf(filepath=origem)
-        antes, depois = decimar(ALVOS.get(os.path.splitext(nome)[0], alvo))
+        var_animado = animado()
+        if var_animado:
+            antes = depois = triangulos()
+        else:
+            antes, depois = decimar(ALVOS.get(os.path.splitext(nome)[0], alvo))
         encolher_texturas(limite_textura)
         bpy.ops.export_scene.gltf(
             filepath=destino,
@@ -121,13 +136,14 @@ def main():
             export_normals=True,
             export_texcoords=True,
             export_tangents=False,
-            export_skins=False,
-            export_animations=False,
+            export_skins=var_animado,
+            export_animations=var_animado,
             export_yup=True,
         )
-        print("%-26s %10d %10d %9dK %9dK" % (
+        print("%-26s %10d %10d %9dK %9dK%s" % (
             nome, antes, depois,
-            os.path.getsize(origem) // 1024, os.path.getsize(destino) // 1024))
+            os.path.getsize(origem) // 1024, os.path.getsize(destino) // 1024,
+            "  (animado: nao decimado)" if var_animado else ""))
 
 
 main()

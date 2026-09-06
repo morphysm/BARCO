@@ -1,21 +1,22 @@
-[gd_scene format=3 uid="uid://bg5dr4y22da7d"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://cgd6vt3qbxct6" path="res://scripts/ui/assentamento_screen.gd" id="1_natrv"]
-[ext_resource type="PackedScene" uid="uid://c6rdosju1ys8f" path="res://resources/modelos/cauldron.glb" id="2_5gom5"]
-[ext_resource type="PackedScene" uid="uid://djur3uqlhqh3i" path="res://resources/modelos/galhos.glb" id="3_g7fst"]
-[ext_resource type="PackedScene" uid="uid://do6bbibkp8h3u" path="res://resources/modelos/horse_bone.glb" id="4_xakwp"]
-[ext_resource type="PackedScene" uid="uid://3skhlkyp7mrg" path="res://resources/modelos/rusty_chains.glb" id="5_dkeok"]
-[ext_resource type="PackedScene" uid="uid://clq6kyv2v3ino" path="res://resources/modelos/skull_para_caveira.glb" id="6_lb37t"]
-[ext_resource type="PackedScene" uid="uid://sacsnotdmvln" path="res://resources/modelos/vela_preta.glb" id="7_bb8c7"]
-[ext_resource type="PackedScene" uid="uid://d36qk6votuvmg" path="res://resources/modelos/vela_vermlha.glb" id="8_3no75"]
-[ext_resource type="PackedScene" uid="uid://b1ks58qrrlx3b" path="res://resources/modelos/vela_branca.glb" id="9_5j7es"]
-[ext_resource type="PackedScene" uid="uid://c1aba1o1212st" path="res://resources/modelos/knife.glb" id="10_1vv23"]
-[ext_resource type="PackedScene" uid="uid://tj5rvmvoxpry" path="res://resources/modelos/black_rose.glb" id="11_5b10g"]
-[ext_resource type="PackedScene" uid="uid://c265p5mauose8" path="res://resources/modelos/chili_pepper.glb" id="12_5401n"]
-[ext_resource type="PackedScene" uid="uid://df8i5qgrwmtsy" path="res://resources/modelos/bottle_to_paloo.glb" id="13_t6q11"]
-[ext_resource type="PackedScene" uid="uid://jy4f5n6owd4p" path="res://resources/modelos/baphomet_head.glb" id="15_g7fst"]
-[ext_resource type="PackedScene" uid="uid://b3hltmg2k5xd1" path="res://resources/modelos/sangue.glb" id="15_xakwp"]
-[ext_resource type="PackedScene" uid="uid://j1mrsx2h72c7" path="res://resources/modelos/one_dollar_bill.glb" id="16_xakwp"]
+[ext_resource type="Script" path="res://scripts/ui/assentamento_screen.gd" id="1_natrv"]
+[ext_resource type="PackedScene" path="res://resources/modelos/cauldron.glb" id="2_5gom5"]
+[ext_resource type="PackedScene" path="res://resources/modelos/galhos.glb" id="3_g7fst"]
+[ext_resource type="PackedScene" path="res://resources/modelos/horse_bone.glb" id="4_xakwp"]
+[ext_resource type="PackedScene" path="res://resources/modelos/rusty_chains.glb" id="5_dkeok"]
+[ext_resource type="PackedScene" path="res://resources/modelos/skull_para_caveira.glb" id="6_lb37t"]
+[ext_resource type="PackedScene" path="res://resources/modelos/vela_preta.glb" id="7_bb8c7"]
+[ext_resource type="PackedScene" path="res://resources/modelos/vela_vermlha.glb" id="8_3no75"]
+[ext_resource type="PackedScene" path="res://resources/modelos/vela_branca.glb" id="9_5j7es"]
+[ext_resource type="PackedScene" path="res://resources/modelos/knife.glb" id="10_1vv23"]
+[ext_resource type="PackedScene" path="res://resources/modelos/black_rose.glb" id="11_5b10g"]
+[ext_resource type="PackedScene" path="res://resources/modelos/chili_pepper.glb" id="12_5401n"]
+[ext_resource type="PackedScene" path="res://resources/modelos/bottle_to_paloo.glb" id="13_t6q11"]
+[ext_resource type="PackedScene" path="res://resources/modelos/baphomet_head.glb" id="15_g7fst"]
+[ext_resource type="PackedScene" path="res://resources/modelos/sangue.glb" id="15_xakwp"]
+[ext_resource type="PackedScene" path="res://resources/modelos/one_dollar_bill.glb" id="16_xakwp"]
+[ext_resource type="PackedScene" path="res://resources/modelos/aranha.glb" id="17_dkeok"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xakwp"]
 albedo_color = Color(0.06, 0.055, 0.05, 1)
@@ -44,122 +45,125 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9192696e-05, 0, -0.00181770
 material_override = SubResource("StandardMaterial3D_xakwp")
 mesh = SubResource("PlaneMesh_l7rw8")
 
-[node name="cauldron" parent="." unique_id=112582217 instance=ExtResource("2_5gom5")]
+[node name="cauldron" type="Node3D" parent="." unique_id=112582217 instance=ExtResource("2_5gom5")]
 transform = Transform3D(0.32137966, 0, 0, 0, 0.32137966, 0, 0, 0, 0.32137966, 0, -2.8560056e-05, 1.4901161e-08)
 
-[node name="galhos" parent="." unique_id=335609428 instance=ExtResource("3_g7fst")]
+[node name="galhos" type="Node3D" parent="." unique_id=335609428 instance=ExtResource("3_g7fst")]
 transform = Transform3D(0.16157685, 0, 0.075344525, -0.07470692, 0.023144271, 0.1602095, -0.009781193, -0.17677167, 0.020975836, 0.0017342716, 0.3187232, -0.012362421)
 
-[node name="galhos2" parent="." unique_id=342142352 instance=ExtResource("3_g7fst")]
+[node name="galhos2" type="Node3D" parent="." unique_id=342142352 instance=ExtResource("3_g7fst")]
 transform = Transform3D(0.16157685, 0, 0.075344525, -0.07470692, 0.023144271, 0.1602095, -0.009781193, -0.17677167, 0.020975836, 0.0017342716, 0.3187232, 0.10378224)
 
-[node name="galhos3" parent="." unique_id=936610995 instance=ExtResource("3_g7fst")]
+[node name="galhos3" type="Node3D" parent="." unique_id=936610995 instance=ExtResource("3_g7fst")]
 transform = Transform3D(0.16157685, 0, 0.075344525, -0.07470692, 0.023144271, 0.1602095, -0.009781193, -0.17677167, 0.020975836, 0.0017342716, 0.3187232, -0.072448134)
 
-[node name="horse_bone" parent="." unique_id=856933843 instance=ExtResource("4_xakwp")]
+[node name="horse_bone" type="Node3D" parent="." unique_id=856933843 instance=ExtResource("4_xakwp")]
 transform = Transform3D(0.0653307, 0, -0.054818965, -0.051465493, -0.029370755, -0.06133419, -0.018879155, 0.08006609, -0.0224993, 0.0056555755, 0.35403898, 0.0019304119)
 
-[node name="rusty_chains" parent="." unique_id=2020464425 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains" type="Node3D" parent="." unique_id=2020464425 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.023266524, 0, 0.16822049, 0.028555173, 0.16735731, -0.0039494573, -0.16577917, 0.028827006, 0.022928867, 0.54588664, 0.03695175, 0.0024644993)
 
-[node name="rusty_chains2" parent="." unique_id=2020604383 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains2" type="Node3D" parent="." unique_id=2020604383 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.10810512, 0.010792901, -0.13052301, -0.018036585, 0.16885848, -0.00097587146, 0.12972057, 0.014483917, 0.10863818, 0.41346604, 0.05986795, -0.28323358)
 
-[node name="rusty_chains5" parent="." unique_id=164536658 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains5" type="Node3D" parent="." unique_id=164536658 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.1604357, 0.016830187, -0.05307158, -0.018036583, 0.16885847, -0.00097587117, 0.052673813, 0.0065586055, 0.16131312, 0.12241489, 0.05986795, -0.39389646)
 
-[node name="rusty_chains6" parent="." unique_id=1886534631 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains6" type="Node3D" parent="." unique_id=1886534631 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.16912082, 0.014371967, -0.0055721495, -0.015296783, 0.16404909, -0.04115029, 0.0019002054, 0.041482314, 0.16466653, -0.20070663, 0.0761213, -0.35055232)
 
-[node name="rusty_chains7" parent="." unique_id=771338089 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains7" type="Node3D" parent="." unique_id=771338089 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.081088394, -0.01943393, 0.14794075, 0.011557238, 0.16868746, 0.015824603, -0.14876345, 0.0025120135, 0.08186935, -0.38831425, 0.07131091, -0.14693332)
 
-[node name="rusty_chains8" parent="." unique_id=1097210222 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains8" type="Node3D" parent="." unique_id=1097210222 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.011004431, -0.025011549, 0.16760907, -0.019112034, 0.16670725, 0.026131798, -0.16838376, -0.020556334, 0.007987764, -0.40387255, 0.05986795, 0.19813679)
 
-[node name="rusty_chains9" parent="." unique_id=1522458708 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains9" type="Node3D" parent="." unique_id=1522458708 instance=ExtResource("5_dkeok")]
 transform = Transform3D(-0.0931076, -0.01198841, 0.14151578, -0.0005428304, 0.16924447, 0.013980284, -0.14202163, 0.007212565, -0.09282941, -0.2605005, 0.062444553, 0.4376006)
 
-[node name="rusty_chains10" parent="." unique_id=1980514798 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains10" type="Node3D" parent="." unique_id=1980514798 instance=ExtResource("5_dkeok")]
 transform = Transform3D(-0.16971955, -0.003973311, 0.0043539885, -0.004809584, 0.16586748, -0.036114518, -0.0034076564, -0.036216058, -0.16588014, 0.17350435, 0.062444553, 0.49929094)
 
-[node name="rusty_chains11" parent="." unique_id=949716109 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains11" type="Node3D" parent="." unique_id=949716109 instance=ExtResource("5_dkeok")]
 transform = Transform3D(-0.16030286, -0.0051253457, 0.055822775, -0.00054283167, 0.16924445, 0.0139802825, -0.056054935, 0.013018215, -0.15977432, -0.048847742, 0.062444553, 0.5116943)
 
-[node name="rusty_chains3" parent="." unique_id=1838713692 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains3" type="Node3D" parent="." unique_id=1838713692 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.10525257, -0.014833082, 0.13244373, 0.0030514896, 0.1689907, 0.016501168, -0.13323681, -0.007847277, 0.10500397, 0.49882644, 0.03695175, 0.31502748)
 
-[node name="rusty_chains4" parent="." unique_id=1087666344 instance=ExtResource("5_dkeok")]
+[node name="rusty_chains4" type="Node3D" parent="." unique_id=1087666344 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.16965038, 0.0019216146, -0.007383831, -0.0002458261, 0.16563886, 0.037458807, 0.0076258443, -0.037410293, 0.1654744, 0.30745667, 0.08773488, 0.45150295)
 
-[node name="skull_para_caveira" parent="." unique_id=258562617 instance=ExtResource("6_lb37t")]
+[node name="skull_para_caveira" type="Node3D" parent="." unique_id=258562617 instance=ExtResource("6_lb37t")]
 transform = Transform3D(0.008043322, -0.028281197, 0.069114156, -0.001748954, 0.069423504, 0.028611323, -0.07465609, -0.00467334, 0.0067759706, -0.0825935, 0.49465406, 0.029138424)
 
-[node name="vela_preta" parent="." unique_id=44924634 groups=["vela"] instance=ExtResource("7_bb8c7")]
+[node name="vela_preta" type="Node3D" parent="." unique_id=44924634 groups=["vela"] instance=ExtResource("7_bb8c7")]
 transform = Transform3D(0.00043494612, 0, 0, 0, 0.00043494612, 0, 0, 0, 0.00043494612, 0.25987613, 0.077349626, 0.08999999)
 
-[node name="vela_vermlha" parent="." unique_id=1465869822 groups=["sem_chama", "vela"] instance=ExtResource("8_3no75")]
+[node name="vela_vermlha" type="Node3D" parent="." unique_id=1465869822 groups=["sem_chama", "vela"] instance=ExtResource("8_3no75")]
 transform = Transform3D(0.007331052, 0, 0, 0, 0.007331052, 0, 0, 0, 0.007331052, 0.17171896, 0.22000068, 0.18039164)
 
-[node name="vela_branca" parent="." unique_id=1951123402 groups=["vela"] instance=ExtResource("9_5j7es")]
+[node name="vela_branca" type="Node3D" parent="." unique_id=1951123402 groups=["vela"] instance=ExtResource("9_5j7es")]
 transform = Transform3D(1.001136, 0, 0, 0, 1.001136, 0, 0, 0, 1.001136, 0.22034633, 0.00029892864, -0.1807172)
 
-[node name="knife" parent="." unique_id=886172802 instance=ExtResource("10_1vv23")]
+[node name="knife" type="Node3D" parent="." unique_id=886172802 instance=ExtResource("10_1vv23")]
 transform = Transform3D(0.00802552, 0.039678223, 0.09143974, -0.022455402, 0.09009721, -0.037124783, -0.09711511, -0.017553708, 0.016140673, 0.060277, 0.3658615, 0.0031899065)
 
-[node name="chili_pepper" parent="." unique_id=1393072689 instance=ExtResource("12_5401n")]
+[node name="chili_pepper" type="Node3D" parent="." unique_id=1393072689 instance=ExtResource("12_5401n")]
 transform = Transform3D(0.015825648, 0, 0.015825648, 0, 0.022380847, 0, -0.015825648, 0, 0.015825648, 0.23741877, 0.012249127, 0.13088147)
 
-[node name="bottle_to_paloo" parent="." unique_id=741873284 instance=ExtResource("13_t6q11")]
+[node name="bottle_to_paloo" type="Node3D" parent="." unique_id=741873284 instance=ExtResource("13_t6q11")]
 transform = Transform3D(0.11028902, 0, 0.019446932, 0, 0.111990415, 0, -0.019446932, 0, 0.11028902, 0.36, -0.00052884535, 0.21351665)
 
-[node name="baphomet_head" parent="." unique_id=1372496663 instance=ExtResource("15_g7fst")]
+[node name="baphomet_head" type="Node3D" parent="." unique_id=1372496663 instance=ExtResource("15_g7fst")]
 transform = Transform3D(0.0058318665, -0.10182932, 0.06552315, 0.009027599, 0.065782145, 0.10142836, -0.120751806, 5.7485533e-10, 0.010747476, 0.28196365, 0.025679082, -0.0033055544)
 
-[node name="black_rose" parent="." unique_id=1059206588 instance=ExtResource("11_5b10g")]
+[node name="black_rose" type="Node3D" parent="." unique_id=1059206588 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, 0.20764208, -0.017981768)
 
-[node name="black_rose2" parent="." unique_id=1211782080 instance=ExtResource("11_5b10g")]
+[node name="black_rose2" type="Node3D" parent="." unique_id=1211782080 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, -0.075699, -0.2522284)
 
-[node name="black_rose3" parent="." unique_id=1083118606 instance=ExtResource("11_5b10g")]
+[node name="black_rose3" type="Node3D" parent="." unique_id=1083118606 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294534, 0.02908078, 0.47525388, 0.062363926, 0.200851, -0.068810984, 0.43072626, -0.018179975, -0.027958602, 0.18402332)
 
-[node name="black_rose4" parent="." unique_id=537122177 instance=ExtResource("11_5b10g")]
+[node name="black_rose4" type="Node3D" parent="." unique_id=537122177 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.4266037, -0.08110198, -0.20501915, 0.2024769, -0.032608382, 0.43421304, -0.08725542, -0.47218668, 0.005227764, 0.4055623, -0.0052007437, 0.15897341)
 
-[node name="black_rose5" parent="." unique_id=2023454263 instance=ExtResource("11_5b10g")]
+[node name="black_rose5" type="Node3D" parent="." unique_id=2023454263 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, -0.050565273, 0.2213423)
 
-[node name="black_rose6" parent="." unique_id=1734616949 instance=ExtResource("11_5b10g")]
+[node name="black_rose6" type="Node3D" parent="." unique_id=1734616949 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, 0.23871341, -0.017981768)
 
-[node name="black_rose7" parent="." unique_id=978856805 instance=ExtResource("11_5b10g")]
+[node name="black_rose7" type="Node3D" parent="." unique_id=978856805 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, 0.25852785, -0.08457423)
 
-[node name="sangue" parent="." unique_id=818275365 instance=ExtResource("15_xakwp")]
+[node name="sangue" type="Node3D" parent="." unique_id=818275365 instance=ExtResource("15_xakwp")]
 transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0.26846415, 0.0030006215, -0.002919294)
 
-[node name="sangue2" parent="." unique_id=1083451159 instance=ExtResource("15_xakwp")]
+[node name="sangue2" type="Node3D" parent="." unique_id=1083451159 instance=ExtResource("15_xakwp")]
 transform = Transform3D(0.14, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0.07515472, 0.0030006215, 0.04270032)
 
-[node name="one_dollar_bill" parent="." unique_id=1694586584 instance=ExtResource("16_xakwp")]
+[node name="one_dollar_bill" type="Node3D" parent="." unique_id=1694586584 instance=ExtResource("16_xakwp")]
 transform = Transform3D(0.23051345, 0, -0.34723556, 0, 0.4167841, 0, 0.34723556, 0, 0.23051345, 0.27776188, 0.0031344574, 0.3272897)
 
-[node name="one_dollar_bill2" parent="." unique_id=39713049 instance=ExtResource("16_xakwp")]
+[node name="one_dollar_bill2" type="Node3D" parent="." unique_id=39713049 instance=ExtResource("16_xakwp")]
 transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697, 0, 0.29377177, -0.070488214, 0.0031344574, 0.07276794)
 
-[node name="one_dollar_bill3" parent="." unique_id=591344474 instance=ExtResource("16_xakwp")]
+[node name="one_dollar_bill3" type="Node3D" parent="." unique_id=591344474 instance=ExtResource("16_xakwp")]
 transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697, 0, 0.29377177, -0.027184725, 0.0031344574, 0.32285622)
 
-[node name="one_dollar_bill4" parent="." unique_id=212545297 instance=ExtResource("16_xakwp")]
+[node name="one_dollar_bill4" type="Node3D" parent="." unique_id=212545297 instance=ExtResource("16_xakwp")]
 transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697, 0, 0.29377177, 0.3, 0.0031344574, -0.2102932)
 
-[node name="one_dollar_bill5" parent="." unique_id=1592089357 instance=ExtResource("16_xakwp")]
+[node name="one_dollar_bill5" type="Node3D" parent="." unique_id=1592089357 instance=ExtResource("16_xakwp")]
 transform = Transform3D(0.042957723, 0, -0.41456437, 0, 0.4167841, 0, 0.41456437, 0, 0.042957723, 0.21986198, 0.0031344574, 0.3195673)
 
-[node name="one_dollar_bill6" parent="." unique_id=2134820625 instance=ExtResource("16_xakwp")]
+[node name="one_dollar_bill6" type="Node3D" parent="." unique_id=2134820625 instance=ExtResource("16_xakwp")]
 transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697, 0, 0.29377177, 0.3, 0.0031344574, 0.28223336)
 
-[node name="one_dollar_bill7" parent="." unique_id=840275016 instance=ExtResource("16_xakwp")]
+[node name="one_dollar_bill7" type="Node3D" parent="." unique_id=840275016 instance=ExtResource("16_xakwp")]
 transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697, 0, 0.29377177, 0.26751274, 0.0031344574, 0.38926718)
+
+[node name="aranha" type="Node3D" parent="." unique_id=2118962358 instance=ExtResource("17_dkeok")]
+transform = Transform3D(0.0018898416, 0, -0.0010911006, 0, 0.0021822012, 0, 0.0010911006, 0, 0.0018898416, 0.12948516, 0.2566822, 0.040891733)

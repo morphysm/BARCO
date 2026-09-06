@@ -129,8 +129,39 @@ func _ready() -> void:
 	if not Engine.is_editor_hint():
 		_carregar_depositos()
 		_montar_tira()
+		_por_a_andar()
 	_vestir()
 	set_process(true)
+
+
+## Poe a andar o que tem animacao propria — a aranha, por exemplo.
+##
+## So fora do editor: na bancada a nganga fica quieta, para se arrumar sem
+## nada a mexer.
+func _por_a_andar() -> void:
+	for tocador in _tocadores(self):
+		var lista := tocador.get_animation_list()
+		if lista.is_empty():
+			continue
+		# Preferir um ciclo de andar; senao, a primeira que houver.
+		var escolhida: String = lista[0]
+		for nome in lista:
+			if "walk" in String(nome).to_lower() or "ciclo" in String(nome).to_lower():
+				escolhida = nome
+				break
+		var anim := tocador.get_animation(escolhida)
+		if anim != null:
+			anim.loop_mode = Animation.LOOP_LINEAR
+		tocador.play(escolhida)
+
+
+func _tocadores(raiz: Node) -> Array[AnimationPlayer]:
+	var saida: Array[AnimationPlayer] = []
+	if raiz is AnimationPlayer:
+		saida.append(raiz)
+	for f in raiz.get_children():
+		saida.append_array(_tocadores(f))
+	return saida
 
 
 ## A tira de `oferendas`. Nao e um carrinho de compras: nao se acumula,
