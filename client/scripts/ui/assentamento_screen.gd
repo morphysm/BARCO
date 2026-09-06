@@ -134,12 +134,24 @@ func _ready() -> void:
 	set_process(true)
 
 
-## Poe a andar o que tem animacao propria — a aranha, por exemplo.
+## Poe a andar o que esta no grupo `anda`.
+##
+## Por adesao e nao por omissao: metade dos modelos traz uma animacao de
+## fabrica — a garrafa tem um `CylinderAction`, a vela preta um
+## `Take 001` — e tocar tudo o que aparece punha a garrafa a rodar sobre
+## si propria em cima do `assentamento`.
 ##
 ## So fora do editor: na bancada a nganga fica quieta, para se arrumar sem
 ## nada a mexer.
 func _por_a_andar() -> void:
-	for tocador in _tocadores(self):
+	for no in get_tree().get_nodes_in_group("anda"):
+		if not (no is Node3D and is_ancestor_of(no)):
+			continue
+		_andar(no)
+
+
+func _andar(no: Node) -> void:
+	for tocador in _tocadores(no):
 		var lista := tocador.get_animation_list()
 		if lista.is_empty():
 			continue

@@ -189,8 +189,8 @@ def endireitar_normais():
         mat.use_backface_culling = False
 
 
-def refazer_sombreado():
-    """Depois de decimar, poe sombreado suave limpo.
+def refazer_sombreado(malhas):
+    """Depois de decimar, poe sombreado suave limpo — SO onde e preciso.
 
     A decimacao invalida as normais gravadas de origem: ficam a apontar
     para sitios que a geometria ja nao tem, e a folhagem parte-se num
@@ -199,8 +199,13 @@ def refazer_sombreado():
 
     Feito isto, a malha deixa de ter normais proprias e ja pode ser
     soldada, que e onde esta a poupanca de tamanho.
+
+    So mexe nas malhas que TINHAM normais proprias: as outras ficam com o
+    sombreado que o autor lhes deu. Forcar suave em tudo mudava o aspeto
+    de metade dos modelos sem que ninguem o tivesse pedido — parecia que a
+    luz da cena tinha mudado, e nao tinha.
     """
-    for o in bpy.data.objects:
+    for o in malhas:
         if o.type != "MESH":
             continue
         if hasattr(o.data, "free_normals_split"):
@@ -288,9 +293,11 @@ def main():
         if var_animado:
             antes = depois = triangulos()
         else:
+            com_normais = [o for o in bpy.data.objects
+                    if o.type == "MESH" and normais_proprias(o)]
             antes, depois = decimar(ALVOS.get(os.path.splitext(nome)[0], alvo))
-            if depois != antes:
-                refazer_sombreado()
+            if depois != antes and com_normais:
+                refazer_sombreado(com_normais)
         # Depois do sombreado refeito: quem ja nao tem normais proprias
         # pode ser soldado e endireitado sem perder nada.
         soldar()

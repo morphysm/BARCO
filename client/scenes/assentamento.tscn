@@ -1,19 +1,19 @@
 [gd_scene format=3 uid="uid://bg5dr4y22da7d"]
 
 [ext_resource type="Script" uid="uid://cgd6vt3qbxct6" path="res://scripts/ui/assentamento_screen.gd" id="1_natrv"]
-[ext_resource type="PackedScene" uid="uid://c6rdosju1ys8f" path="res://resources/modelos/cauldron.glb" id="2_5gom5"]
-[ext_resource type="PackedScene" uid="uid://djur3uqlhqh3i" path="res://resources/modelos/galhos.glb" id="3_g7fst"]
-[ext_resource type="PackedScene" uid="uid://do6bbibkp8h3u" path="res://resources/modelos/horse_bone.glb" id="4_xakwp"]
-[ext_resource type="PackedScene" uid="uid://3skhlkyp7mrg" path="res://resources/modelos/rusty_chains.glb" id="5_dkeok"]
-[ext_resource type="PackedScene" uid="uid://clq6kyv2v3ino" path="res://resources/modelos/skull_para_caveira.glb" id="6_lb37t"]
-[ext_resource type="PackedScene" uid="uid://sacsnotdmvln" path="res://resources/modelos/vela_preta.glb" id="7_bb8c7"]
-[ext_resource type="PackedScene" uid="uid://d36qk6votuvmg" path="res://resources/modelos/vela_vermlha.glb" id="8_3no75"]
-[ext_resource type="PackedScene" uid="uid://b1ks58qrrlx3b" path="res://resources/modelos/vela_branca.glb" id="9_5j7es"]
-[ext_resource type="PackedScene" uid="uid://c1aba1o1212st" path="res://resources/modelos/knife.glb" id="10_1vv23"]
-[ext_resource type="PackedScene" uid="uid://tj5rvmvoxpry" path="res://resources/modelos/black_rose.glb" id="11_5b10g"]
-[ext_resource type="PackedScene" uid="uid://c265p5mauose8" path="res://resources/modelos/chili_pepper.glb" id="12_5401n"]
-[ext_resource type="PackedScene" uid="uid://df8i5qgrwmtsy" path="res://resources/modelos/bottle_to_paloo.glb" id="13_t6q11"]
-[ext_resource type="PackedScene" uid="uid://jy4f5n6owd4p" path="res://resources/modelos/baphomet_head.glb" id="15_g7fst"]
+[ext_resource type="PackedScene" uid="uid://bqked5ff8vluu" path="res://resources/modelos/cauldron.glb" id="2_5gom5"]
+[ext_resource type="PackedScene" uid="uid://b3sm4m5pkis0a" path="res://resources/modelos/galhos.glb" id="3_g7fst"]
+[ext_resource type="PackedScene" uid="uid://cc4q14ct1mweh" path="res://resources/modelos/horse_bone.glb" id="4_xakwp"]
+[ext_resource type="PackedScene" uid="uid://bp7sr8xf3blbg" path="res://resources/modelos/rusty_chains.glb" id="5_dkeok"]
+[ext_resource type="PackedScene" uid="uid://bqr2u4ixrum27" path="res://resources/modelos/skull_para_caveira.glb" id="6_lb37t"]
+[ext_resource type="PackedScene" uid="uid://2o8lrry2w7v0" path="res://resources/modelos/vela_preta.glb" id="7_bb8c7"]
+[ext_resource type="PackedScene" uid="uid://d1h5qybvaai0q" path="res://resources/modelos/vela_vermlha.glb" id="8_3no75"]
+[ext_resource type="PackedScene" uid="uid://cc52claeujwvw" path="res://resources/modelos/vela_branca.glb" id="9_5j7es"]
+[ext_resource type="PackedScene" uid="uid://dtgbeqniieglw" path="res://resources/modelos/knife.glb" id="10_1vv23"]
+[ext_resource type="PackedScene" uid="uid://pgqsbf7hdpb4" path="res://resources/modelos/black_rose.glb" id="11_5b10g"]
+[ext_resource type="PackedScene" uid="uid://dobdh3obsi35v" path="res://resources/modelos/chili_pepper.glb" id="12_5401n"]
+[ext_resource type="PackedScene" uid="uid://b4vuikefon4af" path="res://resources/modelos/bottle_to_paloo.glb" id="13_t6q11"]
+[ext_resource type="PackedScene" uid="uid://gyoupgyxwbbo" path="res://resources/modelos/baphomet_head.glb" id="15_g7fst"]
 [ext_resource type="PackedScene" uid="uid://b3hltmg2k5xd1" path="res://resources/modelos/sangue.glb" id="15_xakwp"]
 [ext_resource type="PackedScene" uid="uid://j1mrsx2h72c7" path="res://resources/modelos/one_dollar_bill.glb" id="16_xakwp"]
 [ext_resource type="PackedScene" uid="uid://cxbxjjg5fbciq" path="res://resources/modelos/aranha.glb" id="17_dkeok"]
@@ -117,7 +117,7 @@ transform = Transform3D(0.015825648, 0, 0.015825648, 0, 0.022380847, 0, -0.01582
 transform = Transform3D(0.11028902, 0, 0.019446932, 0, 0.111990415, 0, -0.019446932, 0, 0.11028902, 0.36, -0.00052884535, 0.21351665)
 
 [node name="baphomet_head" parent="." unique_id=1372496663 instance=ExtResource("15_g7fst")]
-transform = Transform3D(0.0066191964, -0.09550879, 0.07436909, 0.008467255, 0.07466304, 0.0951327, -0.12075179, 9.401306e-10, 0.010747475, 0.28196365, 0.017902017, -0.0033055544)
+transform = Transform3D(0.006102062, -0.07575371, 0.094449155, -0.0029542735, 0.0944477, 0.075943425, -0.12103941, -0.006124268, 0.0029079567, 0.28196365, 0.05051513, -0.0033055544)
 
 [node name="black_rose" parent="." unique_id=1059206588 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, 0.20764208, -0.017981768)
@@ -167,7 +167,7 @@ transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697,
 [node name="one_dollar_bill7" parent="." unique_id=840275016 instance=ExtResource("16_xakwp")]
 transform = Transform3D(0.29377177, 0, -0.29564697, 0, 0.4167841, 0, 0.29564697, 0, 0.29377177, 0.26751274, 0.0031344574, 0.38926718)
 
-[node name="aranha" parent="." unique_id=2118962358 instance=ExtResource("17_dkeok")]
+[node name="aranha" parent="." unique_id=2118962358 groups=["anda"] instance=ExtResource("17_dkeok")]
 transform = Transform3D(-0.0001781154, 0.0021142657, 0.0005100553, 0.0004622271, 0.0005368699, -0.0020640055, -0.002125234, -6.0429782e-05, -0.0004916578, 0.032858267, 0.33121908, 0.0071037672)
 
 [node name="tridente" parent="." unique_id=1974266223 instance=ExtResource("18_lb37t")]
