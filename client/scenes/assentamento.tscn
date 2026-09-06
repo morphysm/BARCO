@@ -35,7 +35,6 @@ queda_da_luz = 2.211
 alcance_da_luz = 1.136
 forca_da_luz = 0.1
 luz_de_bancada = 0.205
-dias_de_queima = 0.001
 
 [node name="Camara" type="Camera3D" parent="." unique_id=304538616]
 transform = Transform3D(-0.13592725, -0.24140391, 0.960858, -0.006324605, 0.97005105, 0.24281886, -0.99069864, 0.02692865, -0.13338315, 1.4331161, 0.64691037, -0.16424498)
