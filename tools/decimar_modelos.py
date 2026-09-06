@@ -6,10 +6,14 @@ Rodar:
 
 Dois cortes, e os dois vem do modo como a cena e desenhada:
 
-1. SEM TEXTURAS. O shader `gravura` e unshaded e nao amostra textura
+1. TEXTURAS PEQUENAS. O shader `gravura` e unshaded e nao amostra textura
    nenhuma — a cor sai de uma trama de linhas calculada a partir de uma
-   luz so. As imagens dentro dos .glb nunca chegam a ser lidas, e sao a
-   maior parte do peso: a rosa negra sao 9 MB para 53 mil triangulos.
+   luz so. As imagens nunca chegam a ser lidas pelo app: existem para o
+   editor, para se reconhecer o objeto ao arrumar a nganga. Para isso
+   256 px chegam, e sao a diferenca entre 9 MB e uma fracao disso.
+
+   (Tira-las por completo poupa mais, mas deixa os modelos irreconheciveis
+   no editor. Nao vale a troca.)
 
 2. MENOS TRIANGULOS. A camara e ortogonal, fixa, e o objeto esta quase
    todo no escuro. Cento e trinta mil triangulos numa teia que se ve de um
@@ -22,6 +26,7 @@ import sys
 import bpy
 
 ALVO_PADRAO = 6000
+TEXTURA_PADRAO = 256
 
 
 def limpar():
@@ -63,24 +68,26 @@ def decimar(alvo):
     return antes, triangulos()
 
 
-def despir():
-    """Fora materiais e imagens: o shader da cena nao le nenhuma."""
-    for o in bpy.data.objects:
-        if o.type == "MESH":
-            o.data.materials.clear()
-    for bloco in list(bpy.data.materials):
-        bpy.data.materials.remove(bloco)
-    for bloco in list(bpy.data.images):
-        bpy.data.images.remove(bloco)
+def encolher_texturas(limite):
+    """Reduz cada imagem ate caber em `limite` px no lado maior."""
+    for img in bpy.data.images:
+        if img.size[0] <= 0 or img.size[1] <= 0:
+            continue
+        maior = max(img.size)
+        if maior <= limite:
+            continue
+        fator = limite / maior
+        img.scale(max(1, int(img.size[0] * fator)), max(1, int(img.size[1] * fator)))
 
 
 def main():
     args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     if len(args) < 2:
-        print("uso: ... -- ENTRADA/ SAIDA/ [alvo]")
+        print("uso: ... -- ENTRADA/ SAIDA/ [tris] [px_textura]")
         return
     entrada, saida = args[0], args[1]
     alvo = int(args[2]) if len(args) > 2 else ALVO_PADRAO
+    limite_textura = int(args[3]) if len(args) > 3 else TEXTURA_PADRAO
     os.makedirs(saida, exist_ok=True)
 
     nomes = sorted(f for f in os.listdir(entrada) if f.lower().endswith(".glb"))
@@ -91,13 +98,14 @@ def main():
         limpar()
         bpy.ops.import_scene.gltf(filepath=origem)
         antes, depois = decimar(alvo)
-        despir()
+        encolher_texturas(limite_textura)
         bpy.ops.export_scene.gltf(
             filepath=destino,
             export_format="GLB",
-            export_materials="NONE",
+            export_materials="EXPORT",
+            export_image_format="AUTO",
             export_normals=True,
-            export_texcoords=False,
+            export_texcoords=True,
             export_tangents=False,
             export_skins=False,
             export_animations=False,
