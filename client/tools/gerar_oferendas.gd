@@ -18,11 +18,9 @@ const CENA := "res://scenes/assentamento.tscn"
 const OferendaS := preload("res://scripts/resources/oferenda.gd")
 
 ## Fica na cena: o vaso, e o que o define.
-## `Exu Aranha` e a teia que tece: a teia e do vaso, nao coisa que se
-## ofereca.
 const FUNDAMENTO := [
 	"cauldron", "galhos", "horse_bone", "rusty_chains",
-	"skull_para_caveira", "baphomet_head", "spider_web",
+	"skull_para_caveira", "baphomet_head",
 ]
 
 ## Sai da cena e passa a catalogo. `cafes` segue SPEC.md §10.1.

@@ -2,6 +2,7 @@
 ##
 ## Rodar:
 ##   godot --headless --path client --script res://tools/por_peca.gd -- MODELO x y z tamanho giro [vela]
+##   godot --headless --path client --script res://tools/por_peca.gd -- MODELO tirar
 ##
 ## Ao contrario de `gerar_cena_assentamento.gd`, que escreve a cena do
 ## zero, este carrega a que la esta e so lhe junta um no. E o que permite
@@ -24,8 +25,11 @@ func _initialize() -> void:
 		return
 
 	var a := OS.get_cmdline_user_args()
+	if a.size() >= 2 and a[1] == "tirar":
+		_tirar(a[0])
+		return
 	if a.size() < 6:
-		printerr("uso: -- MODELO x y z tamanho giro [vela]")
+		printerr("uso: -- MODELO x y z tamanho giro [vela]  |  -- MODELO tirar")
 		quit(1)
 		return
 	var modelo := a[0]
@@ -66,6 +70,26 @@ func _initialize() -> void:
 	assert(ResourceSaver.save(empacotada, CENA) == OK)
 	print("acrescentado %s em (%.2f, %.2f, %.2f), tamanho %.2f" % [
 		modelo, onde.x, onde.y, onde.z, tamanho])
+	raiz.free()
+	quit()
+
+
+## Tira uma peca do fundamento. Isto e do vaso, nao dos `depositos`: o que
+## alguem depoe nunca se tira (GDD §2).
+func _tirar(nome: String) -> void:
+	var raiz: Node3D = load(CENA).instantiate()
+	root.add_child(raiz)
+	var no := raiz.get_node_or_null(NodePath(nome))
+	if no == null:
+		printerr("nao ha no chamado: ", nome)
+		quit(1)
+		return
+	raiz.remove_child(no)
+	no.free()
+	var e := PackedScene.new()
+	assert(e.pack(raiz) == OK)
+	assert(ResourceSaver.save(e, CENA) == OK)
+	print("tirado: ", nome)
 	raiz.free()
 	quit()
 
