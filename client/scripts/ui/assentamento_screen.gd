@@ -113,6 +113,18 @@ var _lampadas: Array[OmniLight3D] = []
 var _depositos: Array[Dictionary] = []
 var _velas: Array[Node3D] = []
 
+## Pedidos a arder no caldeirao. As palavras ficam no aparelho e mais
+## lado nenhum (ver Pedido).
+var _pedidos: Array[Pedido] = []
+var _papeis: Array[Papel] = []
+var _menu: CanvasLayer
+var _escrita: TextEdit
+var _lista: Label
+var _folhas: HBoxContainer
+
+## Onde os papeis pousam dentro do caldeirao.
+const BOCA := Vector3(0.0, 0.33, 0.02)
+
 ## O gesto de depor (GDD §5.2, SPEC.md §8.1): pega-se numa `oferenda` na
 ## tira de baixo e arrasta-se ate ao sitio. O que se arrasta ja e o proprio
 ## objeto, nao uma pre-visualizacao — larga-se e fica.
@@ -129,7 +141,9 @@ func _ready() -> void:
 	if not Engine.is_editor_hint():
 		_carregar_depositos()
 		_montar_tira()
+		_montar_menu()
 		_por_a_andar()
+		_carregar_pedidos()
 	_vestir()
 	set_process(true)
 
@@ -176,6 +190,36 @@ func _tocadores(raiz: Node) -> Array[AnimationPlayer]:
 	return saida
 
 
+# --- pedidos ----------------------------------------------------------
+
+func _carregar_pedidos() -> void:
+	_pedidos = Pedido.ler()
+	for p in _pedidos:
+		_por_papel(p)
+
+
+func _por_papel(p: Pedido) -> void:
+	var papel := Papel.new(p)
+	# Sem `owner`: os papeis nao se gravam na cena travada.
+	add_child(papel)
+	papel.position = BOCA + Vector3(
+		randf_range(-0.05, 0.05), randf_range(0.0, 0.03), randf_range(-0.04, 0.04))
+	_papeis.append(papel)
+
+
+## Poe um pedido a arder. Sete dias, e nao ha como o tirar de la.
+func acender_pedido(texto: String) -> void:
+	var limpo := texto.strip_edges()
+	if limpo.is_empty():
+		return
+	var p := Pedido.new()
+	p.texto = limpo
+	p.aceso_em = Time.get_unix_time_from_system()
+	_pedidos.append(p)
+	Pedido.guardar(_pedidos)
+	_por_papel(p)
+
+
 ## A tira de `oferendas`. Nao e um carrinho de compras: nao se acumula,
 ## nao se soma, nao se confirma. Carrega-se numa e arrasta-se — o gesto e
 ## a decisao (GDD §2, pilar 3).
@@ -203,6 +247,119 @@ func _montar_tira() -> void:
 		tira.add_child(b)
 
 
+func _montar_menu() -> void:
+	_menu = CanvasLayer.new()
+	_menu.name = "Menu"
+	_menu.visible = false
+	add_child(_menu)
+
+	var fundo := ColorRect.new()
+	fundo.color = Color(0, 0, 0, 0.86)
+	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_menu.add_child(fundo)
+
+	var titulo := Pagina.texto("escrever um pedido", 30)
+	titulo.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	titulo.offset_top = 70
+	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_menu.add_child(titulo)
+
+	_escrita = TextEdit.new()
+	_escrita.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_escrita.offset_top = 130
+	_escrita.offset_bottom = 320
+	_escrita.offset_left = 56
+	_escrita.offset_right = -56
+	_escrita.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+	_escrita.add_theme_font_size_override("font_size", 22)
+	_escrita.add_theme_color_override("font_color", Pagina.TINTA)
+	# Sem sugestao nenhuma no campo: o app nao insinua o que se pede
+	# (CONTENT_pt.md §2).
+	var caixa := StyleBoxFlat.new()
+	caixa.bg_color = Color(0, 0, 0, 0)
+	caixa.border_color = Pagina.TINTA
+	caixa.set_border_width_all(1)
+	caixa.set_corner_radius_all(0)
+	caixa.content_margin_left = 14
+	caixa.content_margin_top = 12
+	for estado in ["normal", "focus", "read_only"]:
+		_escrita.add_theme_stylebox_override(estado, caixa)
+	_menu.add_child(_escrita)
+
+	var deitar := Pagina.botao("deitar ao caldeirao", 22)
+	deitar.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	deitar.offset_top = 340
+	deitar.offset_bottom = 392
+	deitar.offset_left = 56
+	deitar.offset_right = -56
+	deitar.pressed.connect(_deitar_ao_caldeirao)
+	_menu.add_child(deitar)
+
+	_lista = Pagina.texto("", 19)
+	_lista.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_lista.offset_top = 414
+	_lista.offset_bottom = 452
+	_lista.offset_left = 56
+	_lista.offset_right = -56
+	_lista.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_menu.add_child(_lista)
+
+	# As folhas, como estao agora. E para isto que o menu serve: ver o
+	# papel a decompor-se, nao ler uma percentagem.
+	_folhas = HBoxContainer.new()
+	_folhas.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_folhas.offset_top = 460
+	_folhas.offset_bottom = 700
+	_folhas.offset_left = 40
+	_folhas.offset_right = -40
+	_folhas.alignment = BoxContainer.ALIGNMENT_CENTER
+	_folhas.add_theme_constant_override("separation", 14)
+	_menu.add_child(_folhas)
+
+
+func _deitar_ao_caldeirao() -> void:
+	acender_pedido(_escrita.text)
+	_escrita.text = ""
+	_actualizar_lista()
+
+
+## Quanto falta a cada pedido. Diz o que esta a acontecer, nunca o que vai
+## acontecer (CONTENT_pt.md §2).
+func _actualizar_lista() -> void:
+	if _lista == null:
+		return
+	var vivos := 0
+	for p in _pedidos:
+		if not p.acabou():
+			vivos += 1
+	_lista.text = "%d no caldeirao" % vivos if vivos > 0 else ""
+
+	if _folhas == null:
+		return
+	for f in _folhas.get_children():
+		f.queue_free()
+	for papel in _papeis:
+		if papel == null or not is_instance_valid(papel) or papel.pedido.acabou():
+			continue
+		var caixa := VBoxContainer.new()
+		caixa.add_theme_constant_override("separation", 6)
+		var folha := TextureRect.new()
+		folha.texture = papel.escrito()
+		folha.custom_minimum_size = Vector2(186, 124)
+		folha.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		folha.stretch_mode = TextureRect.STRETCH_SCALE
+		var m := ShaderMaterial.new()
+		m.shader = load("res://shaders/papel_2d.gdshader")
+		m.set_shader_parameter("consumido", papel.pedido.consumido())
+		folha.material = m
+		caixa.add_child(folha)
+		var falta: float = papel.pedido.duracao * (1.0 - papel.pedido.consumido())
+		var quanto := Pagina.texto("%dd %dh" % [int(falta / 86400.0), int(falta / 3600.0) % 24], 17)
+		quanto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		caixa.add_child(quanto)
+		_folhas.add_child(caixa)
+
+
 func _oferendas_disponiveis() -> Array[String]:
 	var saida: Array[String] = []
 	var d := DirAccess.open("res://resources/oferendas")
@@ -226,7 +383,16 @@ func _comecar_a_depor(oferenda: Oferenda) -> void:
 
 
 func _input(evento: InputEvent) -> void:
-	if _na_mao == null or Engine.is_editor_hint():
+	if Engine.is_editor_hint():
+		return
+	if evento.is_action_pressed("ui_cancel") and _menu != null:
+		_menu.visible = not _menu.visible
+		if _menu.visible:
+			_actualizar_lista()
+			_escrita.grab_focus()
+		get_viewport().set_input_as_handled()
+		return
+	if _na_mao == null:
 		return
 	if evento is InputEventMouseMotion or evento is InputEventScreenDrag:
 		var onde: Variant = _no_chao(evento.position)
