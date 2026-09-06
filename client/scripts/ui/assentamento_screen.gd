@@ -111,6 +111,7 @@ var _chamas: Array[MeshInstance3D] = []
 var _lampadas: Array[OmniLight3D] = []
 ## O que ja foi deposto. Cresce; nunca encolhe.
 var _depositos: Array[Dictionary] = []
+var _velas: Array[Node3D] = []
 var _tempo := 0.0
 
 
@@ -213,18 +214,16 @@ func _process(delta: float) -> void:
 ## Poe a gravura em tudo e recalcula onde estao as chamas.
 func _vestir() -> void:
 	_luzes.clear()
+	_velas.clear()
 	for vela in get_tree().get_nodes_in_group("vela"):
 		if vela is Node3D and is_ancestor_of(vela):
 			var caixa := _caixa_mundo(vela)
 			if caixa.size != Vector3.ZERO:
+				_velas.append(vela)
 				_luzes.append(Vector3(
 					caixa.get_center().x, caixa.end.y + 0.012, caixa.get_center().z))
 	_montar_lampadas()
-	if mostrar_gravura:
-		_montar_chamas()
-	else:
-		while not _chamas.is_empty():
-			_chamas.pop_back().queue_free()
+	_montar_chamas()
 
 	var chao := get_node_or_null("Chao")
 	for malha in _malhas(self):
@@ -274,24 +273,42 @@ func _montar_lampadas() -> void:
 		_lampadas[i].omni_attenuation = queda_da_luz
 
 
+## Desenha uma chama para as velas que nao trazem chama no modelo.
+##
+## A vela preta e a branca trazem a sua; a vermelha e uma malha so, sem
+## pavio aceso. Em vez de adivinhar pela contagem de malhas, quem precisa
+## de chama diz-se pelo grupo `sem_chama` — assim uma vela nova resolve-se
+## no editor e nao no codigo.
 func _montar_chamas() -> void:
-	while _chamas.size() > _luzes.size():
+	var precisam: Array[Vector3] = []
+	for i in _velas.size():
+		if _velas[i].is_in_group("sem_chama"):
+			precisam.append(_luzes[i])
+
+	while _chamas.size() > precisam.size():
 		_chamas.pop_back().queue_free()
-	while _chamas.size() < _luzes.size():
+	while _chamas.size() < precisam.size():
 		var chama := MeshInstance3D.new()
-		var esfera := SphereMesh.new()
-		esfera.radius = 0.010
-		esfera.height = 0.026
-		chama.mesh = esfera
+		# Gota, nao esfera: uma chama e mais alta que larga.
+		var gota := SphereMesh.new()
+		gota.radius = 0.0045
+		gota.height = 0.020
+		chama.mesh = gota
 		var m := StandardMaterial3D.new()
 		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		m.albedo_color = cor_da_chama
+		# Mais saturada que a luz que lanca: uma chama vista de perto e
+		# amarela, nao branca. Sem isto le-se como uma bola palida ao lado
+		# das chamas que os proprios modelos trazem.
+		m.albedo_color = Color(1.0, 0.85, 0.45)
 		chama.material_override = m
 		# Sem `owner`: as chamas nao se gravam na cena, sao desenhadas.
 		add_child(chama)
 		_chamas.append(chama)
 	for i in _chamas.size():
-		_chamas[i].position = _luzes[i]
+		_chamas[i].position = precisam[i] + Vector3(0, 0.010, 0)
+		var mat := _chamas[i].material_override
+		if mat is StandardMaterial3D:
+			mat.albedo_color = Color(1.0, 0.85, 0.45)
 
 
 ## Escuro a serio: fundo preto e nada de luz ambiente. A unica luz da cena
