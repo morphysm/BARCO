@@ -22,7 +22,17 @@ The product sells the act. It never sells the outcome.
 
 ## 2. Stack
 
-- **Client:** Godot 4.x. Export targets: Web (primary), Android.
+- **Client:** Godot 4.x. Export target: **desktop (Linux, Windows)**.
+
+  Web and Android are deferred, not abandoned. Models ship at source
+  quality; cutting them down to fit a phone is what broke the roses, the
+  staff and the bill, and that cost is not worth paying yet. The Web
+  preset and `tools/decimar_modelos.py` both stay, ready for the day a
+  phone build matters.
+
+  Two designed mechanics need a phone and cannot ship on desktop: pouring
+  by tilting the device (§8.1) and the `asmodeu` seal that reads how the
+  device is held (GDD §3.1). Both wait for the phone build.
 - **Server:** Supabase or Pocketbase. Hosted in the EU (operator is in Sweden;
   GDPR applies).
 - **Payments:** Ko-fi, out of band, reconciled by webhook.

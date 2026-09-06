@@ -3,9 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfhrcew5tnbqh"
-path="res://.godot/imported/baphomet_head_3.jpg-05dc2c5442a963a3bf9770a8fc5552ef.ctex"
+path.s3tc="res://.godot/imported/baphomet_head_3.jpg-05dc2c5442a963a3bf9770a8fc5552ef.s3tc.ctex"
+path.etc2="res://.godot/imported/baphomet_head_3.jpg-05dc2c5442a963a3bf9770a8fc5552ef.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "e7686d62651d6e6e06d1abc9d9d24436"
@@ -14,11 +16,11 @@ generator_parameters={
 [deps]
 
 source_file="res://resources/modelos/baphomet_head_3.jpg"
-dest_files=["res://.godot/imported/baphomet_head_3.jpg-05dc2c5442a963a3bf9770a8fc5552ef.ctex"]
+dest_files=["res://.godot/imported/baphomet_head_3.jpg-05dc2c5442a963a3bf9770a8fc5552ef.s3tc.ctex", "res://.godot/imported/baphomet_head_3.jpg-05dc2c5442a963a3bf9770a8fc5552ef.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +42,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

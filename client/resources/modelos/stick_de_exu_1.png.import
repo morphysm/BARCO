@@ -3,9 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dele1k73f84ki"
-path="res://.godot/imported/stick_de_exu_1.png-621c2c7cfe41d38969ce756f4fa559c2.ctex"
+path.s3tc="res://.godot/imported/stick_de_exu_1.png-621c2c7cfe41d38969ce756f4fa559c2.s3tc.ctex"
+path.etc2="res://.godot/imported/stick_de_exu_1.png-621c2c7cfe41d38969ce756f4fa559c2.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "51ef4e4125c1a05b7be41f9a226a781a"
@@ -14,11 +16,11 @@ generator_parameters={
 [deps]
 
 source_file="res://resources/modelos/stick_de_exu_1.png"
-dest_files=["res://.godot/imported/stick_de_exu_1.png-621c2c7cfe41d38969ce756f4fa559c2.ctex"]
+dest_files=["res://.godot/imported/stick_de_exu_1.png-621c2c7cfe41d38969ce756f4fa559c2.s3tc.ctex", "res://.godot/imported/stick_de_exu_1.png-621c2c7cfe41d38969ce756f4fa559c2.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +42,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

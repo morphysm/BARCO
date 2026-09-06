@@ -3,9 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddt02m2scwy1x"
-path="res://.godot/imported/vela_preta_0.jpg-d0f5c719ff3599c21bc9feafd1e0e50e.ctex"
+path.s3tc="res://.godot/imported/vela_preta_0.jpg-d0f5c719ff3599c21bc9feafd1e0e50e.s3tc.ctex"
+path.etc2="res://.godot/imported/vela_preta_0.jpg-d0f5c719ff3599c21bc9feafd1e0e50e.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "ef4a8840632212547331cbf62fa45df0"
@@ -14,11 +16,11 @@ generator_parameters={
 [deps]
 
 source_file="res://resources/modelos/vela_preta_0.jpg"
-dest_files=["res://.godot/imported/vela_preta_0.jpg-d0f5c719ff3599c21bc9feafd1e0e50e.ctex"]
+dest_files=["res://.godot/imported/vela_preta_0.jpg-d0f5c719ff3599c21bc9feafd1e0e50e.s3tc.ctex", "res://.godot/imported/vela_preta_0.jpg-d0f5c719ff3599c21bc9feafd1e0e50e.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +42,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

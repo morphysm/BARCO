@@ -3,9 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qsgvkmfk6wmp"
-path="res://.godot/imported/aranha_3.png-ab23ca1ae1225b4fd91b4935c3e787e4.ctex"
+path.s3tc="res://.godot/imported/aranha_3.png-ab23ca1ae1225b4fd91b4935c3e787e4.s3tc.ctex"
+path.etc2="res://.godot/imported/aranha_3.png-ab23ca1ae1225b4fd91b4935c3e787e4.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "cd1bfb0ff7c1792a6a604d467f6f02c6"
@@ -14,11 +16,11 @@ generator_parameters={
 [deps]
 
 source_file="res://resources/modelos/aranha_3.png"
-dest_files=["res://.godot/imported/aranha_3.png-ab23ca1ae1225b4fd91b4935c3e787e4.ctex"]
+dest_files=["res://.godot/imported/aranha_3.png-ab23ca1ae1225b4fd91b4935c3e787e4.s3tc.ctex", "res://.godot/imported/aranha_3.png-ab23ca1ae1225b4fd91b4935c3e787e4.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +42,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

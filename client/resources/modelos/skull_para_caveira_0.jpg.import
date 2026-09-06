@@ -3,9 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bb4xytldex5dm"
-path="res://.godot/imported/skull_para_caveira_0.jpg-9913e8cdf63697755205567efba9730c.ctex"
+path.s3tc="res://.godot/imported/skull_para_caveira_0.jpg-9913e8cdf63697755205567efba9730c.s3tc.ctex"
+path.etc2="res://.godot/imported/skull_para_caveira_0.jpg-9913e8cdf63697755205567efba9730c.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "88c03b72e75a9ff8c43c84715ad777ef"
@@ -14,11 +16,11 @@ generator_parameters={
 [deps]
 
 source_file="res://resources/modelos/skull_para_caveira_0.jpg"
-dest_files=["res://.godot/imported/skull_para_caveira_0.jpg-9913e8cdf63697755205567efba9730c.ctex"]
+dest_files=["res://.godot/imported/skull_para_caveira_0.jpg-9913e8cdf63697755205567efba9730c.s3tc.ctex", "res://.godot/imported/skull_para_caveira_0.jpg-9913e8cdf63697755205567efba9730c.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +42,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
