@@ -11,7 +11,7 @@ const MARGEM := 0.92
 ## Faixas reservadas a pagina impressa: o nome em cima, os rotulos em
 ## baixo. O `ponto` nunca entra nelas.
 const FAIXA_TOPO := 96.0
-const FAIXA_BASE := 210.0
+const FAIXA_BASE := 246.0
 const COR_MARCA := Color(0.937, 0.925, 0.882, 0.55)
 const COR_GUIA := Color(0.937, 0.925, 0.882, 0.14)
 const COR_TINTA := Color(0.937, 0.925, 0.882)
@@ -24,6 +24,7 @@ var _marcas: Node2D
 var _tracos_no: Node2D
 var _rotulo: Label
 var _titulo: Label
+var _lugar: Label
 var _botao_fechar: Button
 var _botao_refazer: Button
 var _botao_guia: Button
@@ -73,7 +74,10 @@ func _montar() -> void:
 	var folha := CanvasLayer.new()
 	add_child(folha)
 
-	_titulo = _texto(irmandade.nome, 34)
+	# Em cima, sempre o nome da entidade. Em baixo, o lugar que ela
+	# responde. Enquanto nao se sabe quem atendeu, o alto fica vazio: nao
+	# se anuncia uma entidade antes de o risco a nomear.
+	_titulo = _texto("", 34)
 	_titulo.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	_titulo.offset_top = 48
 	_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -81,15 +85,22 @@ func _montar() -> void:
 
 	_rotulo = _texto("", 26)
 	_rotulo.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	_rotulo.offset_top = -190
-	_rotulo.offset_bottom = -120
+	_rotulo.offset_top = -222
+	_rotulo.offset_bottom = -164
 	_rotulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	folha.add_child(_rotulo)
 
+	_lugar = _texto(irmandade.nome, 22)
+	_lugar.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	_lugar.offset_top = -158
+	_lugar.offset_bottom = -122
+	_lugar.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	folha.add_child(_lugar)
+
 	var barra := HBoxContainer.new()
 	barra.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	barra.offset_top = -104
-	barra.offset_bottom = -40
+	barra.offset_top = -110
+	barra.offset_bottom = -46
 	barra.offset_left = 40
 	barra.offset_right = -40
 	barra.add_theme_constant_override("separation", 20)
@@ -183,16 +194,18 @@ func _fechar_risco() -> void:
 ## Quando o risco nao nomeia ninguem, o app nao explica por que — e nao
 ## anuncia a `hora_asmodeica` de forma alguma (SPEC.md §5.3, §6.2).
 func _ler(r: RiscoResultado) -> String:
-	var linhas := ["firmeza %d" % r.firmeza]
-	if not r.indefinida and r.entidade_slug != "":
-		var e := irmandade.entidade_por_slug(r.entidade_slug)
-		if e != null:
-			linhas.append(e.nome)
-	return "\n".join(linhas)
+	# Quem atendeu vai para o alto, nao para aqui. Quando ninguem atendeu,
+	# o alto fica vazio — o app nao revela nada (SPEC.md §5.3).
+	var e: Entidade = null
+	if not r.indefinida and not r.abandonado and r.entidade_slug != "":
+		e = irmandade.entidade_por_slug(r.entidade_slug)
+	_titulo.text = e.nome if e != null else ""
+	return "firmeza %d" % r.firmeza
 
 
 func _limpar() -> void:
 	_fechado = false
+	_titulo.text = ""
 	_tracos.clear()
 	_traco_atual = PackedVector2Array()
 	_linha_atual = null
@@ -229,7 +242,8 @@ func _referencia() -> Vector2:
 
 func _atualizar_rotulo_guia() -> void:
 	var e := _assinatura_guiada()
-	_rotulo.text = "primeiro contato — %s" % e.nome if e != null else ""
+	_titulo.text = e.nome if e != null else ""
+	_rotulo.text = "primeiro contato" if e != null else ""
 
 
 # --- desenho -----------------------------------------------------------
