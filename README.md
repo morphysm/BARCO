@@ -145,6 +145,23 @@ godot --headless --path client --script res://tools/por_peca.gd -- \
       --cena cenario --nome black_rose8 black_rose -0.13 0 0.24 0.11 40
 ```
 
+Uma imagem PNG entra pelo `por_imagem.gd`, e sao dois passos: o Godot so
+ve o que importou.
+
+```sh
+cp a_minha.png client/resources/imagens/
+godot --headless --path client --import
+
+godot --headless --path client --script res://tools/por_imagem.gd -- \
+      --cena cenario resources/imagens/a_minha.png 0.12 0 -0.16 0.20 90
+#                                                   x   y   z  altura giro
+```
+
+A largura sai da propria imagem, para nao a esticar. `--deitada` pousa-a
+no chao, `--inclinar G` tomba-a para tras, `--acesa` faz com que nao
+dependa da luz das velas, `--tirar` tira-a. O alfa e respeitado: um PNG
+com fundo branco fica um retangulo branco no escuro.
+
 O que se acrescenta por cima do fundamento sao `depositos` — `depor()` no
 script do `assentamento` — e esses nunca tocam nesta cena. Sao de quem os
 depoe, ficam onde foram postos, e nao se tiram (GDD §2).
