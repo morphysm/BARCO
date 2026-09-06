@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dmp6np21846bk"
-path="res://.godot/imported/cauldron.glb-af552606b9df7ce46866b46316b4c235.scn"
+uid="uid://dlqh43iudaomx"
+path="res://.godot/imported/knife.glb-87f128b6b05607ea14970ce7eda5f2d7.scn"
 
 [deps]
 
-source_file="res://resources/modelos/cauldron.glb"
-dest_files=["res://.godot/imported/cauldron.glb-af552606b9df7ce46866b46316b4c235.scn"]
+source_file="res://resources/modelos/knife.glb"
+dest_files=["res://.godot/imported/knife.glb-87f128b6b05607ea14970ce7eda5f2d7.scn"]
 
 [params]
 

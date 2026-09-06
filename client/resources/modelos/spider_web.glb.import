@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dmp6np21846bk"
-path="res://.godot/imported/cauldron.glb-af552606b9df7ce46866b46316b4c235.scn"
+uid="uid://dh2d5tw6xpq5h"
+path="res://.godot/imported/spider_web.glb-66149d5449cba12e7954146341f73763.scn"
 
 [deps]
 
-source_file="res://resources/modelos/cauldron.glb"
-dest_files=["res://.godot/imported/cauldron.glb-af552606b9df7ce46866b46316b4c235.scn"]
+source_file="res://resources/modelos/spider_web.glb"
+dest_files=["res://.godot/imported/spider_web.glb-66149d5449cba12e7954146341f73763.scn"]
 
 [params]
 

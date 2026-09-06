@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dmp6np21846bk"
-path="res://.godot/imported/cauldron.glb-af552606b9df7ce46866b46316b4c235.scn"
+uid="uid://fnobf7nkftg5"
+path="res://.godot/imported/sangue.glb-8a33e4e3a3e7c99e8593342ae8b9aa32.scn"
 
 [deps]
 
-source_file="res://resources/modelos/cauldron.glb"
-dest_files=["res://.godot/imported/cauldron.glb-af552606b9df7ce46866b46316b4c235.scn"]
+source_file="res://resources/modelos/sangue.glb"
+dest_files=["res://.godot/imported/sangue.glb-8a33e4e3a3e7c99e8593342ae8b9aa32.scn"]
 
 [params]
 

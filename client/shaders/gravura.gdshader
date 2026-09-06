@@ -9,8 +9,12 @@
 shader_type spatial;
 render_mode unshaded, cull_disabled, diffuse_burley;
 
-uniform vec3 luz_pos;
-uniform float luz_energia = 1.0;
+// Cada vela acesa e uma luz. Acender e o que revela o `assentamento`:
+// com uma vela ve-se um palmo, com tres ve-se a nganga.
+const int MAX_LUZES = 6;
+uniform vec3 luz_pos[MAX_LUZES];
+uniform float luz_energia[MAX_LUZES];
+uniform int luzes = 1;
 // Uma vela alcanca um palmo, nao um quarto inteiro. Com um alcance
 // grande demais a queda deixa de existir e o chao todo fica aceso — o
 // oposto do que se quer.
@@ -18,6 +22,11 @@ uniform float alcance = 0.18;
 uniform vec4 cor_tinta : source_color = vec4(0.937, 0.925, 0.882, 1.0);
 uniform float passo = 0.15;       // espacamento da hachura, em pixeis
 uniform float grao : hint_range(0.0, 1.0) = 0.45;
+
+// Quanto a superficie responde a luz. O chao leva menos que os objetos:
+// e uma extensao grande e de frente para as chamas, e com a mesma
+// resposta ofusca a nganga que devia estar a mostrar.
+uniform float resposta = 1.0;
 
 varying vec3 mundo;
 varying vec3 normal_mundo;
@@ -44,11 +53,20 @@ void vertex() {
 }
 
 void fragment() {
-	vec3 para_luz = luz_pos - mundo;
-	float distancia = length(para_luz);
-	float lambert = max(dot(normalize(normal_mundo), normalize(para_luz)), 0.0);
-	float queda = luz_energia / (1.0 + (distancia * distancia) / (alcance * alcance));
-	float luz = clamp(lambert * queda, 0.0, 1.0);
+	vec3 n = normalize(normal_mundo);
+	float luz = 0.0;
+	for (int i = 0; i < MAX_LUZES; i++) {
+		if (i >= luzes) break;
+		vec3 para_luz = luz_pos[i] - mundo;
+		float distancia = length(para_luz);
+		// Meio-lambert: uma superficie de esguelha a chama nao fica preta
+		// de todo. Com o lambert cru quase tudo o que esta na nganga cai
+		// para silhueta e perde-se o que la esta dentro.
+		float bruto = dot(n, normalize(para_luz));
+		float lambert = pow(max(bruto * 0.5 + 0.5, 0.0), 2.2);
+		luz += lambert * luz_energia[i] / (1.0 + (distancia * distancia) / (alcance * alcance));
+	}
+	luz = clamp(luz * resposta, 0.0, 1.0);
 
 	float t = trama(FRAGCOORD.xy, luz);
 	float g = mix(1.0, ruido(floor(FRAGCOORD.xy * 0.8)) * 1.5, grao);

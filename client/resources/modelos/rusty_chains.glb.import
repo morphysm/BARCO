@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dmp6np21846bk"
-path="res://.godot/imported/cauldron.glb-af552606b9df7ce46866b46316b4c235.scn"
+uid="uid://bldoyt06bbvgh"
+path="res://.godot/imported/rusty_chains.glb-a63319d37f09b6859f1c3f4e8a418551.scn"
 
 [deps]
 
-source_file="res://resources/modelos/cauldron.glb"
-dest_files=["res://.godot/imported/cauldron.glb-af552606b9df7ce46866b46316b4c235.scn"]
+source_file="res://resources/modelos/rusty_chains.glb"
+dest_files=["res://.godot/imported/rusty_chains.glb-a63319d37f09b6859f1c3f4e8a418551.scn"]
 
 [params]
 
