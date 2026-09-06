@@ -121,6 +121,9 @@ var _menu: CanvasLayer
 var _escrita: TextEdit
 var _lista: Label
 var _folhas: HBoxContainer
+## As folhas desenhadas no menu, para se irem queimando enquanto o menu
+## esta aberto em vez de ficarem paradas no instante em que abriu.
+var _folhas_vivas: Array[Dictionary] = []
 
 ## Quantos dias um `pedido` leva a arder. Sete e o que vale (SPEC.md §8.1);
 ## baixar isto e so para ver a queima sem esperar uma semana.
@@ -154,6 +157,28 @@ func _ready() -> void:
 		_carregar_pedidos()
 	_vestir()
 	set_process(true)
+
+
+## Mantem as folhas do menu a arder enquanto o menu esta aberto.
+##
+## Sem isto, cada folha ficava com o valor que tinha no instante em que o
+## menu abriu: no caldeirao ardiam, no menu estavam paradas.
+func _arder_no_menu() -> void:
+	var alguma_acabou := false
+	for f in _folhas_vivas:
+		var papel = f["papel"]
+		if papel == null or not is_instance_valid(papel):
+			alguma_acabou = true
+			continue
+		var p: Pedido = papel.pedido
+		if p.acabou():
+			alguma_acabou = true
+			continue
+		f["material"].set_shader_parameter("consumido", p.consumido())
+		var falta: float = p.duracao * (1.0 - p.consumido())
+		f["quanto"].text = "%dd %dh" % [int(falta / 86400.0), int(falta / 3600.0) % 24]
+	if alguma_acabou:
+		_actualizar_lista()
 
 
 ## Poe a andar o que esta no grupo `anda`.
@@ -406,6 +431,7 @@ func _actualizar_lista() -> void:
 		return
 	for f in _folhas.get_children():
 		f.queue_free()
+	_folhas_vivas.clear()
 	for papel in _papeis:
 		if papel == null or not is_instance_valid(papel) or papel.pedido.acabou():
 			continue
@@ -426,6 +452,7 @@ func _actualizar_lista() -> void:
 		quanto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		caixa.add_child(quanto)
 		_folhas.add_child(caixa)
+		_folhas_vivas.append({"papel": papel, "material": m, "quanto": quanto})
 
 
 func _oferendas_disponiveis() -> Array[String]:
@@ -588,6 +615,9 @@ func _process(delta: float) -> void:
 		# luz dela.
 		_vestir()
 	_tempo += delta
+
+	if _menu != null and _menu.visible:
+		_arder_no_menu()
 
 	var energias := PackedFloat32Array()
 	for i in _luzes.size():
