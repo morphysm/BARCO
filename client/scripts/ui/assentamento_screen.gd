@@ -112,6 +112,15 @@ var _lampadas: Array[OmniLight3D] = []
 ## O que ja foi deposto. Cresce; nunca encolhe.
 var _depositos: Array[Dictionary] = []
 var _velas: Array[Node3D] = []
+
+## O gesto de depor (GDD §5.2, SPEC.md §8.1): pega-se numa `oferenda` na
+## tira de baixo e arrasta-se ate ao sitio. O que se arrasta ja e o proprio
+## objeto, nao uma pre-visualizacao — larga-se e fica.
+var _na_mao: Node3D
+var _oferenda_na_mao: Oferenda
+## Ate onde se pode depor, a contar do centro. Fora disto o gesto nao
+## chegou ao `assentamento`.
+const ALCANCE_DO_CHAO := 0.62
 var _tempo := 0.0
 
 
@@ -119,8 +128,102 @@ func _ready() -> void:
 	_gravura = load("res://shaders/gravura.gdshader")
 	if not Engine.is_editor_hint():
 		_carregar_depositos()
+		_montar_tira()
 	_vestir()
 	set_process(true)
+
+
+## A tira de `oferendas`. Nao e um carrinho de compras: nao se acumula,
+## nao se soma, nao se confirma. Carrega-se numa e arrasta-se — o gesto e
+## a decisao (GDD §2, pilar 3).
+func _montar_tira() -> void:
+	var folha := CanvasLayer.new()
+	folha.name = "Folha"
+	add_child(folha)
+
+	var tira := HBoxContainer.new()
+	tira.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	tira.offset_top = -86
+	tira.offset_bottom = -18
+	tira.offset_left = 12
+	tira.offset_right = -12
+	tira.alignment = BoxContainer.ALIGNMENT_CENTER
+	tira.add_theme_constant_override("separation", 8)
+	folha.add_child(tira)
+
+	for caminho in _oferendas_disponiveis():
+		var o: Oferenda = load(caminho)
+		if o == null:
+			continue
+		var b := Pagina.botao(o.nome, 17)
+		b.button_down.connect(_comecar_a_depor.bind(o))
+		tira.add_child(b)
+
+
+func _oferendas_disponiveis() -> Array[String]:
+	var saida: Array[String] = []
+	var d := DirAccess.open("res://resources/oferendas")
+	if d == null:
+		return saida
+	for f in d.get_files():
+		if f.ends_with(".tres"):
+			saida.append("res://resources/oferendas/%s" % f)
+	saida.sort()
+	return saida
+
+
+func _comecar_a_depor(oferenda: Oferenda) -> void:
+	if _na_mao != null:
+		return
+	_na_mao = _pegar(oferenda)
+	if _na_mao == null:
+		return
+	_oferenda_na_mao = oferenda
+	_assentar(_na_mao, Vector2.ZERO)
+
+
+func _input(evento: InputEvent) -> void:
+	if _na_mao == null or Engine.is_editor_hint():
+		return
+	if evento is InputEventMouseMotion or evento is InputEventScreenDrag:
+		var onde: Variant = _no_chao(evento.position)
+		if onde != null:
+			_assentar(_na_mao, onde)
+	elif (evento is InputEventMouseButton and not evento.pressed) \
+			or (evento is InputEventScreenTouch and not evento.pressed):
+		_largar(_no_chao(evento.position))
+
+
+## Larga o que esta na mao. Se chegou ao `assentamento`, fica — e fica
+## para sempre. Se nao chegou, nunca chegou a ser deposto: isto nao e um
+## desfazer, e um gesto que nao se completou.
+func _largar(onde: Variant) -> void:
+	if onde == null:
+		_na_mao.queue_free()
+	else:
+		_assentar(_na_mao, onde)
+		_registar(_oferenda_na_mao, onde)
+		guardar_depositos()
+		_vestir()
+	_na_mao = null
+	_oferenda_na_mao = null
+
+
+## Onde o dedo cai no chao do `assentamento`, ou null se caiu fora.
+func _no_chao(ecra: Vector2) -> Variant:
+	var cam := get_node_or_null("Camara") as Camera3D
+	if cam == null:
+		return null
+	var origem := cam.project_ray_origin(ecra)
+	var dir := cam.project_ray_normal(ecra)
+	if absf(dir.y) < 0.0001:
+		return null
+	var t := -origem.y / dir.y
+	if t < 0.0:
+		return null
+	var p := origem + dir * t
+	var onde := Vector2(p.x, p.z)
+	return onde if onde.length() <= ALCANCE_DO_CHAO else null
 
 
 ## Depoe uma `oferenda` no `assentamento`, para sempre.
@@ -132,32 +235,49 @@ func _ready() -> void:
 ## Nao existe o inverso. Se um dia aparecer um `retirar()`, alguem
 ## quebrou GDD §2.
 func depor(oferenda: Oferenda, onde: Vector2) -> Node3D:
+	var no := _pegar(oferenda)
+	if no == null:
+		return null
+	_assentar(no, onde)
+	_registar(oferenda, onde)
+	_vestir()
+	return no
+
+
+## Poe a `oferenda` na mao: instancia o modelo e da-lhe o tamanho certo.
+## Ainda nao esta deposta — enquanto esta na mao pode nao chegar a ficar.
+func _pegar(oferenda: Oferenda) -> Node3D:
 	if oferenda == null or oferenda.modelo == "":
 		return null
 	var cena: PackedScene = load(oferenda.modelo)
 	if cena == null:
 		push_error("oferenda sem modelo: %s" % oferenda.slug)
 		return null
-
 	var no: Node3D = cena.instantiate()
 	no.name = "%s_%d" % [oferenda.slug, _depositos.size()]
-	add_child(no)
 	# Sem `owner`: o que se depoe nao se grava na cena. A cena e o
-	# fundamento; os depositos vivem no registo.
+	# fundamento travado; os depositos vivem no registo.
+	add_child(no)
 	var local := _caixa_local(no)
 	var maior: float = maxf(local.size.x, maxf(local.size.y, local.size.z))
 	if maior > 0.0:
 		no.scale = Vector3.ONE * (oferenda.tamanho / maior)
-	var caixa := no.transform * local
+	return no
+
+
+## Assenta no chao: a base toca o chao, o centro fica onde se pede.
+func _assentar(no: Node3D, onde: Vector2) -> void:
+	var caixa := no.transform * _caixa_local(no)
 	var centro := caixa.get_center()
 	no.position += Vector3(onde.x, 0.0, onde.y) - Vector3(centro.x, caixa.position.y, centro.z)
 
-	if oferenda.e_vela:
-		no.add_to_group("vela", true)
 
+func _registar(oferenda: Oferenda, onde: Vector2) -> void:
+	if oferenda.e_vela:
+		var no := get_node_or_null(NodePath("%s_%d" % [oferenda.slug, _depositos.size()]))
+		if no != null:
+			no.add_to_group("vela", true)
 	_depositos.append({"oferenda": oferenda.slug, "x": onde.x, "y": onde.y})
-	_vestir()
-	return no
 
 
 ## Substituto local da tabela `depositos` enquanto nao ha servidor. O
