@@ -122,6 +122,10 @@ var _escrita: TextEdit
 var _lista: Label
 var _folhas: HBoxContainer
 
+## Quantos dias um `pedido` leva a arder. Sete e o que vale (SPEC.md §8.1);
+## baixar isto e so para ver a queima sem esperar uma semana.
+@export var dias_de_queima := 7.0
+
 ## Nome do no em que os pedidos se espetam. Como na tradicao: o papel vai
 ## na lanca, nao pousado no fundo da panela.
 ##
@@ -233,6 +237,7 @@ func acender_pedido(texto: String) -> void:
 		return
 	var p := Pedido.new()
 	p.texto = limpo
+	p.duracao = maxf(dias_de_queima, 0.0001) * 24.0 * 60.0 * 60.0
 	p.aceso_em = Time.get_unix_time_from_system()
 	_pedidos.append(p)
 	Pedido.guardar(_pedidos)
