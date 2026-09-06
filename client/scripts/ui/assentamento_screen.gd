@@ -5,6 +5,10 @@
 ## paredes e sem camara que gire — uma chapa, nao um mundo. SPEC.md §11:
 ## a presenca indica-se por `ponto`, luz, fumo e movimento de objeto.
 ##
+## As velas sao luz a serio — OmniLight3D, uma por vela. Nao ha luz
+## nenhuma alem delas: acender e o que revela o `assentamento`, e quando a
+## ultima se apagar fica tudo escuro.
+##
 ## O arranjo esta na cena, nao aqui. Para mudar onde uma peca fica, abre-se
 ## `scenes/assentamento.tscn` e arrasta-se — e por isso que o script e
 ## `@tool`: a gravura e as chamas desenham-se no editor, para se ver o que
@@ -15,6 +19,11 @@
 extends Node3D
 
 const COR_TINTA := Color(0.937, 0.925, 0.882)
+
+## Cor do chao. Sem material o plano fica branco por omissao, e um branco
+## de tres metros de lado devolve toda a luz das velas — foi assim que a
+## nganga ficou a flutuar num lencol aceso.
+@export var cor_do_chao := Color(0.06, 0.055, 0.05)
 
 ## Quanto o chao responde a luz, comparado com os objetos. Menos que eles:
 ## e uma extensao grande e de frente para as chamas, e com a mesma
@@ -56,11 +65,24 @@ const COR_TINTA := Color(0.937, 0.925, 0.882)
 ##
 ## Fora do editor nao ha ambiente nem luz de motor nenhuma, entao com isto
 ## desligado a cena corre preta. E um auxiliar de bancada, nao um modo.
-@export var mostrar_gravura := true:
+@export var mostrar_gravura := false:
 	set(valor):
 		mostrar_gravura = valor
 		if is_inside_tree():
 			_vestir()
+
+## Cor da chama. Cera a arder e alaranjada, nao branca.
+@export var cor_da_chama := Color(1.0, 0.72, 0.42)
+
+## Quao depressa a luz cai. Uma vela cai depressa: com queda lenta o chao
+## inteiro acende e a escuridao desaparece.
+@export_range(0.5, 8.0) var queda_da_luz := 3.0
+
+## Ate onde a luz de uma vela chega, em metros.
+@export_range(0.1, 3.0) var alcance_da_luz := 0.5
+
+## Forca de cada vela.
+@export_range(0.0, 8.0) var forca_da_luz := 0.45
 
 ## Desliga o bruxuleio. Ligado por omissao fora do editor; no editor a luz
 ## fica quieta, para nao pulsar enquanto se arruma a nganga.
@@ -69,6 +91,7 @@ const COR_TINTA := Color(0.937, 0.925, 0.882)
 var _gravura: Shader
 var _luzes: Array[Vector3] = []
 var _chamas: Array[MeshInstance3D] = []
+var _lampadas: Array[OmniLight3D] = []
 var _tempo := 0.0
 
 
@@ -90,13 +113,15 @@ func _process(delta: float) -> void:
 	var energias := PackedFloat32Array()
 	for i in _luzes.size():
 		var e := brilho_da_vela
-		if bruxulear and not no_editor:
+		if bruxulear:
 			# Cada chama bruxuleia por sua conta; se todas pulsassem
 			# juntas leria-se como um interruptor a piscar.
 			var f := float(i) * 2.3
 			e *= 1.0 + 0.06 * sin(_tempo * 3.1 + f) + 0.04 * sin(_tempo * 7.7 + f * 1.7)
 			if i < _chamas.size():
 				_chamas[i].scale = Vector3.ONE * (1.0 + 0.08 * sin(_tempo * 9.0 + f))
+		if i < _lampadas.size():
+			_lampadas[i].light_energy = forca_da_luz * (e / maxf(brilho_da_vela, 0.001))
 		energias.append(e)
 	_aplicar_luz(energias)
 
@@ -110,6 +135,7 @@ func _vestir() -> void:
 			if caixa.size != Vector3.ZERO:
 				_luzes.append(Vector3(
 					caixa.get_center().x, caixa.end.y + 0.012, caixa.get_center().z))
+	_montar_lampadas()
 	if mostrar_gravura:
 		_montar_chamas()
 	else:
@@ -119,7 +145,16 @@ func _vestir() -> void:
 	var chao := get_node_or_null("Chao")
 	for malha in _malhas(self):
 		if not mostrar_gravura:
-			malha.material_override = null
+			# Sem gravura, o chao continua a precisar de material proprio:
+			# o plano nu e branco e reflete tudo.
+			if malha == chao:
+				var terra := StandardMaterial3D.new()
+				terra.albedo_color = cor_do_chao
+				terra.roughness = 1.0
+				terra.metallic = 0.0
+				malha.material_override = terra
+			else:
+				malha.material_override = null
 			continue
 		if malha.material_override == null or not malha.material_override is ShaderMaterial:
 			malha.material_override = _material()
@@ -128,6 +163,31 @@ func _vestir() -> void:
 			continue
 		m.set_shader_parameter("resposta",
 			resposta_do_chao if chao != null and chao.is_ancestor_of(malha) or malha == chao else 1.0)
+
+
+## As lampadas sao a luz da cena e existem sempre. As `_chamas` abaixo sao
+## esferas brancas que so fazem falta com a gravura ligada — os modelos das
+## velas ja trazem a sua propria chama.
+func _montar_lampadas() -> void:
+	_montar_ambiente()
+	while _lampadas.size() > _luzes.size():
+		_lampadas.pop_back().queue_free()
+	while _lampadas.size() < _luzes.size():
+		var l := OmniLight3D.new()
+		l.light_color = cor_da_chama
+		l.omni_range = alcance_da_luz
+		l.light_energy = forca_da_luz
+		l.omni_attenuation = queda_da_luz
+		l.shadow_enabled = false     # sombras de seis lados por vela, no
+		                             # renderizador de compatibilidade, nao
+		                             # compensam o que custam
+		add_child(l)                 # sem `owner`: nao se grava na cena
+		_lampadas.append(l)
+	for i in _lampadas.size():
+		_lampadas[i].position = _luzes[i]
+		_lampadas[i].light_color = cor_da_chama
+		_lampadas[i].omni_range = alcance_da_luz
+		_lampadas[i].omni_attenuation = queda_da_luz
 
 
 func _montar_chamas() -> void:
@@ -141,13 +201,31 @@ func _montar_chamas() -> void:
 		chama.mesh = esfera
 		var m := StandardMaterial3D.new()
 		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		m.albedo_color = COR_TINTA
+		m.albedo_color = cor_da_chama
 		chama.material_override = m
 		# Sem `owner`: as chamas nao se gravam na cena, sao desenhadas.
 		add_child(chama)
 		_chamas.append(chama)
 	for i in _chamas.size():
 		_chamas[i].position = _luzes[i]
+
+
+## Escuro a serio: fundo preto e nada de luz ambiente. A unica luz da cena
+## sao as velas.
+func _montar_ambiente() -> void:
+	if get_node_or_null("Ambiente") != null:
+		return
+	var amb := WorldEnvironment.new()
+	amb.name = "Ambiente"
+	var env := Environment.new()
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color.BLACK
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color(0.05, 0.045, 0.04)
+	env.ambient_light_energy = 1.0
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	amb.environment = env
+	add_child(amb)
 
 
 func _material() -> ShaderMaterial:
@@ -162,13 +240,14 @@ func _aplicar_luz(energias: PackedFloat32Array) -> void:
 	var chao := get_node_or_null("Chao")
 	for malha in _malhas(self):
 		var m := malha.material_override
-		if m is ShaderMaterial:
-			m.set_shader_parameter("luz_pos", posicoes)
-			m.set_shader_parameter("luz_energia", energias)
-			m.set_shader_parameter("luzes", _luzes.size())
-			m.set_shader_parameter("alcance", alcance_da_vela)
-			m.set_shader_parameter("grao", grao)
+		if not m is ShaderMaterial:
+			continue                 # gravura desligada: nao ha o que afinar
 		var e_chao: bool = malha == chao
+		m.set_shader_parameter("luz_pos", posicoes)
+		m.set_shader_parameter("luz_energia", energias)
+		m.set_shader_parameter("luzes", _luzes.size())
+		m.set_shader_parameter("alcance", alcance_da_vela)
+		m.set_shader_parameter("grao", grao)
 		m.set_shader_parameter("angulo", deg_to_rad(angulo_do_chao) if e_chao else 0.0)
 		m.set_shader_parameter("passo", trama * calibre_do_chao if e_chao else trama)
 		m.set_shader_parameter("contorno", 0.0 if e_chao else contorno)
