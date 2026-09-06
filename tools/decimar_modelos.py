@@ -28,6 +28,20 @@ import bpy
 ALVO_PADRAO = 6000
 TEXTURA_PADRAO = 256
 
+## Modelos que nao aguentam o corte normal.
+##
+## A decimacao por colapso junta vertices vizinhos. Num volume fechado —
+## caveira, caldeirao, corrente — isso perde detalhe e mais nada. Numa
+## petala, que e uma folha fina com duas faces quase encostadas, junta as
+## duas faces e a petala rasga. A rosa a 6 mil triangulos deixava de ser
+## uma rosa e passava a ser cacos.
+##
+## Verificado um a um com tools/ver_modelo.gd: a teia, as velas, as
+## correntes, a caveira e o baphomet aguentam os 6 mil sem dar por isso.
+ALVOS = {
+	"black_rose": 12000,
+}
+
 
 def limpar():
     bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -97,7 +111,7 @@ def main():
         destino = os.path.join(saida, nome)
         limpar()
         bpy.ops.import_scene.gltf(filepath=origem)
-        antes, depois = decimar(alvo)
+        antes, depois = decimar(ALVOS.get(os.path.splitext(nome)[0], alvo))
         encolher_texturas(limite_textura)
         bpy.ops.export_scene.gltf(
             filepath=destino,

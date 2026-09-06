@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://clsgtxmh1rkye"
+uid="uid://ck0ch6lh0ra5o"
 path="res://.godot/imported/bottle_to_paloo_Image_1.jpg-aa00435d585781cbc1d6b5798e4a25fa.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "7c92f3c235da7d867fd54565137ba859"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://deli7uxou36vs"
+uid="uid://bqcyxm8pm7mk1"
 path="res://.godot/imported/galhos_Image_0.png-443a1fad0c1d48c7c634782b40f877cf.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "4cbdcdb870d5eda0847d2e77768dda2c"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

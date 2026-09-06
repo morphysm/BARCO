@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c2cpkr2yndhml"
+uid="uid://dcplejx4dtqyu"
 path="res://.godot/imported/rusty_chains_Image_2.png-59ae8c2e0d2c38d6cbf299e74fe2463f.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "3fe40de15d2421fbe6859dbeefca3635"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

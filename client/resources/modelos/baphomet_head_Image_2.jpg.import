@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b2o3rmm7enfua"
+uid="uid://r6f3mn3bcolt"
 path="res://.godot/imported/baphomet_head_Image_2.jpg-ee3facd8d4f2490022392ec8610f02a9.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "d6bdd92702305d0a6b95311a7a0bb87d"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

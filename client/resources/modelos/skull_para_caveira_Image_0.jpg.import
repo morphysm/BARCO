@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b7eau60av1sjm"
+uid="uid://b37du2k6yocya"
 path="res://.godot/imported/skull_para_caveira_Image_0.jpg-a0c6f49ac703994c19678e63914b7217.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "f6af799c6348761ff692c6a1dab7f3c6"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

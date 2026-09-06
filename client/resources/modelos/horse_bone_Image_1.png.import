@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cavousqrlrq7u"
+uid="uid://bs2dsqh3m3hhy"
 path="res://.godot/imported/horse_bone_Image_1.png-b8092b559d6091e93f9fd4411cbd4fb1.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "2bff170f772e28dc54ede5ade045b550"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

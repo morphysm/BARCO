@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bp6i0l81t0pbf"
+uid="uid://bk8fpwaiw3hh5"
 path="res://.godot/imported/chili_pepper_Image_1.png-d333eda9bec8d2b36094ec426cb5c56e.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "63c6086ff702c192ae194a330f2a207e"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

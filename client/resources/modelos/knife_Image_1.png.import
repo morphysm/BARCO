@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://g2hjra0j8tjr"
+uid="uid://cko24r1is7lyc"
 path="res://.godot/imported/knife_Image_1.png-483bf2c55e9dd97f8e8262c25ad75c6b.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "b2abe028e68495dc80ded3328c456984"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

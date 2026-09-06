@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxwoj8hshjt2x"
+uid="uid://b1frvd18iy7c6"
 path="res://.godot/imported/sangue_Image_1.png-0491f93598cf87dda4c584db8be92745.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "a78433c4276a3a632a25962d9fdbc048"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

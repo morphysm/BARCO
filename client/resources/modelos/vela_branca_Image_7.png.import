@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b135w2jj5kpxs"
+uid="uid://dlm6bdwsasn3x"
 path="res://.godot/imported/vela_branca_Image_7.png-901df315eb43630fdcf32fa598aa5618.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "1b284c12fc7ae0fa7f3e449814a73a97"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

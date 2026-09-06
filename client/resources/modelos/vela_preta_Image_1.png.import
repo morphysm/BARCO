@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgroprw4snvuv"
+uid="uid://bwrajpwifpt1x"
 path="res://.godot/imported/vela_preta_Image_1.png-2aced41506bdc3128185253c234dac79.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "d156e140a01f96d4909509cc489760d4"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

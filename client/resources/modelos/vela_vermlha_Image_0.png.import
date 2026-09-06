@@ -2,13 +2,10 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dthbffd20igj6"
+uid="uid://b17gdwk8goms8"
 path="res://.godot/imported/vela_vermlha_Image_0.png-e49b36725371a5dd3335ced032c7da1d.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "46a73d9870f398954b2db124b2af11c3"
 }
 
 [deps]
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
