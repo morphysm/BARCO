@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Oferenda" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/oferenda.gd" id="1_q7q2d"]
+
+[resource]
+script = ExtResource("1_q7q2d")
+slug = "navalha"
+nome = "Navalha"
+modelo = "res://resources/modelos/knife.glb"
+tamanho = 0.2
+cafes = 1

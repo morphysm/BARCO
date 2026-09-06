@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Oferenda" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/oferenda.gd" id="1_tl73l"]
+
+[resource]
+script = ExtResource("1_tl73l")
+slug = "vela_preta"
+nome = "Vela preta"
+tipo = "luz"
+modelo = "res://resources/modelos/vela_preta.glb"
+tamanho = 0.24
+e_vela = true
+cafes = 1

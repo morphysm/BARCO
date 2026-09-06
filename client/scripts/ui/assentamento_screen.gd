@@ -5,6 +5,13 @@
 ## paredes e sem camara que gire — uma chapa, nao um mundo. SPEC.md §11:
 ## a presenca indica-se por `ponto`, luz, fumo e movimento de objeto.
 ##
+## A cena tem so o FUNDAMENTO: o caldeirao e o que faz este `assentamento`
+## ser o daquela entidade. Tudo o resto chega por `depor()` — porque
+## alguem o depos, na posicao que escolheu (SPEC.md §8.1, GDD §8).
+##
+## Depor e irreversivel. Nao ha aqui como tirar nada: `depositos` e
+## append-only, como o `caderno` (SPEC.md §3.3, GDD §2).
+##
 ## As velas sao luz a serio — OmniLight3D, uma por vela. Nao ha luz
 ## nenhuma alem delas: acender e o que revela o `assentamento`, e quando a
 ## ultima se apagar fica tudo escuro.
@@ -84,6 +91,11 @@ const COR_TINTA := Color(0.937, 0.925, 0.882)
 ## Forca de cada vela.
 @export_range(0.0, 8.0) var forca_da_luz := 0.45
 
+## Luz de reserva, para um `assentamento` sem vela nenhuma nao ser um ecra
+## preto. Visitar um `assentamento` e sempre gratis (SPEC.md §10.1), entao
+## tem de se poder ver que la esta alguma coisa — mal, mas ver.
+@export_range(0.0, 0.5) var luz_de_reserva := 0.16
+
 ## Desliga o bruxuleio. Ligado por omissao fora do editor; no editor a luz
 ## fica quieta, para nao pulsar enquanto se arruma a nganga.
 @export var bruxulear := true
@@ -92,13 +104,80 @@ var _gravura: Shader
 var _luzes: Array[Vector3] = []
 var _chamas: Array[MeshInstance3D] = []
 var _lampadas: Array[OmniLight3D] = []
+## O que ja foi deposto. Cresce; nunca encolhe.
+var _depositos: Array[Dictionary] = []
 var _tempo := 0.0
 
 
 func _ready() -> void:
 	_gravura = load("res://shaders/gravura.gdshader")
+	if not Engine.is_editor_hint():
+		_carregar_depositos()
 	_vestir()
 	set_process(true)
+
+
+## Depoe uma `oferenda` no `assentamento`, para sempre.
+##
+## `onde` e no plano do chao: `depositos` guarda duas coordenadas
+## (SPEC.md §3.3), portanto o que se deposita assenta no chao e nao
+## flutua.
+##
+## Nao existe o inverso. Se um dia aparecer um `retirar()`, alguem
+## quebrou GDD §2.
+func depor(oferenda: Oferenda, onde: Vector2) -> Node3D:
+	if oferenda == null or oferenda.modelo == "":
+		return null
+	var cena: PackedScene = load(oferenda.modelo)
+	if cena == null:
+		push_error("oferenda sem modelo: %s" % oferenda.slug)
+		return null
+
+	var no: Node3D = cena.instantiate()
+	no.name = "%s_%d" % [oferenda.slug, _depositos.size()]
+	add_child(no)
+	# Sem `owner`: o que se depoe nao se grava na cena. A cena e o
+	# fundamento; os depositos vivem no registo.
+	var local := _caixa_local(no)
+	var maior: float = maxf(local.size.x, maxf(local.size.y, local.size.z))
+	if maior > 0.0:
+		no.scale = Vector3.ONE * (oferenda.tamanho / maior)
+	var caixa := no.transform * local
+	var centro := caixa.get_center()
+	no.position += Vector3(onde.x, 0.0, onde.y) - Vector3(centro.x, caixa.position.y, centro.z)
+
+	if oferenda.e_vela:
+		no.add_to_group("vela", true)
+
+	_depositos.append({"oferenda": oferenda.slug, "x": onde.x, "y": onde.y})
+	_vestir()
+	return no
+
+
+## Substituto local da tabela `depositos` enquanto nao ha servidor. O
+## servidor e que manda (SPEC.md §3.3); isto so guarda o que ja foi deposto
+## para o `assentamento` nao esquecer entre sessoes.
+const REGISTO := "user://depositos.json"
+
+
+func _carregar_depositos() -> void:
+	if not FileAccess.file_exists(REGISTO):
+		return
+	var f := FileAccess.open(REGISTO, FileAccess.READ)
+	var dados = JSON.parse_string(f.get_as_text())
+	f.close()
+	if not dados is Array:
+		return
+	for d in dados:
+		var o: Oferenda = load("res://resources/oferendas/%s.tres" % d["oferenda"])
+		if o != null:
+			depor(o, Vector2(float(d["x"]), float(d["y"])))
+
+
+func guardar_depositos() -> void:
+	var f := FileAccess.open(REGISTO, FileAccess.WRITE)
+	f.store_string(JSON.stringify(_depositos))
+	f.close()
 
 
 func _process(delta: float) -> void:
@@ -221,7 +300,7 @@ func _montar_ambiente() -> void:
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color.BLACK
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.05, 0.045, 0.04)
+	env.ambient_light_color = Color(luz_de_reserva, luz_de_reserva * 0.92, luz_de_reserva * 0.84)
 	env.ambient_light_energy = 1.0
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	amb.environment = env
@@ -260,6 +339,31 @@ func _malhas(raiz: Node) -> Array[MeshInstance3D]:
 	for filho in raiz.get_children():
 		saida.append_array(_malhas(filho))
 	return saida
+
+
+## Caixa envolvente de um no, no espaco local dele — sem contar a
+## transformacao do proprio no. Acumulada a mao, para servir tambem antes
+## de o no estar na arvore.
+func _caixa_local(no: Node3D) -> AABB:
+	var total := AABB()
+	var primeiro := true
+	var pilha: Array = [[no, Transform3D.IDENTITY]]
+	while pilha:
+		var par = pilha.pop_back()
+		var n: Node = par[0]
+		var t: Transform3D = par[1]
+		if n is Node3D and n != no:
+			t = t * (n as Node3D).transform
+		if n is MeshInstance3D and n.mesh != null:
+			var caixa: AABB = t * n.mesh.get_aabb()
+			if primeiro:
+				total = caixa
+				primeiro = false
+			else:
+				total = total.merge(caixa)
+		for f in n.get_children():
+			pilha.append([f, t])
+	return total
 
 
 ## Caixa envolvente de um no, em espaco de mundo.

@@ -12,19 +12,20 @@ const CENA := "res://scenes/assentamento.tscn"
 
 ## posicao poe a BASE da peca naquele ponto; tamanho normaliza a MAIOR
 ## dimensao do modelo (uma faca deitada quase nao tem altura).
+## Só o FUNDAMENTO: o vaso e o que faz este `assentamento` ser o daquela
+## entidade. As velas, a rosa, a pimenta, a navalha e a garrafa sairam
+## daqui e passaram a `oferendas` — chegam por `depor()`, porque alguem as
+## depos (SPEC.md §8.1, GDD §8).
+##
+## Um `assentamento` cheio no primeiro dia daria de graca o que o app
+## inteiro cobra em tempo, gesto e dinheiro.
 const NGANGA := [
 	{"m": "cauldron",           "onde": Vector3(0.00, 0.000, 0.00),  "tamanho": 0.40, "giro": 0.0},
 	{"m": "galhos",             "onde": Vector3(-0.03, 0.240, 0.00), "tamanho": 0.36, "giro": 25.0},
 	{"m": "horse_bone",         "onde": Vector3(0.06, 0.200, 0.02),  "tamanho": 0.26, "giro": -40.0},
 	{"m": "rusty_chains",       "onde": Vector3(0.00, 0.000, 0.05),  "tamanho": 0.34, "giro": 15.0},
 	{"m": "skull_para_caveira", "onde": Vector3(-0.30, 0.000, 0.10), "tamanho": 0.15, "giro": 30.0},
-	{"m": "vela_preta",         "onde": Vector3(0.26, 0.000, 0.09),  "tamanho": 0.24, "giro": 0.0},
-	{"m": "vela_vermlha",       "onde": Vector3(-0.27, 0.000, -0.10),"tamanho": 0.22, "giro": 0.0},
-	{"m": "vela_branca",        "onde": Vector3(0.22, 0.000, -0.16), "tamanho": 0.22, "giro": 0.0},
-	{"m": "knife",              "onde": Vector3(-0.16, 0.000, 0.26), "tamanho": 0.20, "giro": 70.0},
-	{"m": "black_rose",         "onde": Vector3(0.14, 0.000, 0.27),  "tamanho": 0.13, "giro": -20.0},
-	{"m": "chili_pepper",       "onde": Vector3(-0.05, 0.000, 0.30), "tamanho": 0.09, "giro": 45.0},
-	{"m": "bottle_to_paloo",    "onde": Vector3(0.36, 0.000, 0.26),  "tamanho": 0.18, "giro": 10.0},
+	{"m": "baphomet_head",      "onde": Vector3(0.00, 0.260, -0.26), "tamanho": 0.22, "giro": 8.0},
 ]
 
 
