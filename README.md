@@ -122,14 +122,17 @@ que em `project.godot` troca a cena de arranque e o tamanho da janela.
 `export_presets.cfg` esta no `.gitignore`, entao o preset e local.
 
 ```sh
-godot --headless --path client --export-release "Assentamento (Linux)"
+# refaz os quatro: quadros, mp4, gif e executavel (precisa de display)
+# grava a cena no editor ANTES — isto le o disco, nao o editor
+tools/refazer_cenario.sh
 
-# refazer o video (precisa de display)
-godot --path client --script res://tools/filmar_assentamento.gd \
-      --resolution 720x900 --fixed-fps 30
-ffmpeg -y -framerate 30 -i capturas/filme/%04d.png \
-       -c:v libx264 -pix_fmt yuv420p -crf 18 build/assentamento/assentamento.mp4
+# so o executavel
+godot --headless --path client --export-release "Assentamento (Linux)"
 ```
+
+`filmar_assentamento.gd` sozinho **nao refaz o video**: o Godot nao
+escreve video, so grava PNG em `capturas/filme/`. Quem junta e o ffmpeg,
+e o executavel e outra exportacao — por isso e que o script existe.
 
 Nao esta travado, e nao acompanha o fundamento sozinho — se a nganga
 mudar, esta copia refaz-se a mao. Acrescentar-lhe uma peca faz-se no
