@@ -96,9 +96,26 @@ DEAD*, copied without alteration by `tools/tirar_fornalha.py` — the
 source project is read-only and never touched. Four of the five bays are
 simply not referenced; `Bay2` is the one with an open door.
 
-**3. The `assentamento`.** The room is now reachable. The person makes
-`oferendas` and `pedidos` in it. This is where a `trabalho` runs (§7),
-and where everything accumulates and never leaves (§8.1).
+**3. The `assentamento`.** The room is now reachable. This is **the paid
+phase** — the only one. `oferendas` are bought (§10.1: 1 coffee = 21 SEK;
+prices live in `cafes` on each `.tres` and are shown in SEK, per
+AGENTS.md). Everything in phases 1 and 2 is free and stays free: tracing
+the three `pontos`, the eclipse, the `fornalha`.
+
+**`pedidos` are free.** Writing one and spearing it on the trident costs
+nothing, ever. What is bought is the `oferenda` placed beside it.
+
+**An `oferenda` reinforces a `pedido`** (A.C.). That is a mechanic of the
+rite, and it is the reason the two live in the same room. It is **not** a
+promise: the app may show that an offering was made and that a `pedido`
+burns, and must never say what either will do in the world. §10 and
+AGENTS.md hold — copy describes the act performed, never its effect.
+**How the reinforcement is measured is not decided.**
+
+**Not built yet, and now visible:** prices are on the buttons but there
+is no payment gate — `depor` currently costs nothing in the build. The
+Ko-fi flow (§10.2–10.4) has to exist before this ships, or the prices
+have to come off the screen.
 
 The `sacrificio` (§8.2) is not one of the three. Where it sits relative
 to them is **not decided**. So is what the `caderno` records of the

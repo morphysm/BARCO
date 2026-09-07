@@ -573,6 +573,10 @@ func _process(delta: float) -> void:
 		# Fechada de todo, fica-se no escuro um instante antes de trocar.
 		if _tempo >= fecho_da_iris + pausa_no_escuro:
 			_fase = IDO
+			# Largar o rato ANTES de sair. `Input.mouse_mode` e global e
+			# sobrevive a troca de cena: sem isto o `assentamento` herdava
+			# o rato preso e ninguem conseguia carregar em nada.
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			# A iris fecha aqui e abre la: e a mesma iris, nao duas.
 			Passagem.iris_a_abrir = true
 			get_tree().change_scene_to_file("res://scenes/assentamento.tscn")

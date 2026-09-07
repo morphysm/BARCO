@@ -148,6 +148,10 @@ var _tempo := 0.0
 
 
 func _ready() -> void:
+	# O rato e sempre visivel aqui: depor faz-se a arrastar. Posto a mao e
+	# nao presumido — quem chega da `fornalha` vem com ele preso.
+	if not Engine.is_editor_hint():
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_gravura = load("res://shaders/gravura.gdshader")
 	if not Engine.is_editor_hint():
 		_carregar_depositos()
@@ -314,32 +318,68 @@ func acender_pedido(texto: String) -> void:
 ## A tira de `oferendas`. Nao e um carrinho de compras: nao se acumula,
 ## nao se soma, nao se confirma. Carrega-se numa e arrasta-se — o gesto e
 ## a decisao (GDD §2, pilar 3).
+## SEK por cafe (SPEC.md §10.1). Os precos estao em `cafes` nos `.tres`;
+## no ecra mostram-se em SEK, que e o que AGENTS.md manda.
+const SEK_POR_CAFE := 21
+
+
+## A tira de baixo: o que se pode fazer aqui, e quanto custa.
+##
+## O `pedido` fica SEPARADO das `oferendas`. Estavam os nove botoes em
+## fila, todos iguais, e o `pedido` — que e gratis — lia-se como mais uma
+## coisa a comprar. Sao duas naturezas diferentes e agora veem-se como
+## duas.
 func _montar_tira() -> void:
 	var folha := CanvasLayer.new()
 	folha.name = "Folha"
 	add_child(folha)
 
-	var tira := HBoxContainer.new()
-	tira.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	tira.offset_top = -86
-	tira.offset_bottom = -18
-	tira.offset_left = 12
-	tira.offset_right = -12
-	tira.alignment = BoxContainer.ALIGNMENT_CENTER
-	tira.add_theme_constant_override("separation", 8)
-	folha.add_child(tira)
+	var coluna := VBoxContainer.new()
+	coluna.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	coluna.offset_top = -196
+	coluna.offset_bottom = -14
+	coluna.offset_left = 12
+	coluna.offset_right = -12
+	coluna.add_theme_constant_override("separation", 6)
+	folha.add_child(coluna)
 
-	# Entrada visivel para os pedidos. O ESC continua a servir, mas ninguem
-	# adivinha uma tecla que nao esta escrita em lado nenhum.
-	var escrever := Pagina.botao("pedido", 17)
+	# Ninguem adivinha que se arrasta. TODO(CONTENT.pt.md): texto autoral.
+	var como := Pagina.texto("arrasta uma oferenda para o assentamento", 16)
+	como.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	como.modulate = Color(1, 1, 1, 0.62)
+	coluna.add_child(como)
+
+	# O que e gratis, primeiro e a parte.
+	var linha_livre := HBoxContainer.new()
+	linha_livre.alignment = BoxContainer.ALIGNMENT_CENTER
+	coluna.add_child(linha_livre)
+	# O ESC continua a servir, mas ninguem adivinha uma tecla que nao
+	# esta escrita em lado nenhum.
+	# TODO(CONTENT.pt.md): rotulo autoral.
+	var escrever := Pagina.botao("escrever um pedido · grátis", 17)
 	escrever.pressed.connect(_alternar_menu)
-	tira.add_child(escrever)
+	linha_livre.add_child(escrever)
 
-	for caminho in _oferendas_disponiveis():
-		var o: Oferenda = load(caminho)
+	# E o que se paga, com o preco a vista.
+	#
+	# Em duas linhas e nao numa: com o preco no rotulo, oito oferendas
+	# nao cabem na largura e as ultimas saíam do ecra.
+	var todas := _oferendas_disponiveis()
+	var por_linha: int = int(ceil(todas.size() / 2.0))
+	var tira: HBoxContainer = null
+	for i in todas.size():
+		if i % por_linha == 0:
+			tira = HBoxContainer.new()
+			tira.alignment = BoxContainer.ALIGNMENT_CENTER
+			tira.add_theme_constant_override("separation", 8)
+			coluna.add_child(tira)
+		var o: Oferenda = load(todas[i])
 		if o == null:
 			continue
-		var b := Pagina.botao(o.nome, 17)
+		var rotulo := o.nome
+		if o.cafes > 0:
+			rotulo += " · %d kr" % (o.cafes * SEK_POR_CAFE)
+		var b := Pagina.botao(rotulo, 16)
 		b.button_down.connect(_comecar_a_depor.bind(o))
 		tira.add_child(b)
 
