@@ -97,8 +97,8 @@ source project is read-only and never touched. Four of the five bays are
 simply not referenced; `Bay2` is the one with an open door.
 
 **3. The `assentamento`.** The room is now reachable. This is **the paid
-phase** — the only one. `oferendas` are bought (§10.1: 1 coffee = 21 SEK;
-prices live in `cafes` on each `.tres` and are shown in SEK, per
+phase** — the only one. `oferendas` are bought (§10.1: 1 coffee = 2 USD;
+prices live in `cafes` on each `.tres` and are shown in USD, per
 AGENTS.md). Everything in phases 1 and 2 is free and stays free: tracing
 the three `pontos`, the eclipse, the `fornalha`.
 
@@ -522,16 +522,24 @@ Mix headphone-first. Assume night use, alone, with headphones.
 
 Ko-fi's unit is the "coffee". Bind the app economy to it directly.
 
-**1 coffee = 21 SEK**
+**1 coffee = 2 USD**
 
-| Act | Coffees | SEK |
+| Act | Coffees | USD |
 |---|---|---|
-| Candle, 20 min | 1 | 21 |
-| Drink or smoke `oferenda` | 1 | 21 |
-| Full `trabalho` | 3 | 63 |
-| Seven-day candle | 3 | 63 |
-| `assentamento` firmeza | 7 | 147 |
-| `sacrificio` | 7 | 147 |
+| Candle, 20 min | 1 | 2 |
+| Drink or smoke `oferenda` | 1 | 2 |
+| Full `trabalho` | 3 | 6 |
+| Seven-day candle | 3 | 6 |
+| `assentamento` firmeza | 7 | 14 |
+| `sacrificio` | 7 | 14 |
+
+The currency went SEK -> EUR -> USD, and USD is the one that holds:
+**Ko-fi charges in USD, so the number on the button is the number at
+checkout.** The app being in Portuguese does not change that — showing
+R$ or € beside a dollar charge would read as a bait.
+
+The currency lives in one place in the client:
+`AssentamentoScreen.POR_CAFE` and `MOEDA`. Changing it is two lines.
 
 Permanently free: tracing and learning any `ponto`, opening any `selo`, hearing
 any `ponto_cantado`, visiting an `assentamento`, reading the `caderno`, and

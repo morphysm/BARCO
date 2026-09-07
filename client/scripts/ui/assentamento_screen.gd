@@ -318,9 +318,13 @@ func acender_pedido(texto: String) -> void:
 ## A tira de `oferendas`. Nao e um carrinho de compras: nao se acumula,
 ## nao se soma, nao se confirma. Carrega-se numa e arrasta-se — o gesto e
 ## a decisao (GDD §2, pilar 3).
-## SEK por cafe (SPEC.md §10.1). Os precos estao em `cafes` nos `.tres`;
-## no ecra mostram-se em SEK, que e o que AGENTS.md manda.
-const SEK_POR_CAFE := 21
+## A moeda, num sitio so.
+##
+## Os `.tres` guardam `cafes` — a unidade do Ko-fi (SPEC.md §10.1). O que
+## se mostra e dinheiro a serio, porque AGENTS.md proibe moeda de faz de
+## conta. Trocar de moeda e trocar estas duas linhas e mais nada.
+const POR_CAFE := 2
+const MOEDA := "US$"
 
 
 ## A tira de baixo: o que se pode fazer aqui, e quanto custa.
@@ -378,7 +382,7 @@ func _montar_tira() -> void:
 			continue
 		var rotulo := o.nome
 		if o.cafes > 0:
-			rotulo += " · %d kr" % (o.cafes * SEK_POR_CAFE)
+			rotulo += " · %d %s" % [o.cafes * POR_CAFE, MOEDA]
 		var b := Pagina.botao(rotulo, 16)
 		b.button_down.connect(_comecar_a_depor.bind(o))
 		tira.add_child(b)

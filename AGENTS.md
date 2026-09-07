@@ -28,7 +28,8 @@ say so instead of implementing it.
 - Never gate the `hora_asmodeica` behind payment.
 - Never sell access outside a `dormente` window. No "open now" purchase.
 - No subscriptions, no loot boxes, no randomised rewards, no intermediate
-  soft currency. Prices are fixed and shown in SEK.
+  soft currency. Prices are fixed and shown in USD — the currency Ko-fi
+  charges in, so the number on the button is the number at checkout.
 - Never write copy that promises an outcome. Copy describes the act performed,
   never its effect. This is a legal constraint, not a stylistic one.
 
