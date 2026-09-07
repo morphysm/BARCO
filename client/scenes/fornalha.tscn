@@ -1,61 +1,54 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/ui/fornalha_screen.gd" id="1_4isy8"]
-[ext_resource type="AudioStream" path="res://resources/audio/Entrego Minha Alma.ogg" id="2_so3h3"]
-[ext_resource type="Script" path="res://scripts/ui/jogador.gd" id="3_x87dg"]
-[ext_resource type="Texture2D" path="res://resources/imagens/MORPHISTIC SIGIL_para o chão.jpg" id="4_0g3bd"]
-[ext_resource type="Texture2D" path="res://resources/imagens/mmorph REDskin_para_as_paredes.png" id="5_vovy2"]
-[ext_resource type="PackedScene" path="res://resources/modelos/fornalha.glb" id="6_hn8tv"]
-[ext_resource type="Texture2D" path="res://resources/imagens/BAPHOMET777SUBLIMINALL.jpg" id="7_bp5j7"]
-[ext_resource type="Shader" path="res://shaders/ferro.gdshader" id="8_1f6v6"]
-[ext_resource type="Texture2D" path="res://resources/imagens/morphysm sigil STONE.png" id="9_gmkiy"]
-[ext_resource type="PackedScene" path="res://resources/modelos/cruz_pro_fogo.glb" id="10_2vy2x"]
-[ext_resource type="Script" path="res://scripts/ui/forma_dancante.gd" id="11_mw147"]
+[ext_resource type="Script" path="res://scripts/ui/fornalha_screen.gd" id="1_so3h3"]
+[ext_resource type="AudioStream" path="res://resources/audio/Entrego Minha Alma.ogg" id="2_x87dg"]
+[ext_resource type="Script" path="res://scripts/ui/jogador.gd" id="3_0g3bd"]
+[ext_resource type="Texture2D" path="res://resources/imagens/MORPHISTIC SIGIL_para o chão.jpg" id="4_vovy2"]
+[ext_resource type="Texture2D" path="res://resources/imagens/mmorph REDskin_para_as_paredes.png" id="5_hn8tv"]
+[ext_resource type="Shader" path="res://shaders/buraco_negro.gdshader" id="6_bp5j7"]
+[ext_resource type="PackedScene" path="res://resources/modelos/fornalha.glb" id="7_1f6v6"]
+[ext_resource type="Texture2D" path="res://resources/imagens/BAPHOMET777SUBLIMINALL.jpg" id="8_gmkiy"]
+[ext_resource type="Shader" path="res://shaders/ferro.gdshader" id="9_2vy2x"]
+[ext_resource type="Texture2D" path="res://resources/imagens/morphysm sigil STONE.png" id="10_mw147"]
+[ext_resource type="PackedScene" path="res://resources/modelos/cruz_pro_fogo.glb" id="11_sumuu"]
+[ext_resource type="Script" path="res://scripts/ui/forma_dancante.gd" id="12_77jdi"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sumuu"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sp8qb"]
 radius = 0.32
 height = 1.7
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_77jdi"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_clqt3"]
 size = Vector3(5, 0.3, 8)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_sp8qb"]
-size = Vector3(0.3, 2.4, 8)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_clqt3"]
-size = Vector3(0.3, 2.4, 8)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_24jri"]
-size = Vector3(4.3, 2.4, 0.3)
+size = Vector3(0.3, 2.4, 8)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_sasjo"]
+size = Vector3(0.3, 2.4, 8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_23ijq"]
 size = Vector3(4.3, 2.4, 0.3)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_23ijq"]
-albedo_color = Color(0.055, 0.05, 0.048, 1)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_c4fn1"]
-size = Vector2(9, 9)
+[sub_resource type="BoxShape3D" id="BoxShape3D_c4fn1"]
+size = Vector3(4.3, 2.4, 0.3)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5t2h"]
-transparency = 1
-albedo_texture = ExtResource("4_0g3bd")
+albedo_color = Color(0.055, 0.05, 0.048, 1)
 
-[sub_resource type="QuadMesh" id="QuadMesh_rrl8t"]
-material = SubResource("StandardMaterial3D_i5t2h")
-size = Vector2(2.4, 2.28)
+[sub_resource type="PlaneMesh" id="PlaneMesh_rrl8t"]
+size = Vector2(9, 9)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0l71y"]
 transparency = 1
-albedo_texture = ExtResource("5_vovy2")
+albedo_texture = ExtResource("4_vovy2")
 
 [sub_resource type="QuadMesh" id="QuadMesh_at1vf"]
 material = SubResource("StandardMaterial3D_0l71y")
-size = Vector2(9, 5.4)
+size = Vector2(2.4, 2.28)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bcnqa"]
 transparency = 1
-albedo_texture = ExtResource("5_vovy2")
+albedo_texture = ExtResource("5_hn8tv")
 
 [sub_resource type="QuadMesh" id="QuadMesh_pbbmi"]
 material = SubResource("StandardMaterial3D_bcnqa")
@@ -63,7 +56,7 @@ size = Vector2(9, 5.4)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6yw2x"]
 transparency = 1
-albedo_texture = ExtResource("5_vovy2")
+albedo_texture = ExtResource("5_hn8tv")
 
 [sub_resource type="QuadMesh" id="QuadMesh_t4oqo"]
 material = SubResource("StandardMaterial3D_6yw2x")
@@ -71,15 +64,42 @@ size = Vector2(9, 5.4)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_faaqk"]
 transparency = 1
-albedo_texture = ExtResource("7_bp5j7")
+albedo_texture = ExtResource("5_hn8tv")
 
 [sub_resource type="QuadMesh" id="QuadMesh_xpqns"]
 material = SubResource("StandardMaterial3D_faaqk")
-size = Vector2(1.7196293, 2.7)
+size = Vector2(9, 5.4)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_l70n5"]
 render_priority = 0
-shader = ExtResource("8_1f6v6")
+shader = ExtResource("6_bp5j7")
+shader_parameter/horizonte = null
+shader_parameter/anel = null
+shader_parameter/cor_do_anel = null
+shader_parameter/rotacao = null
+shader_parameter/arrasto = null
+shader_parameter/densidade = null
+shader_parameter/tamanho_da_estrela = null
+shader_parameter/cor_do_fio = null
+shader_parameter/cor_do_ceu = null
+shader_parameter/cor_da_nevoa = null
+shader_parameter/nevoa = null
+shader_parameter/brilho = null
+
+[sub_resource type="QuadMesh" id="QuadMesh_of1bw"]
+size = Vector2(9, 9)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_41une"]
+transparency = 1
+albedo_texture = ExtResource("8_gmkiy")
+
+[sub_resource type="QuadMesh" id="QuadMesh_0p5lt"]
+material = SubResource("StandardMaterial3D_41une")
+size = Vector2(1.7196293, 2.7)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b67c1"]
+render_priority = 0
+shader = ExtResource("9_2vy2x")
 shader_parameter/cor_ferro = null
 shader_parameter/cor_ferrugem = null
 shader_parameter/cor_ferrugem_clara = null
@@ -87,61 +107,30 @@ shader_parameter/ferrugem = null
 shader_parameter/escala = null
 shader_parameter/assentar = null
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_of1bw"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_pk6lk"]
 top_radius = 0.045
 bottom_radius = 0.06
 height = 3.5
 radial_segments = 10
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_41une"]
-top_radius = 0.032
-bottom_radius = 0.032
-height = 1.0
-radial_segments = 8
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0p5lt"]
-transparency = 1
-cull_mode = 2
-albedo_texture = ExtResource("9_gmkiy")
-
-[sub_resource type="QuadMesh" id="QuadMesh_b67c1"]
-material = SubResource("StandardMaterial3D_0p5lt")
-size = Vector2(0.78, 2.05)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pk6lk"]
-render_priority = 0
-shader = ExtResource("8_1f6v6")
-shader_parameter/cor_ferro = null
-shader_parameter/cor_ferrugem = null
-shader_parameter/cor_ferrugem_clara = null
-shader_parameter/ferrugem = null
-shader_parameter/escala = null
-shader_parameter/assentar = null
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_qdg03"]
-top_radius = 0.045
-bottom_radius = 0.06
-height = 3.5
-radial_segments = 10
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_0jcwy"]
 top_radius = 0.032
 bottom_radius = 0.032
 height = 1.0
 radial_segments = 8
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vk275"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0jcwy"]
 transparency = 1
 cull_mode = 2
-albedo_texture = ExtResource("9_gmkiy")
+albedo_texture = ExtResource("10_mw147")
 
-[sub_resource type="QuadMesh" id="QuadMesh_l502i"]
-material = SubResource("StandardMaterial3D_vk275")
+[sub_resource type="QuadMesh" id="QuadMesh_vk275"]
+material = SubResource("StandardMaterial3D_0jcwy")
 size = Vector2(0.78, 2.05)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_2d1rc"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_l502i"]
 render_priority = 0
-shader = ExtResource("8_1f6v6")
+shader = ExtResource("9_2vy2x")
 shader_parameter/cor_ferro = null
 shader_parameter/cor_ferrugem = null
 shader_parameter/cor_ferrugem_clara = null
@@ -149,210 +138,247 @@ shader_parameter/ferrugem = null
 shader_parameter/escala = null
 shader_parameter/assentar = null
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_8lm7n"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_2d1rc"]
 top_radius = 0.045
 bottom_radius = 0.06
 height = 3.5
 radial_segments = 10
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_bcy3p"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_8lm7n"]
 top_radius = 0.032
 bottom_radius = 0.032
 height = 1.0
 radial_segments = 8
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fwbd6"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bcy3p"]
 transparency = 1
 cull_mode = 2
-albedo_texture = ExtResource("9_gmkiy")
+albedo_texture = ExtResource("10_mw147")
 
-[sub_resource type="QuadMesh" id="QuadMesh_p643i"]
-material = SubResource("StandardMaterial3D_fwbd6")
+[sub_resource type="QuadMesh" id="QuadMesh_fwbd6"]
+material = SubResource("StandardMaterial3D_bcy3p")
 size = Vector2(0.78, 2.05)
 
-[node name="Fornalha" type="Node3D" unique_id=1241572199]
-script = ExtResource("1_4isy8")
-musica = ExtResource("2_so3h3")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_p643i"]
+render_priority = 0
+shader = ExtResource("9_2vy2x")
+shader_parameter/cor_ferro = null
+shader_parameter/cor_ferrugem = null
+shader_parameter/cor_ferrugem_clara = null
+shader_parameter/ferrugem = null
+shader_parameter/escala = null
+shader_parameter/assentar = null
 
-[node name="Jogador" type="CharacterBody3D" parent="." unique_id=323186372]
+[sub_resource type="CylinderMesh" id="CylinderMesh_m62y6"]
+top_radius = 0.045
+bottom_radius = 0.06
+height = 3.5
+radial_segments = 10
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_81x5a"]
+top_radius = 0.032
+bottom_radius = 0.032
+height = 1.0
+radial_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h501x"]
+transparency = 1
+cull_mode = 2
+albedo_texture = ExtResource("10_mw147")
+
+[sub_resource type="QuadMesh" id="QuadMesh_00ud5"]
+material = SubResource("StandardMaterial3D_h501x")
+size = Vector2(0.78, 2.05)
+
+[node name="Fornalha" type="Node3D" unique_id=513100380]
+script = ExtResource("1_so3h3")
+musica = ExtResource("2_x87dg")
+
+[node name="Jogador" type="CharacterBody3D" parent="." unique_id=1987886655]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 6.2)
-script = ExtResource("3_x87dg")
+script = ExtResource("3_0g3bd")
 
-[node name="Corpo" type="CollisionShape3D" parent="Jogador" unique_id=1238169158]
+[node name="Corpo" type="CollisionShape3D" parent="Jogador" unique_id=1632792572]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
-shape = SubResource("CapsuleShape3D_sumuu")
+shape = SubResource("CapsuleShape3D_sp8qb")
 
-[node name="Camara" type="Camera3D" parent="Jogador" unique_id=712914463]
+[node name="Camara" type="Camera3D" parent="Jogador" unique_id=222404568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, 0)
 current = true
 fov = 58.0
 
-[node name="Corredor" type="Node3D" parent="." unique_id=1750021043]
+[node name="Corredor" type="Node3D" parent="." unique_id=85867491]
 
-[node name="Chao" type="StaticBody3D" parent="Corredor" unique_id=1265097932]
+[node name="Chao" type="StaticBody3D" parent="Corredor" unique_id=1905330649]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, -0.15, 3.6)
 
-[node name="Forma" type="CollisionShape3D" parent="Corredor/Chao" unique_id=1803634222]
-shape = SubResource("BoxShape3D_77jdi")
-
-[node name="Esquerda" type="StaticBody3D" parent="Corredor" unique_id=366121246]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 1.2, 3.6)
-
-[node name="Forma" type="CollisionShape3D" parent="Corredor/Esquerda" unique_id=265240298]
-shape = SubResource("BoxShape3D_sp8qb")
-
-[node name="Direita" type="StaticBody3D" parent="Corredor" unique_id=988078133]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.2, 3.6)
-
-[node name="Forma" type="CollisionShape3D" parent="Corredor/Direita" unique_id=1943910913]
+[node name="Forma" type="CollisionShape3D" parent="Corredor/Chao" unique_id=875684847]
 shape = SubResource("BoxShape3D_clqt3")
 
-[node name="Fundo" type="StaticBody3D" parent="Corredor" unique_id=1914493029]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 2.3)
+[node name="Esquerda" type="StaticBody3D" parent="Corredor" unique_id=784300402]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 1.2, 3.6)
 
-[node name="Forma" type="CollisionShape3D" parent="Corredor/Fundo" unique_id=1069682085]
+[node name="Forma" type="CollisionShape3D" parent="Corredor/Esquerda" unique_id=1191047882]
 shape = SubResource("BoxShape3D_24jri")
 
-[node name="Atras" type="StaticBody3D" parent="Corredor" unique_id=1909826194]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 7.4)
+[node name="Direita" type="StaticBody3D" parent="Corredor" unique_id=2003900426]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.2, 3.6)
 
-[node name="Forma" type="CollisionShape3D" parent="Corredor/Atras" unique_id=1296981616]
+[node name="Forma" type="CollisionShape3D" parent="Corredor/Direita" unique_id=868782390]
 shape = SubResource("BoxShape3D_sasjo")
 
-[node name="Chao" type="MeshInstance3D" parent="." unique_id=321777507]
+[node name="Fundo" type="StaticBody3D" parent="Corredor" unique_id=785609345]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 2.3)
+
+[node name="Forma" type="CollisionShape3D" parent="Corredor/Fundo" unique_id=1684226387]
+shape = SubResource("BoxShape3D_23ijq")
+
+[node name="Atras" type="StaticBody3D" parent="Corredor" unique_id=1815524649]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 7.4)
+
+[node name="Forma" type="CollisionShape3D" parent="Corredor/Atras" unique_id=1999068205]
+shape = SubResource("BoxShape3D_c4fn1")
+
+[node name="Chao" type="MeshInstance3D" parent="." unique_id=633293275]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 3.3)
-material_override = SubResource("StandardMaterial3D_23ijq")
-mesh = SubResource("PlaneMesh_c4fn1")
+material_override = SubResource("StandardMaterial3D_i5t2h")
+mesh = SubResource("PlaneMesh_rrl8t")
 
-[node name="SigiloDoChao" type="MeshInstance3D" parent="." unique_id=1054755330]
+[node name="SigiloDoChao" type="MeshInstance3D" parent="." unique_id=96315362]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.5, 0.006, 2.6)
-mesh = SubResource("QuadMesh_rrl8t")
-
-[node name="ParedeEsquerda" type="MeshInstance3D" parent="." unique_id=528026271]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6, 2.7, 3.3)
 mesh = SubResource("QuadMesh_at1vf")
 
-[node name="ParedeDireita" type="MeshInstance3D" parent="." unique_id=1046824534]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 3, 2.7, 3.3)
+[node name="ParedeEsquerda" type="MeshInstance3D" parent="." unique_id=1725688619]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6, 2.7, 3.3)
 mesh = SubResource("QuadMesh_pbbmi")
 
-[node name="ParedeAtras" type="MeshInstance3D" parent="." unique_id=466726039]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 2.7, -0.9)
+[node name="ParedeDireita" type="MeshInstance3D" parent="." unique_id=360228222]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 3, 2.7, 3.3)
 mesh = SubResource("QuadMesh_t4oqo")
 
-[node name="fornalha" type="Node3D" parent="." unique_id=350307604 instance=ExtResource("6_hn8tv")]
-
-[node name="Baphomet" type="MeshInstance3D" parent="." unique_id=1579350353]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 3.75, 0.05)
+[node name="ParedeAtras" type="MeshInstance3D" parent="." unique_id=1246340941]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 2.7, -0.9)
 mesh = SubResource("QuadMesh_xpqns")
 
-[node name="Bandeiras" type="Node3D" parent="." unique_id=1027672915]
+[node name="Teto" type="MeshInstance3D" parent="." unique_id=826194202]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -1.5, 5.4, 3.3)
+material_override = SubResource("ShaderMaterial_l70n5")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_of1bw")
 
-[node name="Bandeira1" type="Node3D" parent="Bandeiras" unique_id=712814276]
+[node name="fornalha" type="Node3D" parent="." unique_id=350307604 instance=ExtResource("7_1f6v6")]
+
+[node name="Baphomet" type="MeshInstance3D" parent="." unique_id=326855225]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 3.75, 0.05)
+mesh = SubResource("QuadMesh_0p5lt")
+
+[node name="Bandeiras" type="Node3D" parent="." unique_id=346729368]
+
+[node name="Bandeira1" type="Node3D" parent="Bandeiras" unique_id=185473692]
 transform = Transform3D(0.9135454, 0, 0.40673664, 0, 1, 0, -0.40673664, 0, 0.9135454, -3.6, 0, 0.4)
 
-[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=341397951]
+[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=1952241306]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
-material_override = SubResource("ShaderMaterial_l70n5")
-mesh = SubResource("CylinderMesh_of1bw")
+material_override = SubResource("ShaderMaterial_b67c1")
+mesh = SubResource("CylinderMesh_pk6lk")
 
-[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=59588692]
+[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=989625855]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 3.44, 0)
-material_override = SubResource("ShaderMaterial_l70n5")
-mesh = SubResource("CylinderMesh_41une")
-
-[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=1992035819]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.375, 0.02)
-mesh = SubResource("QuadMesh_b67c1")
-
-[node name="Bandeira2" type="Node3D" parent="Bandeiras" unique_id=1360041835]
-transform = Transform3D(0.9135454, 0, -0.40673664, 0, 1, 0, 0.40673664, 0, 0.9135454, 0.6, 0, 0.4)
-
-[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=739397168]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
-material_override = SubResource("ShaderMaterial_pk6lk")
+material_override = SubResource("ShaderMaterial_b67c1")
 mesh = SubResource("CylinderMesh_qdg03")
 
-[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=556471587]
-transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 3.44, 0)
-material_override = SubResource("ShaderMaterial_pk6lk")
-mesh = SubResource("CylinderMesh_0jcwy")
-
-[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=1473823032]
+[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=874856804]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.375, 0.02)
-mesh = SubResource("QuadMesh_l502i")
+mesh = SubResource("QuadMesh_vk275")
 
-[node name="Bandeira3" type="Node3D" parent="Bandeiras" unique_id=1008735419]
-transform = Transform3D(0.9781476, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.9781476, -3.5, 0, 2.2)
+[node name="Bandeira2" type="Node3D" parent="Bandeiras" unique_id=1006270290]
+transform = Transform3D(0.9135454, 0, -0.40673664, 0, 1, 0, 0.40673664, 0, 0.9135454, 0.6, 0, 0.4)
 
-[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=1654005905]
+[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=825397769]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
-material_override = SubResource("ShaderMaterial_2d1rc")
+material_override = SubResource("ShaderMaterial_l502i")
+mesh = SubResource("CylinderMesh_2d1rc")
+
+[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=1819170573]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 3.44, 0)
+material_override = SubResource("ShaderMaterial_l502i")
 mesh = SubResource("CylinderMesh_8lm7n")
 
-[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=1364754495]
-transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 3.44, 0)
-material_override = SubResource("ShaderMaterial_2d1rc")
-mesh = SubResource("CylinderMesh_bcy3p")
-
-[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=1448409843]
+[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=578476775]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.375, 0.02)
-mesh = SubResource("QuadMesh_p643i")
+mesh = SubResource("QuadMesh_fwbd6")
 
-[node name="Cruz" type="Node3D" parent="." unique_id=1195807499]
+[node name="Bandeira3" type="Node3D" parent="Bandeiras" unique_id=1589516434]
+transform = Transform3D(0.9781476, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.9781476, -3.5, 0, 2.2)
+
+[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=1588951670]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+material_override = SubResource("ShaderMaterial_p643i")
+mesh = SubResource("CylinderMesh_m62y6")
+
+[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=155773286]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 3.44, 0)
+material_override = SubResource("ShaderMaterial_p643i")
+mesh = SubResource("CylinderMesh_81x5a")
+
+[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=1947969820]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.375, 0.02)
+mesh = SubResource("QuadMesh_00ud5")
+
+[node name="Cruz" type="Node3D" parent="." unique_id=1585819619]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.3, 4.3)
 visible = false
 
-[node name="Modelo" type="Node3D" parent="Cruz" unique_id=1268432694 instance=ExtResource("10_2vy2x")]
+[node name="Modelo" type="Node3D" parent="Cruz" unique_id=1268432694 instance=ExtResource("11_sumuu")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
 
-[node name="Dancantes" type="Node3D" parent="." unique_id=523843210]
+[node name="Dancantes" type="Node3D" parent="." unique_id=126451851]
 
-[node name="Forma1" type="Node3D" parent="Dancantes" unique_id=1750577528]
-transform = Transform3D(0.80140454, 0, 0.5981227, 0, 1, 0, -0.5981227, 0, 0.80140454, -2.6, 0, 1.1)
-script = ExtResource("11_mw147")
+[node name="Forma1" type="Node3D" parent="Dancantes" unique_id=2045989044]
+transform = Transform3D(0.99406004, 0, 0.108833134, 0, 1, 0, -0.108833134, 0, 0.99406004, -2.6, 0, 1.1)
+script = ExtResource("12_77jdi")
 semente = 0.83
 ritmo = 0.72
 tamanho = 0.92
 eco = 0.022
 
-[node name="Forma2" type="Node3D" parent="Dancantes" unique_id=1455317271]
-transform = Transform3D(0.8953675, 0, 0.44532803, 0, 1, 0, -0.44532803, 0, 0.8953675, -0.4, 0, 1.1)
-script = ExtResource("11_mw147")
+[node name="Forma2" type="Node3D" parent="Dancantes" unique_id=261032110]
+transform = Transform3D(0.79767746, 0, 0.6030843, 0, 1, 0, -0.6030843, 0, 0.79767746, -0.4, 0, 1.1)
+script = ExtResource("12_77jdi")
 semente = 3.5300000000000002
 ritmo = 1.0899999999999999
 tamanho = 1.1500000000000001
 espelhar = true
 eco = 0.033
 
-[node name="Forma3" type="Node3D" parent="Dancantes" unique_id=457984369]
-transform = Transform3D(0.9994929, 0, 0.031842455, 0, 1, 0, -0.031842455, 0, 0.9994929, -3, 0, 1.9)
-script = ExtResource("11_mw147")
+[node name="Forma3" type="Node3D" parent="Dancantes" unique_id=668872817]
+transform = Transform3D(0.83007365, 0, 0.5576538, 0, 1, 0, -0.5576538, 0, 0.83007365, -3, 0, 1.9)
+script = ExtResource("12_77jdi")
 semente = 6.23
 ritmo = 0.9099999999999999
 tamanho = 1.12
 eco = 0.023999999999999997
 
-[node name="Forma4" type="Node3D" parent="Dancantes" unique_id=210287628]
-transform = Transform3D(0.8276828, 0, -0.56119627, 0, 1, 0, 0.56119627, 0, 0.8276828, 0, 0, 1.9)
-script = ExtResource("11_mw147")
+[node name="Forma4" type="Node3D" parent="Dancantes" unique_id=1783365099]
+transform = Transform3D(0.99108726, 0, 0.13321438, 0, 1, 0, -0.13321438, 0, 0.99108726, 0, 0, 1.9)
+script = ExtResource("12_77jdi")
 semente = 8.930000000000001
 ritmo = 0.7299999999999998
 tamanho = 1.09
 espelhar = true
 eco = 0.035
 
-[node name="Forma5" type="Node3D" parent="Dancantes" unique_id=2024694304]
-transform = Transform3D(0.97416586, 0, 0.22583376, 0, 1, 0, -0.22583376, 0, 0.97416586, -2.92, 0, 2.7)
-script = ExtResource("11_mw147")
+[node name="Forma5" type="Node3D" parent="Dancantes" unique_id=2050976972]
+transform = Transform3D(0.9797893, 0, -0.20003217, 0, 1, 0, 0.20003217, 0, 0.9797893, -2.92, 0, 2.7)
+script = ExtResource("12_77jdi")
 semente = 11.63
 ritmo = 1.0999999999999999
 tamanho = 1.06
 eco = 0.025999999999999995
 
-[node name="Forma6" type="Node3D" parent="Dancantes" unique_id=815774427]
-transform = Transform3D(0.91241175, 0, 0.40927348, 0, 1, 0, -0.40927348, 0, 0.91241175, -0.08, 0, 2.7)
-script = ExtResource("11_mw147")
+[node name="Forma6" type="Node3D" parent="Dancantes" unique_id=861846197]
+transform = Transform3D(0.96120286, 0, 0.27584237, 0, 1, 0, -0.27584237, 0, 0.96120286, -0.08, 0, 2.7)
+script = ExtResource("12_77jdi")
 semente = 14.33
 ritmo = 0.9199999999999999
 tamanho = 1.0300000000000002

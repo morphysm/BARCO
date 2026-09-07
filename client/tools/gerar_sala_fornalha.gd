@@ -44,6 +44,7 @@ func _initialize() -> void:
 	_corredor()
 	_chao()
 	_paredes()
+	_teto()
 	_fornalha()
 	_baphomet()
 	_bandeiras()
@@ -181,6 +182,26 @@ func _paredes() -> void:
 	q3.material = _material_de_imagem(REDSKIN, false)
 	atras.mesh = q3
 	_por(atras, "ParedeAtras", Vector3(-1.5, ALTURA * 0.5, -0.9))
+
+
+## O teto: o buraco negro e as estrelas negras de Carcosa.
+##
+## E um quad virado para baixo com o `buraco_negro.gdshader`. Os valores
+## todos — horizonte, anel, rotacao, arrasto, densidade, nevoa, cores —
+## estao no material e mexem-se no inspetor.
+func _teto() -> void:
+	var t := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2(LARGURA, FUNDO)
+	t.mesh = q
+	var m := ShaderMaterial.new()
+	m.shader = load("res://shaders/buraco_negro.gdshader")
+	t.material_override = m
+	t.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Virado para baixo: um quad olha para +z, e rodar 90 em x poe-lhe a
+	# cara em -y.
+	t.rotation_degrees = Vector3(90, 0, 0)
+	_por(t, "Teto", Vector3(-1.5, ALTURA, FUNDO * 0.5 - 1.2))
 
 
 func _fornalha() -> void:
