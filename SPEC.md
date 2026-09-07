@@ -28,7 +28,16 @@ before it.
 the `irmandade` — `Exu Caveira`, `Rosa Negra`, `Exu Aranha`. This is the
 only content at first launch, and passing it is what opens the
 `assentamento`. The threshold `firmeza` per `ponto`, and whether all
-three must be traced in one sitting, are **not decided**.
+three must be traced in one sitting, are **not decided** —
+`Passagem.FIRMEZA_MINIMA` is 0 for now, so naming the entity is enough.
+A `face_indefinida` never counts, and an `abandonado` less so: the phase
+asks for the three signatures, not three attempts.
+
+Between 1 and 2 there is a passage: **the eclipse.** A huge sun, the moon
+crossing it, the black sun, and the light going out — then the
+`assentamento`. It runs in real time and cannot be skipped: no button, no
+tap shortens it, like `permanencia` (§7). It is seen once. Sound plays
+over it (`scenes/eclipse.tscn`, `shaders/eclipse.gdshader`).
 
 **2. The `assentamento`.** The room is now reachable. The person makes
 `oferendas` and `pedidos` in it. This is where a `trabalho` runs (§7),

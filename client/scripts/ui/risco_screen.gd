@@ -41,6 +41,15 @@ var _fechado := false
 ## Indice da assinatura mostrada no guia; -1 = guia desligado.
 var _guiado := 0
 
+## As marcas da primeira fase, e o compasso de espera antes do eclipse.
+var _passagem: Node2D
+var _a_passar := false
+var _espera := 0.0
+
+## Quanto se ve o ultimo risco antes de o sol comecar a ser tapado. O
+## resultado tem de assentar; a passagem nao lhe rouba o lugar.
+const ESPERA_ATE_AO_ECLIPSE := 2.6
+
 ## SPEC.md §6.2: quem resolve a `hora_asmodeica` e o servidor, a partir de
 ## UTC mais `profiles.tz`. O cliente so exibe o que o servidor reporta.
 ## Enquanto nao ha servidor, isto fica falso — e a chave de depuracao
@@ -97,6 +106,13 @@ func _montar() -> void:
 	_lugar.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	folha.add_child(_lugar)
 
+	# Quantas assinaturas ja foram nomeadas. Marcas, nao numeros nem
+	# nomes: a fase mede-se, mas o app nao diz quem falta (SPEC.md §5.1 —
+	# nunca ha lista).
+	_passagem = Node2D.new()
+	_passagem.draw.connect(_desenhar_passagem)
+	folha.add_child(_passagem)
+
 	var barra := HBoxContainer.new()
 	barra.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	barra.offset_top = -110
@@ -130,6 +146,8 @@ func _ajustar_campo() -> void:
 		FAIXA_TOPO + (util - ref.y * escala) * 0.5)
 	_marcas.queue_redraw()
 	_guia.queue_redraw()
+	if _passagem != null:
+		_passagem.queue_redraw()
 
 
 # --- captura -----------------------------------------------------------
@@ -188,6 +206,51 @@ func _fechar_risco() -> void:
 	_fechado = true
 	var r := RiscoScoring.avaliar(_tracos, irmandade, _hora_asmodeica)
 	_rotulo.text = _ler(r)
+
+	# Primeira fase (SPEC.md §1.1). So conta o risco que NOMEIA: uma
+	# `face_indefinida` nao avanca a fase, e um `abandonado` menos ainda.
+	if not r.indefinida and not r.abandonado and r.entidade_slug != "":
+		Passagem.marcar(r.entidade_slug, r.firmeza)
+		_passagem.queue_redraw()
+		if Passagem.aberta(irmandade):
+			_a_passar = true
+			_espera = 0.0
+			set_process(true)
+
+
+## Depois da terceira assinatura, o eclipse. Nao ha botao: quem riscou as
+## tres atravessa, e daqui nao se volta.
+func _process(delta: float) -> void:
+	if not _a_passar:
+		set_process(false)
+		return
+	_espera += delta
+	if _espera >= ESPERA_ATE_AO_ECLIPSE:
+		_a_passar = false
+		set_process(false)
+		get_tree().change_scene_to_file("res://scenes/eclipse.tscn")
+
+
+## Uma marca por assinatura da `irmandade`: cheia se ja foi nomeada, so o
+## contorno se ainda nao.
+func _desenhar_passagem() -> void:
+	if irmandade == null:
+		return
+	var feitos := Passagem.riscados()
+	var n := irmandade.entidades.size()
+	if n == 0:
+		return
+	var vista := get_viewport_rect().size
+	var passo := 26.0
+	var y := vista.y - 244.0
+	var x := vista.x * 0.5 - passo * float(n - 1) * 0.5
+	for i in n:
+		var e: Entidade = irmandade.entidades[i]
+		var centro := Vector2(x + passo * float(i), y)
+		if e != null and feitos.has(e.slug):
+			_passagem.draw_circle(centro, 4.5, COR_TINTA)
+		else:
+			_passagem.draw_arc(centro, 4.5, 0.0, TAU, 18, COR_GUIA, 1.5, true)
 
 
 ## Diz o que foi feito, nunca o que vai acontecer (CONTENT_pt.md §2).
