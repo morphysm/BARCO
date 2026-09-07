@@ -282,7 +282,7 @@ func _responder_sim() -> void:
 	_fase = CRUZ_POUSADA
 	_painel.get_node("Respostas").queue_free()
 	# TODO(CONTENT.pt.md): texto de A.C. Este e estrutural.
-	_dito.text = "duplo clique pegue a cruz"
+	_dito.text = "olha com o rato · anda com W · duplo clique pegue a cruz"
 	_por_a_cruz()
 	# So agora se anda. Durante a pergunta o rato e para responder, e uma
 	# sala que se pode percorrer antes de responder convida a adiar.
@@ -290,7 +290,7 @@ func _responder_sim() -> void:
 	if j != null:
 		j.solto = true
 	if _mira != null:
-		_mira.visible = _a_andar()
+		_mira.visible = true
 
 
 # --- a cruz ------------------------------------------------------------
@@ -348,19 +348,26 @@ func _input(evento: InputEvent) -> void:
 	var e := evento as InputEventMouseButton
 	if not e.pressed or e.button_index != MOUSE_BUTTON_LEFT:
 		return
-	# A andar, depois de largar o rato com ESC, o primeiro clique so o
-	# volta a prender — nao age no mundo.
-	if _a_andar() and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+	# Depois de largar o rato com ESC, o primeiro clique so o volta a
+	# prender — nao age no mundo.
+	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		return
 	if not e.double_click:
 		return
 
-	var onde: Vector2 = (get_viewport().get_visible_rect().size * 0.5
-		if _a_andar() else e.position)
+	# Aponta-se com a MIRA: o rato esta preso a olhar em volta, entao o
+	# ponteiro nao existe.
+	var onde: Vector2 = get_viewport().get_visible_rect().size * 0.5
 
 	if _fase == CRUZ_POUSADA:
-		if _perto_no_ecra(_cruz.global_position, onde, alcance_da_cruz):
+		# Na mira OU ao alcance do braco. So a mira nao chegava: anda-se
+		# em frente, passa-se a cruz, e ela fica ATRAS — e o que esta
+		# atras nunca entra na mira.
+		var cam := get_viewport().get_camera_3d()
+		var encostado: bool = (cam != null
+			and cam.global_position.distance_to(_cruz.global_position) <= perto_da_cruz)
+		if encostado or _perto_no_ecra(_cruz.global_position, onde, alcance_da_cruz):
 			_pegar_a_cruz()
 	elif _fase == CRUZ_NA_MAO:
 		if _perto_no_ecra(boca, onde, alcance_da_boca):
@@ -368,11 +375,6 @@ func _input(evento: InputEvent) -> void:
 		else:
 			# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
 			_dito.text = "duplo clique no forno"
-
-
-func _a_andar() -> bool:
-	var j := get_node_or_null("Jogador")
-	return j != null and j.get("andar")
 
 
 ## Este ponto do mundo esta a menos de `raio` pixeis de `onde`?
