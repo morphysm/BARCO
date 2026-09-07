@@ -15,7 +15,9 @@ render_mode unshaded, blend_mix, depth_draw_never, cull_disabled;
 uniform float horizonte : hint_range(0.01, 0.45) = 0.085;
 /// O anel de luz que fica preso a borda.
 uniform float anel : hint_range(0.0, 0.2) = 0.026;
-uniform vec3 cor_do_anel : source_color = vec3(1.0, 0.72, 0.34);
+/// Prata, nao ouro: o anel e luz a ser torcida, nao lume. O amarelo
+/// puxava-o para o lado da fornalha, e sao coisas diferentes.
+uniform vec3 cor_do_anel : source_color = vec3(0.78, 0.82, 0.88);
 /// Quao depressa tudo roda.
 uniform float rotacao : hint_range(-2.0, 2.0) = 0.12;
 /// Quanto o centro roda mais depressa do que a borda.
