@@ -1,6 +1,8 @@
 ## O caminho ate ao `assentamento` (SPEC.md §1.1).
 ##
-## Tres `pontos`, um de cada vez, sempre com o guia por baixo. Risca-se o
+## Tres `pontos` primeiro, um de cada vez, sempre com o guia por baixo; a
+## `fornalha` a seguir, uma vez so.
+## Risca-se o
 ## que esta a frente e pergunta-se ao guia: posso passar? Se o desenho
 ## estiver riscado o suficiente, o guia poe o seguinte; senao diz que
 ## ainda nao.
@@ -17,6 +19,11 @@ class_name Passagem
 extends RefCounted
 
 const REGISTO := "user://passagem.json"
+
+## A iris que fecha na `fornalha` tem de abrir no `assentamento`. Vive so
+## na memoria e so entre as duas cenas: nao se guarda, porque nao e
+## estado do ritual — e o corte entre dois planos.
+static var iris_a_abrir := false
 
 ## Quanto de um `ponto` tem de estar riscado para se passar ao seguinte.
 ##
@@ -57,6 +64,17 @@ static func passar(slug: String) -> void:
 ## Riscaram-se os tres?
 static func completa(irm: Irmandade) -> bool:
 	return proximo(irm) == null
+
+
+## Ja se queimou o passado na `fornalha`? Atravessa-se uma vez.
+static func queimou() -> bool:
+	return _ler().get("queimou", false)
+
+
+static func queimar() -> void:
+	var d := _ler()
+	d["queimou"] = true
+	_guardar(d)
 
 
 static func _ler() -> Dictionary:

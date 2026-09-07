@@ -53,24 +53,45 @@ not enter (A.C.).
 Crossed once. After the third the app opens on the `assentamento`.
 
 Between 1 and 2 there is a passage: **the eclipse.** A huge sun, the moon
-crossing it, the black sun, and the light going out — then the
-`assentamento`. It runs in real time and cannot be skipped: no button, no
-tap shortens it, like `permanencia` (§7). It is seen once. Sound plays
-over it (`scenes/eclipse.tscn`, `shaders/eclipse.gdshader`).
+crossing it, the black sun, and the light going out. It runs in real time
+and cannot be skipped: no button, no tap shortens it, like `permanencia`
+(§7). It is seen once. Sound plays over it (`scenes/eclipse.tscn`,
+`shaders/eclipse.gdshader`).
 
-**2. The `assentamento`.** The room is now reachable. The person makes
+**2. The `fornalha` — leaving the past behind.** The black sun opens onto
+a dark room: a Baphomet image, the morphysm sigil on the floor, and one
+furnace. A question is put — *Você renega o teu passado e tudo falso que
+você serviu?* — with one answer, **SIM**. There is no "no": the person
+who reached this room traced the three `pontos` and crossed the eclipse,
+and the app does not ask twice.
+
+SIM puts a cross in front of them. Double-click takes it, they carry it
+to the furnace mouth, and another double-click throws it in. A fireball
+grows, the music enters, and when the music ends an iris closes over the
+fire and opens again on the `assentamento` — one iris across two scenes.
+
+Crossed once, and marked at the throw, not at the end: whoever closes the
+app mid-fire has already burnt what they came to burn.
+
+The furnace is one bay of the Exu Caveira furnace bank from *Iovana Is
+DEAD*, copied without alteration by `tools/tirar_fornalha.py` — the
+source project is read-only and never touched. Four of the five bays are
+simply not referenced; `Bay2` is the one with an open door.
+
+**3. The `assentamento`.** The room is now reachable. The person makes
 `oferendas` and `pedidos` in it. This is where a `trabalho` runs (§7),
 and where everything accumulates and never leaves (§8.1).
 
-**3. The `fornalha`.** An exercise in renewal: the person names symbols
-of their own past and sets them on fire. Distinct from the `pedido`,
-which asks forward and burns over seven days — the `fornalha` is about
-what is behind, and it is the person's own material, not a petition to
-anyone. Nothing of it is built. What burns, how it is named, how long it
-takes, and what the `caderno` records of it are all **not decided**.
-
 The `sacrificio` (§8.2) is not one of the three. Where it sits relative
-to them is **not decided**.
+to them is **not decided**. So is what the `caderno` records of the
+`fornalha`.
+
+Two assets are A.C.'s and still missing: the Baphomet image (drop the PNG
+in `client/resources/imagens/`, set `baphomet` on the scene root) and the
+music (`client/resources/audio/`, set `musica`). Both have working
+placeholders; neither is authored content of mine. The iris waits for the
+music to finish, so no duration is written down anywhere — swapping the
+file is enough.
 
 ---
 

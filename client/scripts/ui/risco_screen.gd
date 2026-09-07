@@ -60,9 +60,11 @@ var _hora_asmodeica := false
 
 
 func _ready() -> void:
-	# Atravessa-se uma vez. Quem ja passou abre no `assentamento`.
+	# Atravessa-se uma vez. Quem ja riscou os tres nao volta aqui: vai
+	# para onde ficou — a `fornalha`, se ainda nao queimou o passado; o
+	# `assentamento`, se ja queimou.
 	if not Engine.is_editor_hint() and Passagem.completa(irmandade):
-		call_deferred("_ir_para_o_assentamento")
+		call_deferred("_seguir_em_frente")
 		return
 	if irmandade == null:
 		irmandade = load("res://resources/irmandades/calunga_pequena.tres")
@@ -71,8 +73,9 @@ func _ready() -> void:
 	_ajustar_campo()
 
 
-func _ir_para_o_assentamento() -> void:
-	get_tree().change_scene_to_file("res://scenes/assentamento.tscn")
+func _seguir_em_frente() -> void:
+	get_tree().change_scene_to_file("res://scenes/fornalha.tscn"
+		if not Passagem.queimou() else "res://scenes/assentamento.tscn")
 
 
 func _montar() -> void:

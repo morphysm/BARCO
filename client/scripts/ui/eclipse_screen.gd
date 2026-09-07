@@ -3,7 +3,8 @@
 ##
 ## E o que costura a primeira fase a segunda (SPEC.md §1.1): so se ve
 ## depois de os tres `pontos` terem sido riscados, e uma vez atravessada
-## nao se volta a ver.
+## nao se volta a ver. Do outro lado dela esta a sala da `fornalha`, nao
+## o `assentamento`.
 ##
 ## Nao se salta. Nao ha botao, nao ha toque que a apresse: e uma travessia
 ## em tempo real, como a `permanencia` (SPEC.md §7). O que ela custa e o
@@ -68,8 +69,8 @@ func _process(delta: float) -> void:
 		_entrar()
 
 
-## Entrar no `assentamento`. Daqui nao se volta ao risco.
+## Entrar na sala da `fornalha`. Daqui nao se volta ao risco.
 func _entrar() -> void:
 	if Engine.is_editor_hint():
 		return
-	get_tree().change_scene_to_file("res://scenes/assentamento.tscn")
+	get_tree().change_scene_to_file("res://scenes/fornalha.tscn")

@@ -156,7 +156,38 @@ func _ready() -> void:
 		_por_a_andar()
 		_carregar_pedidos()
 	_vestir()
+	if not Engine.is_editor_hint() and Passagem.iris_a_abrir:
+		Passagem.iris_a_abrir = false
+		_abrir_iris()
 	set_process(true)
+
+
+## A iris que fechou na `fornalha` abre aqui. E o mesmo corte, visto do
+## outro lado: fecha-se sobre o fogo e abre-se sobre o `assentamento`.
+func _abrir_iris() -> void:
+	var camada := CanvasLayer.new()
+	camada.layer = 100
+	add_child(camada)
+	var pano := ColorRect.new()
+	var m := ShaderMaterial.new()
+	m.shader = load("res://shaders/iris.gdshader")
+	m.set_shader_parameter("abertura", 0.0)
+	pano.material = m
+	pano.set_anchors_preset(Control.PRESET_FULL_RECT)
+	pano.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	camada.add_child(pano)
+
+	var v := get_viewport().get_visible_rect().size
+	m.set_shader_parameter("proporcao", v.x / maxf(v.y, 1.0))
+	var t := create_tween()
+	t.tween_method(
+		func(a: float): m.set_shader_parameter("abertura", a),
+		0.0, 1.0, ABERTURA_DA_IRIS)
+	t.tween_callback(camada.queue_free)
+
+
+## Quanto a iris demora a abrir a chegada.
+const ABERTURA_DA_IRIS := 3.4
 
 
 ## Mantem as folhas do menu a arder enquanto o menu esta aberto.

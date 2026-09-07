@@ -10,3 +10,12 @@ inspetor de `scenes/eclipse.tscn`. Se a duracao mudar, muda tambem
 
 Sem `som` nenhum a passagem corre em silencio. Melhor calada do que com
 o som errado.
+
+## fornalha
+
+`fornalha_provisorio.ogg` — o mesmo caso: gerado, provisorio, so para se
+sentir o compasso. A musica da fornalha e de A.C. e entra em
+`scenes/fornalha.tscn`, no campo `musica`.
+
+A cena espera pelo FIM da musica para abrir a iris. Trocar o ficheiro
+chega; nao ha duracao escrita a mao em lado nenhum.

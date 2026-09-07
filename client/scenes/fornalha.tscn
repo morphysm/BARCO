@@ -1,0 +1,42 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/fornalha_screen.gd" id="1_forn"]
+[ext_resource type="PackedScene" path="res://resources/modelos/fornalha.glb" id="2_bank"]
+[ext_resource type="AudioStream" path="res://resources/audio/fornalha_provisorio.ogg" id="3_som"]
+[ext_resource type="Texture2D" uid="uid://teo1omts4txa" path="res://resources/imagens/morphysm sigil STONE.png" id="4_sig"]
+
+[sub_resource type="StandardMaterial3D" id="Chao"]
+albedo_color = Color(0.045, 0.042, 0.04, 1)
+roughness = 1.0
+
+[sub_resource type="PlaneMesh" id="ChaoMalha"]
+size = Vector2(24, 24)
+
+[sub_resource type="StandardMaterial3D" id="SigiloMat"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 1)
+albedo_texture = ExtResource("4_sig")
+roughness = 1.0
+cull_mode = 2
+
+[sub_resource type="QuadMesh" id="SigiloMalha"]
+material = SubResource("SigiloMat")
+size = Vector2(1.8, 1.8)
+
+[node name="Fornalha" type="Node3D"]
+script = ExtResource("1_forn")
+musica = ExtResource("3_som")
+
+[node name="Camara" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.99471, -0.10279, 0, 0.10279, 0.99471, -1.5, 1.95, 6.1)
+fov = 52.0
+
+[node name="Chao" type="MeshInstance3D" parent="."]
+material_override = SubResource("Chao")
+mesh = SubResource("ChaoMalha")
+
+[node name="fornalha" parent="." instance=ExtResource("2_bank")]
+
+[node name="Sigilo" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.3711388e-08, 1, 0, -1, -4.3711388e-08, -1.62, 0.004, 2.35)
+mesh = SubResource("SigiloMalha")
