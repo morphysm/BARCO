@@ -30,6 +30,7 @@ var _titulo: Label
 var _lugar: Label
 var _botao_fechar: Button
 var _botao_refazer: Button
+var _botao_atravessar: Button
 
 var _tracos: Array[PackedVector2Array] = []
 var _traco_atual: PackedVector2Array = PackedVector2Array()
@@ -44,16 +45,6 @@ var _fechado := false
 ## que esta a frente, e passa-se ao seguinte riscando este.
 var _ponto: Entidade
 
-## O compasso de espera entre o "podes" e o eclipse.
-var _a_passar := false
-var _espera := 0.0
-
-## Quanto se ve o ultimo risco antes de o sol comecar a ser tapado. O
-## resultado tem de assentar; a passagem nao lhe rouba o lugar.
-##
-## Eram 2.6 e nao chegavam: A.C. viu aparecer alguma coisa em baixo e nao
-## teve tempo de a ler. E a unica vez que esta frase aparece.
-const ESPERA_ATE_AO_ECLIPSE := 5.0
 
 ## O tamanho da letra do rotulo, e o tamanho a que a ultima frase se le.
 ## Maior: e o fim da primeira fase e diz-se uma vez so.
@@ -144,6 +135,14 @@ func _montar() -> void:
 	barra.add_child(_botao_fechar)
 	barra.add_child(_botao_refazer)
 
+	# So aparece quando os tres estiverem riscados. Atravessar e
+	# irreversivel, e o que e irreversivel neste app faz-se com um gesto —
+	# nao acontece sozinho enquanto se olha.
+	# TODO(CONTENT.pt.md): rotulo definitivo e autoral.
+	_botao_atravessar = _botao("atravessar", _atravessar)
+	_botao_atravessar.visible = false
+	barra.add_child(_botao_atravessar)
+
 	# O ponto da vez. A ordem e a da `irmandade`.
 	_ponto = Passagem.proximo(irmandade)
 	_atualizar_rotulo_guia()
@@ -233,22 +232,17 @@ func _fechar_risco() -> void:
 	var seguinte := Passagem.proximo(irmandade)
 	if seguinte == null:
 		_rotulo.remove_theme_color_override("font_color")
-		# NAO deixar mudo. Ficavam 2.6 segundos de ecra parado sem uma
-		# palavra, e A.C. carregava outra vez a pensar que o botao nao
-		# tinha pegado — parecia que eram precisos dois cliques.
 		# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
 		#
 		# Maior do que o resto: em letra de rotulo ficava encostada ao
 		# nome do `reino` e aos botoes, e nao se lia.
 		_rotulo.add_theme_font_size_override("font_size", LETRA_DO_FIM)
 		_rotulo.text = "os três estão riscados"
-		# E desligar os botoes: um botao que ainda carrega mas ja nao faz
-		# nada diz a pessoa que ela e que fez mal.
-		_botao_fechar.disabled = true
-		_botao_refazer.disabled = true
-		_a_passar = true
-		_espera = 0.0
-		set_process(true)
+		# Os dois de riscar saem; fica o de atravessar. Nao ha relogio:
+		# espera-se o tempo que a pessoa quiser.
+		_botao_fechar.visible = false
+		_botao_refazer.visible = false
+		_botao_atravessar.visible = true
 		return
 
 	# Empurra para o seguinte: o guia troca de desenho e a pessoa
@@ -263,17 +257,9 @@ func _fechar_risco() -> void:
 	_rotulo.text = "agora o ponto de %s" % seguinte.nome
 
 
-## Riscado o terceiro, o eclipse. Nao ha botao: o resultado assenta e
-## atravessa-se, e daqui nao se volta.
-func _process(delta: float) -> void:
-	if not _a_passar:
-		set_process(false)
-		return
-	_espera += delta
-	if _espera >= ESPERA_ATE_AO_ECLIPSE:
-		_a_passar = false
-		set_process(false)
-		get_tree().change_scene_to_file("res://scenes/eclipse.tscn")
+## Atravessar. Daqui nao se volta: o eclipse ve-se uma vez.
+func _atravessar() -> void:
+	get_tree().change_scene_to_file("res://scenes/eclipse.tscn")
 
 
 ## Diz o que foi feito, nunca o que vai acontecer (CONTENT_pt.md §2).
