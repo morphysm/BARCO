@@ -41,12 +41,14 @@ func _initialize() -> void:
 	raiz.set_script(load("res://scripts/ui/fornalha_screen.gd"))
 
 	_camara()
+	_corredor()
 	_chao()
 	_paredes()
 	_fornalha()
 	_baphomet()
 	_bandeiras()
-	_lugares_das_formas()
+	_lugar_da_cruz()
+	_formas()
 
 	raiz.set("musica", load(MUSICA))
 	raiz.set("cruz", load("res://resources/modelos/cruz_pro_fogo.glb"))
@@ -73,13 +75,63 @@ func _por(no: Node3D, nome: String, onde: Vector3) -> Node3D:
 	return no
 
 
+## Quem anda. A camara vai nele, a altura dos olhos.
 func _camara() -> void:
+	var j := CharacterBody3D.new()
+	j.set_script(load("res://scripts/ui/jogador.gd"))
+	_por(j, "Jogador", Vector3(-1.5, 0.0, 6.2))
+
+	var forma := CollisionShape3D.new()
+	forma.name = "Corpo"
+	var capsula := CapsuleShape3D.new()
+	capsula.radius = 0.32
+	capsula.height = 1.7
+	forma.shape = capsula
+	forma.position = Vector3(0, 0.85, 0)
+	j.add_child(forma)
+	forma.owner = raiz
+
 	var c := Camera3D.new()
+	c.name = "Camara"
 	c.fov = 58.0
 	c.current = true
-	# De pe, a olhar para a boca do forno, ligeiramente de cima.
-	c.rotation_degrees = Vector3(-5.5, 0.0, 0.0)
-	_por(c, "Camara", Vector3(-1.5, 2.15, 7.4))
+	c.position = Vector3(0, 1.62, 0)
+	j.add_child(c)
+	c.owner = raiz
+
+
+## O corredor. Caixas a serio, que se veem e se arrastam no editor.
+##
+## Estreito de proposito: da para olhar em volta e nao da para passear.
+## Quatro muros invisiveis a formar uma faixa da entrada ate a fornalha.
+func _corredor() -> void:
+	var grupo := Node3D.new()
+	_por(grupo, "Corredor", Vector3.ZERO)
+	# nome, centro, tamanho
+	var muros := [
+		# O chao. Sem ele o jogador cai — e a cair passa POR BAIXO dos
+		# muros, que e como saía do corredor sem os tocar.
+		["Chao", Vector3(-1.5, -0.15, 3.6), Vector3(5.0, 0.3, 8.0)],
+		["Esquerda", Vector3(-3.5, 1.2, 3.6), Vector3(0.3, 2.4, 8.0)],
+		["Direita", Vector3(0.5, 1.2, 3.6), Vector3(0.3, 2.4, 8.0)],
+		# Nao ate a boca: encostado ao forno perde-se a sala inteira, e a
+		# sala e para se ver. Fica-se a uns dois metros e meio.
+		["Fundo", Vector3(-1.5, 1.2, 2.3), Vector3(4.3, 2.4, 0.3)],
+		["Atras", Vector3(-1.5, 1.2, 7.4), Vector3(4.3, 2.4, 0.3)],
+	]
+	for m in muros:
+		var corpo := StaticBody3D.new()
+		corpo.name = m[0]
+		grupo.add_child(corpo)
+		corpo.owner = raiz
+		corpo.position = m[1]
+		var f := CollisionShape3D.new()
+		f.name = "Forma"
+		var caixa := BoxShape3D.new()
+		caixa.size = m[2]
+		f.shape = caixa
+		corpo.add_child(f)
+		f.owner = raiz
 
 
 func _chao() -> void:
@@ -227,9 +279,28 @@ func _dono(n: Node, d: Node) -> void:
 		_dono(f, d)
 
 
-## Onde as formas dancantes aparecem. So marcas: os corpos sao feitos em
-## tempo de execucao (ver `FormaDancante`).
-func _lugares_das_formas() -> void:
+## Onde a cruz nasce, e virada para onde. E um no a serio: abre-se a cena,
+## roda-se, e fica. O modelo vem dentro dele, escondido ate se dizer SIM.
+func _lugar_da_cruz() -> void:
+	var c := Node3D.new()
+	c.visible = false
+	_por(c, "Cruz", Vector3(-1.5, 1.30, 4.3))
+	var modelo: Node3D = load("res://resources/modelos/cruz_pro_fogo.glb").instantiate()
+	modelo.name = "Modelo"
+	# De pe: o modelo vem deitado, com o braco comprido em z.
+	modelo.rotation_degrees = Vector3(-90, 0, 0)
+	c.add_child(modelo)
+	# So o no do modelo leva dono. Dar dono aos filhos INTERNOS de um
+	# `.glb` marca-os como filhos editaveis e o Godot grava-os outra vez
+	# por cima da instancia — ficavam duas malhas com o mesmo nome, uma
+	# delas fora da arvore.
+	modelo.owner = raiz
+
+
+## As formas dancantes. NOS A SERIO, um por figura — cor, brilho,
+## contorno, faisca e bruma sao todos `@export` e veem-se no editor,
+## porque `FormaDancante` e `@tool`.
+func _formas() -> void:
 	var grupo := Node3D.new()
 	_por(grupo, "Dancantes", Vector3.ZERO)
 	# Dentro do cone visivel, entre a camara e o fogo: dancam diante dele.
@@ -242,12 +313,18 @@ func _lugares_das_formas() -> void:
 		Vector3(-2.92, 0.0, 2.7), Vector3(-0.08, 0.0, 2.7),
 	]
 	for i in lugares.size():
-		var m := Marker3D.new()
-		m.name = "Lugar%d" % (i + 1)
-		m.position = lugares[i]
-		m.rotation_degrees = Vector3(0, randf_range(-40.0, 40.0), 0)
-		grupo.add_child(m)
-		m.owner = raiz
+		var f := FormaDancante.new()
+		f.name = "Forma%d" % (i + 1)
+		f.position = lugares[i]
+		f.rotation_degrees = Vector3(0, randf_range(-40.0, 40.0), 0)
+		# Cada uma com os seus valores: nao se sincronizam.
+		f.semente = float(i) * 2.7 + 0.83
+		f.ritmo = 0.72 + fmod(float(i) * 0.37, 0.55)
+		f.tamanho = 0.92 + fmod(float(i) * 0.23, 0.26)
+		f.espelhar = (i % 2) == 1
+		f.eco = 0.022 + fmod(float(i) * 0.011, 0.02)
+		grupo.add_child(f)
+		f.owner = raiz
 
 
 func _material_de_imagem(caminho: String, dos_dois_lados: bool) -> StandardMaterial3D:

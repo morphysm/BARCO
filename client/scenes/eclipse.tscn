@@ -1,8 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://o08xybp3tjjg"]
 
-[ext_resource type="Script" path="res://scripts/ui/eclipse_screen.gd" id="1_eclipse"]
+[ext_resource type="Script" uid="uid://ck5j162ifl85h" path="res://scripts/ui/eclipse_screen.gd" id="1_eclipse"]
 [ext_resource type="AudioStream" uid="uid://c2nqvkehtnytk" path="res://resources/audio/Empty Corridor Echo.ogg" id="2_som"]
 
-[node name="Eclipse" type="Node2D"]
+[node name="Eclipse" type="Node2D" unique_id=870771676]
 script = ExtResource("1_eclipse")
 som = ExtResource("2_som")
+repetir_o_som = false

@@ -1,126 +1,85 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/ui/fornalha_screen.gd" id="1_n8uwv"]
-[ext_resource type="PackedScene" path="res://resources/modelos/cruz_pro_fogo.glb" id="2_nub1a"]
-[ext_resource type="AudioStream" path="res://resources/audio/Entrego Minha Alma.ogg" id="3_4isy8"]
-[ext_resource type="Texture2D" path="res://resources/imagens/MORPHISTIC SIGIL_para o chão.jpg" id="4_so3h3"]
-[ext_resource type="Texture2D" path="res://resources/imagens/mmorph REDskin_para_as_paredes.png" id="5_x87dg"]
-[ext_resource type="PackedScene" path="res://resources/modelos/fornalha.glb" id="6_0g3bd"]
-[ext_resource type="Texture2D" path="res://resources/imagens/BAPHOMET777SUBLIMINALL.jpg" id="7_vovy2"]
-[ext_resource type="Shader" path="res://shaders/ferro.gdshader" id="8_hn8tv"]
-[ext_resource type="Texture2D" path="res://resources/imagens/morphysm sigil STONE.png" id="9_bp5j7"]
+[ext_resource type="Script" path="res://scripts/ui/fornalha_screen.gd" id="1_4isy8"]
+[ext_resource type="AudioStream" path="res://resources/audio/Entrego Minha Alma.ogg" id="2_so3h3"]
+[ext_resource type="Script" path="res://scripts/ui/jogador.gd" id="3_x87dg"]
+[ext_resource type="Texture2D" path="res://resources/imagens/MORPHISTIC SIGIL_para o chão.jpg" id="4_0g3bd"]
+[ext_resource type="Texture2D" path="res://resources/imagens/mmorph REDskin_para_as_paredes.png" id="5_vovy2"]
+[ext_resource type="PackedScene" path="res://resources/modelos/fornalha.glb" id="6_hn8tv"]
+[ext_resource type="Texture2D" path="res://resources/imagens/BAPHOMET777SUBLIMINALL.jpg" id="7_bp5j7"]
+[ext_resource type="Shader" path="res://shaders/ferro.gdshader" id="8_1f6v6"]
+[ext_resource type="Texture2D" path="res://resources/imagens/morphysm sigil STONE.png" id="9_gmkiy"]
+[ext_resource type="PackedScene" path="res://resources/modelos/cruz_pro_fogo.glb" id="10_2vy2x"]
+[ext_resource type="Script" path="res://scripts/ui/forma_dancante.gd" id="11_mw147"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1f6v6"]
-albedo_color = Color(0.055, 0.05, 0.048, 1)
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sumuu"]
+radius = 0.32
+height = 1.7
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_gmkiy"]
-size = Vector2(9, 9)
+[sub_resource type="BoxShape3D" id="BoxShape3D_77jdi"]
+size = Vector3(5, 0.3, 8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2vy2x"]
-transparency = 1
-albedo_texture = ExtResource("4_so3h3")
+[sub_resource type="BoxShape3D" id="BoxShape3D_sp8qb"]
+size = Vector3(0.3, 2.4, 8)
 
-[sub_resource type="QuadMesh" id="QuadMesh_mw147"]
-material = SubResource("StandardMaterial3D_2vy2x")
-size = Vector2(2.4, 2.28)
+[sub_resource type="BoxShape3D" id="BoxShape3D_clqt3"]
+size = Vector3(0.3, 2.4, 8)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sumuu"]
-transparency = 1
-albedo_texture = ExtResource("5_x87dg")
+[sub_resource type="BoxShape3D" id="BoxShape3D_24jri"]
+size = Vector3(4.3, 2.4, 0.3)
 
-[sub_resource type="QuadMesh" id="QuadMesh_77jdi"]
-material = SubResource("StandardMaterial3D_sumuu")
-size = Vector2(9, 5.4)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sp8qb"]
-transparency = 1
-albedo_texture = ExtResource("5_x87dg")
-
-[sub_resource type="QuadMesh" id="QuadMesh_clqt3"]
-material = SubResource("StandardMaterial3D_sp8qb")
-size = Vector2(9, 5.4)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_24jri"]
-transparency = 1
-albedo_texture = ExtResource("5_x87dg")
-
-[sub_resource type="QuadMesh" id="QuadMesh_sasjo"]
-material = SubResource("StandardMaterial3D_24jri")
-size = Vector2(9, 5.4)
+[sub_resource type="BoxShape3D" id="BoxShape3D_sasjo"]
+size = Vector3(4.3, 2.4, 0.3)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_23ijq"]
+albedo_color = Color(0.055, 0.05, 0.048, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_c4fn1"]
+size = Vector2(9, 9)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5t2h"]
 transparency = 1
-albedo_texture = ExtResource("7_vovy2")
+albedo_texture = ExtResource("4_0g3bd")
 
-[sub_resource type="QuadMesh" id="QuadMesh_c4fn1"]
-material = SubResource("StandardMaterial3D_23ijq")
-size = Vector2(1.7196293, 2.7)
+[sub_resource type="QuadMesh" id="QuadMesh_rrl8t"]
+material = SubResource("StandardMaterial3D_i5t2h")
+size = Vector2(2.4, 2.28)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_i5t2h"]
-render_priority = 0
-shader = ExtResource("8_hn8tv")
-shader_parameter/cor_ferro = null
-shader_parameter/cor_ferrugem = null
-shader_parameter/cor_ferrugem_clara = null
-shader_parameter/ferrugem = null
-shader_parameter/escala = null
-shader_parameter/assentar = null
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_rrl8t"]
-top_radius = 0.045
-bottom_radius = 0.06
-height = 3.5
-radial_segments = 10
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_0l71y"]
-top_radius = 0.032
-bottom_radius = 0.032
-height = 1.0
-radial_segments = 8
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_at1vf"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0l71y"]
 transparency = 1
-cull_mode = 2
-albedo_texture = ExtResource("9_bp5j7")
+albedo_texture = ExtResource("5_vovy2")
 
-[sub_resource type="QuadMesh" id="QuadMesh_bcnqa"]
-material = SubResource("StandardMaterial3D_at1vf")
-size = Vector2(0.78, 2.05)
+[sub_resource type="QuadMesh" id="QuadMesh_at1vf"]
+material = SubResource("StandardMaterial3D_0l71y")
+size = Vector2(9, 5.4)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pbbmi"]
-render_priority = 0
-shader = ExtResource("8_hn8tv")
-shader_parameter/cor_ferro = null
-shader_parameter/cor_ferrugem = null
-shader_parameter/cor_ferrugem_clara = null
-shader_parameter/ferrugem = null
-shader_parameter/escala = null
-shader_parameter/assentar = null
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bcnqa"]
+transparency = 1
+albedo_texture = ExtResource("5_vovy2")
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_6yw2x"]
-top_radius = 0.045
-bottom_radius = 0.06
-height = 3.5
-radial_segments = 10
+[sub_resource type="QuadMesh" id="QuadMesh_pbbmi"]
+material = SubResource("StandardMaterial3D_bcnqa")
+size = Vector2(9, 5.4)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_t4oqo"]
-top_radius = 0.032
-bottom_radius = 0.032
-height = 1.0
-radial_segments = 8
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6yw2x"]
+transparency = 1
+albedo_texture = ExtResource("5_vovy2")
+
+[sub_resource type="QuadMesh" id="QuadMesh_t4oqo"]
+material = SubResource("StandardMaterial3D_6yw2x")
+size = Vector2(9, 5.4)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_faaqk"]
 transparency = 1
-cull_mode = 2
-albedo_texture = ExtResource("9_bp5j7")
+albedo_texture = ExtResource("7_bp5j7")
 
 [sub_resource type="QuadMesh" id="QuadMesh_xpqns"]
 material = SubResource("StandardMaterial3D_faaqk")
-size = Vector2(0.78, 2.05)
+size = Vector2(1.7196293, 2.7)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_l70n5"]
 render_priority = 0
-shader = ExtResource("8_hn8tv")
+shader = ExtResource("8_1f6v6")
 shader_parameter/cor_ferro = null
 shader_parameter/cor_ferrugem = null
 shader_parameter/cor_ferrugem_clara = null
@@ -143,118 +102,259 @@ radial_segments = 8
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0p5lt"]
 transparency = 1
 cull_mode = 2
-albedo_texture = ExtResource("9_bp5j7")
+albedo_texture = ExtResource("9_gmkiy")
 
 [sub_resource type="QuadMesh" id="QuadMesh_b67c1"]
 material = SubResource("StandardMaterial3D_0p5lt")
 size = Vector2(0.78, 2.05)
 
-[node name="Fornalha" type="Node3D" unique_id=1431690504]
-script = ExtResource("1_n8uwv")
-cruz = ExtResource("2_nub1a")
-musica = ExtResource("3_4isy8")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pk6lk"]
+render_priority = 0
+shader = ExtResource("8_1f6v6")
+shader_parameter/cor_ferro = null
+shader_parameter/cor_ferrugem = null
+shader_parameter/cor_ferrugem_clara = null
+shader_parameter/ferrugem = null
+shader_parameter/escala = null
+shader_parameter/assentar = null
 
-[node name="Camara" type="Camera3D" parent="." unique_id=83306165]
-transform = Transform3D(1, 0, 0, 0, 0.9953962, 0.09584575, 0, -0.09584575, 0.9953962, -1.5, 2.15, 7.4)
+[sub_resource type="CylinderMesh" id="CylinderMesh_qdg03"]
+top_radius = 0.045
+bottom_radius = 0.06
+height = 3.5
+radial_segments = 10
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_0jcwy"]
+top_radius = 0.032
+bottom_radius = 0.032
+height = 1.0
+radial_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vk275"]
+transparency = 1
+cull_mode = 2
+albedo_texture = ExtResource("9_gmkiy")
+
+[sub_resource type="QuadMesh" id="QuadMesh_l502i"]
+material = SubResource("StandardMaterial3D_vk275")
+size = Vector2(0.78, 2.05)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2d1rc"]
+render_priority = 0
+shader = ExtResource("8_1f6v6")
+shader_parameter/cor_ferro = null
+shader_parameter/cor_ferrugem = null
+shader_parameter/cor_ferrugem_clara = null
+shader_parameter/ferrugem = null
+shader_parameter/escala = null
+shader_parameter/assentar = null
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_8lm7n"]
+top_radius = 0.045
+bottom_radius = 0.06
+height = 3.5
+radial_segments = 10
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bcy3p"]
+top_radius = 0.032
+bottom_radius = 0.032
+height = 1.0
+radial_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fwbd6"]
+transparency = 1
+cull_mode = 2
+albedo_texture = ExtResource("9_gmkiy")
+
+[sub_resource type="QuadMesh" id="QuadMesh_p643i"]
+material = SubResource("StandardMaterial3D_fwbd6")
+size = Vector2(0.78, 2.05)
+
+[node name="Fornalha" type="Node3D" unique_id=1241572199]
+script = ExtResource("1_4isy8")
+musica = ExtResource("2_so3h3")
+
+[node name="Jogador" type="CharacterBody3D" parent="." unique_id=323186372]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 6.2)
+script = ExtResource("3_x87dg")
+
+[node name="Corpo" type="CollisionShape3D" parent="Jogador" unique_id=1238169158]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+shape = SubResource("CapsuleShape3D_sumuu")
+
+[node name="Camara" type="Camera3D" parent="Jogador" unique_id=712914463]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, 0)
 current = true
 fov = 58.0
 
-[node name="Chao" type="MeshInstance3D" parent="." unique_id=679391877]
+[node name="Corredor" type="Node3D" parent="." unique_id=1750021043]
+
+[node name="Chao" type="StaticBody3D" parent="Corredor" unique_id=1265097932]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, -0.15, 3.6)
+
+[node name="Forma" type="CollisionShape3D" parent="Corredor/Chao" unique_id=1803634222]
+shape = SubResource("BoxShape3D_77jdi")
+
+[node name="Esquerda" type="StaticBody3D" parent="Corredor" unique_id=366121246]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 1.2, 3.6)
+
+[node name="Forma" type="CollisionShape3D" parent="Corredor/Esquerda" unique_id=265240298]
+shape = SubResource("BoxShape3D_sp8qb")
+
+[node name="Direita" type="StaticBody3D" parent="Corredor" unique_id=988078133]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.2, 3.6)
+
+[node name="Forma" type="CollisionShape3D" parent="Corredor/Direita" unique_id=1943910913]
+shape = SubResource("BoxShape3D_clqt3")
+
+[node name="Fundo" type="StaticBody3D" parent="Corredor" unique_id=1914493029]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 2.3)
+
+[node name="Forma" type="CollisionShape3D" parent="Corredor/Fundo" unique_id=1069682085]
+shape = SubResource("BoxShape3D_24jri")
+
+[node name="Atras" type="StaticBody3D" parent="Corredor" unique_id=1909826194]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 7.4)
+
+[node name="Forma" type="CollisionShape3D" parent="Corredor/Atras" unique_id=1296981616]
+shape = SubResource("BoxShape3D_sasjo")
+
+[node name="Chao" type="MeshInstance3D" parent="." unique_id=321777507]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 3.3)
-material_override = SubResource("StandardMaterial3D_1f6v6")
-mesh = SubResource("PlaneMesh_gmkiy")
+material_override = SubResource("StandardMaterial3D_23ijq")
+mesh = SubResource("PlaneMesh_c4fn1")
 
-[node name="SigiloDoChao" type="MeshInstance3D" parent="." unique_id=1699633248]
+[node name="SigiloDoChao" type="MeshInstance3D" parent="." unique_id=1054755330]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.5, 0.006, 2.6)
-mesh = SubResource("QuadMesh_mw147")
+mesh = SubResource("QuadMesh_rrl8t")
 
-[node name="ParedeEsquerda" type="MeshInstance3D" parent="." unique_id=1116238459]
+[node name="ParedeEsquerda" type="MeshInstance3D" parent="." unique_id=528026271]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6, 2.7, 3.3)
-mesh = SubResource("QuadMesh_77jdi")
+mesh = SubResource("QuadMesh_at1vf")
 
-[node name="ParedeDireita" type="MeshInstance3D" parent="." unique_id=1468095533]
+[node name="ParedeDireita" type="MeshInstance3D" parent="." unique_id=1046824534]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 3, 2.7, 3.3)
-mesh = SubResource("QuadMesh_clqt3")
+mesh = SubResource("QuadMesh_pbbmi")
 
-[node name="ParedeAtras" type="MeshInstance3D" parent="." unique_id=366220680]
+[node name="ParedeAtras" type="MeshInstance3D" parent="." unique_id=466726039]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 2.7, -0.9)
-mesh = SubResource("QuadMesh_sasjo")
+mesh = SubResource("QuadMesh_t4oqo")
 
-[node name="fornalha" type="Node3D" parent="." unique_id=350307604 instance=ExtResource("6_0g3bd")]
+[node name="fornalha" type="Node3D" parent="." unique_id=350307604 instance=ExtResource("6_hn8tv")]
 
-[node name="Baphomet" type="MeshInstance3D" parent="." unique_id=1644149596]
+[node name="Baphomet" type="MeshInstance3D" parent="." unique_id=1579350353]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 3.75, 0.05)
-mesh = SubResource("QuadMesh_c4fn1")
-
-[node name="Bandeiras" type="Node3D" parent="." unique_id=495202674]
-
-[node name="Bandeira1" type="Node3D" parent="Bandeiras" unique_id=1294746808]
-transform = Transform3D(0.9135454, 0, 0.40673664, 0, 1, 0, -0.40673664, 0, 0.9135454, -3.6, 0, 0.4)
-
-[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=1722745799]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
-material_override = SubResource("ShaderMaterial_i5t2h")
-mesh = SubResource("CylinderMesh_rrl8t")
-
-[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=1668456001]
-transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 3.44, 0)
-material_override = SubResource("ShaderMaterial_i5t2h")
-mesh = SubResource("CylinderMesh_0l71y")
-
-[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=310128076]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.375, 0.02)
-mesh = SubResource("QuadMesh_bcnqa")
-
-[node name="Bandeira2" type="Node3D" parent="Bandeiras" unique_id=927539379]
-transform = Transform3D(0.9135454, 0, -0.40673664, 0, 1, 0, 0.40673664, 0, 0.9135454, 0.6, 0, 0.4)
-
-[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=604352504]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
-material_override = SubResource("ShaderMaterial_pbbmi")
-mesh = SubResource("CylinderMesh_6yw2x")
-
-[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=841876343]
-transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 3.44, 0)
-material_override = SubResource("ShaderMaterial_pbbmi")
-mesh = SubResource("CylinderMesh_t4oqo")
-
-[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=752297545]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.375, 0.02)
 mesh = SubResource("QuadMesh_xpqns")
 
-[node name="Bandeira3" type="Node3D" parent="Bandeiras" unique_id=1404651979]
-transform = Transform3D(0.9781476, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.9781476, -3.5, 0, 2.2)
+[node name="Bandeiras" type="Node3D" parent="." unique_id=1027672915]
 
-[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=890226599]
+[node name="Bandeira1" type="Node3D" parent="Bandeiras" unique_id=712814276]
+transform = Transform3D(0.9135454, 0, 0.40673664, 0, 1, 0, -0.40673664, 0, 0.9135454, -3.6, 0, 0.4)
+
+[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=341397951]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
 material_override = SubResource("ShaderMaterial_l70n5")
 mesh = SubResource("CylinderMesh_of1bw")
 
-[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=1779702477]
+[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=59588692]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 3.44, 0)
 material_override = SubResource("ShaderMaterial_l70n5")
 mesh = SubResource("CylinderMesh_41une")
 
-[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=1843917398]
+[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=1992035819]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.375, 0.02)
 mesh = SubResource("QuadMesh_b67c1")
 
-[node name="Dancantes" type="Node3D" parent="." unique_id=1672707323]
+[node name="Bandeira2" type="Node3D" parent="Bandeiras" unique_id=1360041835]
+transform = Transform3D(0.9135454, 0, -0.40673664, 0, 1, 0, 0.40673664, 0, 0.9135454, 0.6, 0, 0.4)
 
-[node name="Lugar1" type="Marker3D" parent="Dancantes" unique_id=1541691059]
-transform = Transform3D(0.7923866, 0, 0.61001927, 0, 1, 0, -0.61001927, 0, 0.7923866, -2.6, 0, 1.1)
+[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=739397168]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+material_override = SubResource("ShaderMaterial_pk6lk")
+mesh = SubResource("CylinderMesh_qdg03")
 
-[node name="Lugar2" type="Marker3D" parent="Dancantes" unique_id=1932791052]
-transform = Transform3D(0.9098486, 0, 0.41494048, 0, 1, 0, -0.41494048, 0, 0.9098486, -0.4, 0, 1.1)
+[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=556471587]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 3.44, 0)
+material_override = SubResource("ShaderMaterial_pk6lk")
+mesh = SubResource("CylinderMesh_0jcwy")
 
-[node name="Lugar3" type="Marker3D" parent="Dancantes" unique_id=2124339205]
-transform = Transform3D(0.92193305, 0, 0.3873493, 0, 1, 0, -0.3873493, 0, 0.92193305, -3, 0, 1.9)
+[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=1473823032]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.375, 0.02)
+mesh = SubResource("QuadMesh_l502i")
 
-[node name="Lugar4" type="Marker3D" parent="Dancantes" unique_id=747710247]
-transform = Transform3D(0.9997935, 0, -0.020320373, 0, 1, 0, 0.020320373, 0, 0.9997935, 0, 0, 1.9)
+[node name="Bandeira3" type="Node3D" parent="Bandeiras" unique_id=1008735419]
+transform = Transform3D(0.9781476, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.9781476, -3.5, 0, 2.2)
 
-[node name="Lugar5" type="Marker3D" parent="Dancantes" unique_id=47817553]
-transform = Transform3D(0.9361447, 0, 0.35161498, 0, 1, 0, -0.35161498, 0, 0.9361447, -2.92, 0, 2.7)
+[node name="Mastro" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=1654005905]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+material_override = SubResource("ShaderMaterial_2d1rc")
+mesh = SubResource("CylinderMesh_8lm7n")
 
-[node name="Lugar6" type="Marker3D" parent="Dancantes" unique_id=790385284]
-transform = Transform3D(0.99475324, 0, 0.10230326, 0, 1, 0, -0.10230326, 0, 0.99475324, -0.08, 0, 2.7)
+[node name="Travessa" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=1364754495]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 3.44, 0)
+material_override = SubResource("ShaderMaterial_2d1rc")
+mesh = SubResource("CylinderMesh_bcy3p")
+
+[node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira3" unique_id=1448409843]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.375, 0.02)
+mesh = SubResource("QuadMesh_p643i")
+
+[node name="Cruz" type="Node3D" parent="." unique_id=1195807499]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.3, 4.3)
+visible = false
+
+[node name="Modelo" type="Node3D" parent="Cruz" unique_id=1268432694 instance=ExtResource("10_2vy2x")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+
+[node name="Dancantes" type="Node3D" parent="." unique_id=523843210]
+
+[node name="Forma1" type="Node3D" parent="Dancantes" unique_id=1750577528]
+transform = Transform3D(0.80140454, 0, 0.5981227, 0, 1, 0, -0.5981227, 0, 0.80140454, -2.6, 0, 1.1)
+script = ExtResource("11_mw147")
+semente = 0.83
+ritmo = 0.72
+tamanho = 0.92
+eco = 0.022
+
+[node name="Forma2" type="Node3D" parent="Dancantes" unique_id=1455317271]
+transform = Transform3D(0.8953675, 0, 0.44532803, 0, 1, 0, -0.44532803, 0, 0.8953675, -0.4, 0, 1.1)
+script = ExtResource("11_mw147")
+semente = 3.5300000000000002
+ritmo = 1.0899999999999999
+tamanho = 1.1500000000000001
+espelhar = true
+eco = 0.033
+
+[node name="Forma3" type="Node3D" parent="Dancantes" unique_id=457984369]
+transform = Transform3D(0.9994929, 0, 0.031842455, 0, 1, 0, -0.031842455, 0, 0.9994929, -3, 0, 1.9)
+script = ExtResource("11_mw147")
+semente = 6.23
+ritmo = 0.9099999999999999
+tamanho = 1.12
+eco = 0.023999999999999997
+
+[node name="Forma4" type="Node3D" parent="Dancantes" unique_id=210287628]
+transform = Transform3D(0.8276828, 0, -0.56119627, 0, 1, 0, 0.56119627, 0, 0.8276828, 0, 0, 1.9)
+script = ExtResource("11_mw147")
+semente = 8.930000000000001
+ritmo = 0.7299999999999998
+tamanho = 1.09
+espelhar = true
+eco = 0.035
+
+[node name="Forma5" type="Node3D" parent="Dancantes" unique_id=2024694304]
+transform = Transform3D(0.97416586, 0, 0.22583376, 0, 1, 0, -0.22583376, 0, 0.97416586, -2.92, 0, 2.7)
+script = ExtResource("11_mw147")
+semente = 11.63
+ritmo = 1.0999999999999999
+tamanho = 1.06
+eco = 0.025999999999999995
+
+[node name="Forma6" type="Node3D" parent="Dancantes" unique_id=815774427]
+transform = Transform3D(0.91241175, 0, 0.40927348, 0, 1, 0, -0.40927348, 0, 0.91241175, -0.08, 0, 2.7)
+script = ExtResource("11_mw147")
+semente = 14.33
+ritmo = 0.9199999999999999
+tamanho = 1.0300000000000002
+espelhar = true
+eco = 0.03699999999999999

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://x5ank7nwoex3"]
+
+[ext_resource type="PackedScene" path="res://scenes/fornalha.tscn" id="1_h1iw8"]
+
+[node name="Fornalha" unique_id=1431690504 instance=ExtResource("1_h1iw8")]
+boca = Vector3(-1.5, 1.7549999, 0.212)

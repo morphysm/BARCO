@@ -20,13 +20,11 @@ extends Node3D
 @export var rotulo_sim := "SIM"
 @export var rotulo_nao := "NÃO"
 
-## A cruz que se queima. Modelo de A.C.
-@export var cruz: PackedScene
+## A cruz esta NA CENA, no no `Cruz` — posicao, giro e tamanho arrumam-se
+## no editor como qualquer outra peca. Aqui so se diz quanto ela mede.
 @export_range(0.1, 2.0) var tamanho_da_cruz := 0.55
-## Como o modelo tem de rodar para a cruz ficar DE PE. O `cruz_pro_fogo`
-## vem deitado — o braco comprido dele corre em z — e deitada nao se via:
-## 0.55 m de fundo por 0.09 m de alto, de canto para a camara.
-@export var giro_da_cruz := Vector3(-90.0, 0.0, 0.0)
+## Onde a cruz fica quando esta na mao, relativo a camara.
+@export var cruz_na_mao := Vector3(0.26, -0.30, -0.85)
 
 ## Ferro enferrujado por cima da fornalha. Desligar mostra os materiais
 ## que o modelo traz de fabrica.
@@ -37,14 +35,10 @@ extends Node3D
 			_vestir_a_fornalha()
 @export_range(0.0, 1.0) var ferrugem := 0.62
 
-## Quantas formas dancam. Os LUGARES estao na cena, em `Dancantes` — sao
-## marcas que se arrastam no editor. Isto so diz quantas se usam.
-@export_range(0, 12) var quantas_formas := 6
-## Luz eletrica azul. O `a` e a opacidade da figura.
-@export var cor_das_formas := Color(0.16, 0.44, 0.95, 0.9)
-@export var borda_das_formas := Color(0.62, 0.92, 1.0)
-## Ate que altura a bruma come as figuras, a contar do chao.
-@export_range(0.0, 2.0) var bruma_das_formas := 0.62
+## As formas dancantes estao NA CENA, em `Dancantes`, uma por figura.
+## Cor, brilho, contorno, faisca, bruma, ritmo e tamanho sao `@export` de
+## cada uma e veem-se no editor — `FormaDancante` e `@tool`. Aqui nao ha
+## nada para regular.
 
 ## A musica. A iris so abre quando ela acabar — nao ha duracao escrita a
 ## mao: troca-se o ficheiro e o compasso vai atras.
@@ -65,13 +59,15 @@ extends Node3D
 @export var no_da_boca := "Bay2_MouthInterior"
 ## Usada so se o no acima nao aparecer.
 @export var boca := Vector3(-1.62, 1.30, 0.30)
-## A que distancia da boca, EM PIXEIS NO ECRA, a cruz pode ser atirada.
-##
-## No ecra e nao no mundo: a cruz arrasta-se num plano de frente para a
-## camara, entao nunca fica a mesma profundidade da boca. Medir em metros
-## dava uma boca onde a cruz nunca chegava, por muito que se a arrastasse
-## para cima dela.
-@export_range(20.0, 400.0) var alcance_da_boca := 130.0
+## A que distancia da MIRA, em pixeis, a boca do forno tem de estar para
+## se poder atirar. No ecra e nao em metros: aponta-se com a cabeca.
+@export_range(20.0, 400.0) var alcance_da_boca := 190.0
+## O mesmo, para apanhar a cruz.
+@export_range(20.0, 400.0) var alcance_da_cruz := 260.0
+## Ou entao basta estar perto dela, em metros. A mira sozinha era exigente
+## de mais: de pe ao lado da cruz, ela cai muito abaixo do centro do ecra
+## e nunca entrava no raio.
+@export_range(0.3, 4.0) var perto_da_cruz := 1.7
 
 ## Quanta luz ha na sala antes de o fogo pegar.
 @export_range(0.0, 1.5) var luz_da_sala := 0.62
@@ -90,6 +86,7 @@ var _tocador: AudioStreamPlayer
 var _iris: ColorRect
 var _painel: CanvasLayer
 var _dito: Label
+var _mira: Label
 var _tempo := 0.0
 var _crescimento := 0.0
 
@@ -242,6 +239,16 @@ func _montar_painel() -> void:
 	nao.name = "Nao"
 	respostas.add_child(nao)
 
+	# A mira. Sem ela nao se sabe para onde se esta a apontar, e apontar e
+	# o unico gesto que ha aqui.
+	_mira = Pagina.texto("+", 26)
+	_mira.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_mira.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_mira.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_mira.modulate = Color(1, 1, 1, 0.55)
+	_mira.visible = false
+	_painel.add_child(_mira)
+
 	_iris = ColorRect.new()
 	var m := ShaderMaterial.new()
 	m.shader = load("res://shaders/iris.gdshader")
@@ -267,51 +274,44 @@ func _responder_sim() -> void:
 	_fase = CRUZ_POUSADA
 	_painel.get_node("Respostas").queue_free()
 	# TODO(CONTENT.pt.md): texto de A.C. Este e estrutural.
-	_dito.text = "duplo clique na cruz"
+	_dito.text = "anda com WASD · duplo clique na cruz"
 	_por_a_cruz()
+	# So agora se anda. Durante a pergunta o rato e para responder, e uma
+	# sala que se pode percorrer antes de responder convida a adiar.
+	var j := get_node_or_null("Jogador")
+	if j != null:
+		j.solto = true
+	if _mira != null:
+		_mira.visible = true
 
 
 # --- a cruz ------------------------------------------------------------
 
-## A cruz de A.C., posta a frente de quem olha.
+## Mostrar a cruz que ja esta na cena, e dar-lhe o tamanho pedido.
+##
+## O no `Cruz` e da cena e nao daqui: posicao e giro arrumam-se no editor.
+## O que se faz em codigo e so acender e medir.
 func _por_a_cruz() -> void:
-	_cruz = Node3D.new()
-	_cruz.name = "Cruz"
-	add_child(_cruz)
-
-	if cruz == null:
-		push_warning("sem modelo de cruz — nao ha nada para pegar")
+	_cruz = get_node_or_null("Cruz")
+	if _cruz == null:
+		push_warning("nao ha no `Cruz` na cena — nao ha nada para pegar")
 		return
+	_cruz.visible = true
 
-	var modelo: Node3D = cruz.instantiate()
-	_cruz.add_child(modelo)
-	modelo.rotation_degrees = giro_da_cruz
-
-	# A caixa MEDE-SE EM MUNDO e nao com `malha.transform`.
-	#
-	# O transform de um `MeshInstance3D` e so o dele, relativo ao pai. Num
-	# modelo do Sketchfab a malha esta aninhada sob dois nos que carregam
-	# a escala toda, e medir sem eles da um numero que nao quer dizer
-	# nada: esta cruz saiu com 2617 x 874 x 5500 metros, a volta da
-	# camara, e o que se via era nada. E o mesmo erro que a faca deu.
+	var modelo := _cruz.get_node_or_null("Modelo")
+	if modelo == null:
+		return
+	# A caixa MEDE-SE EM MUNDO e nao com `malha.transform`. O transform de
+	# um `MeshInstance3D` e so o dele relativo ao pai, e num modelo do
+	# Sketchfab a malha esta aninhada sob nos que carregam a escala toda:
+	# medir sem eles deu uma cruz de 2617 x 874 x 5500 metros, a volta da
+	# camara, e o que se via era nada.
 	var caixa := _caixa_em(modelo, _cruz)
 	var maior: float = maxf(caixa.size.x, maxf(caixa.size.y, caixa.size.z))
 	if maior > 0.0:
 		var factor := tamanho_da_cruz / maior
 		modelo.scale *= factor
-		# Recentrar depois de escalar, para a cruz ficar onde se manda e
-		# nao onde o modelo tinha a origem.
-		modelo.position = -caixa.get_center() * factor
-
-	# A frente da pessoa, e nao num sitio escrito a mao: onde a camara
-	# estiver, a cruz aparece a sua frente.
-	var cam := get_viewport().get_camera_3d()
-	if cam != null:
-		_cruz.global_position = (cam.global_position
-			- cam.global_transform.basis.z * 1.7
-			- cam.global_transform.basis.y * 0.34)
-	else:
-		_cruz.position = Vector3(0.0, 0.55, 1.05)
+		modelo.position -= caixa.get_center() * factor
 
 
 ## Caixa envolvente de `no`, no espaco de `referencia`. Em mundo e depois
@@ -321,7 +321,7 @@ func _caixa_em(no: Node3D, referencia: Node3D) -> AABB:
 	var total := AABB()
 	var primeiro := true
 	for malha in _malhas(no):
-		if malha.mesh == null:
+		if malha.mesh == null or not malha.is_inside_tree():
 			continue
 		var c: AABB = (para_dentro * malha.global_transform) * malha.mesh.get_aabb()
 		total = c if primeiro else total.merge(c)
@@ -329,51 +329,60 @@ func _caixa_em(no: Node3D, referencia: Node3D) -> AABB:
 	return total
 
 
+## Em primeira pessoa aponta-se com a MIRA, nao com o ponteiro: o rato
+## esta preso a olhar. Duplo clique com a cruz na mira pega nela; duplo
+## clique com a boca do forno na mira atira-a la para dentro.
 func _input(evento: InputEvent) -> void:
 	if Engine.is_editor_hint() or _fase == PERGUNTA or _fase >= A_ARDER:
 		return
 	if not (evento is InputEventMouseButton):
 		return
 	var e := evento as InputEventMouseButton
-	if not (e.double_click and e.button_index == MOUSE_BUTTON_LEFT):
+	if not e.pressed or e.button_index != MOUSE_BUTTON_LEFT:
 		return
+	# Depois de largar o rato com ESC, o primeiro clique so o volta a
+	# prender — nao age no mundo.
+	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		return
+	if not e.double_click:
+		return
+
 	if _fase == CRUZ_POUSADA:
-		if _sob_o_rato(e.position):
-			_fase = CRUZ_NA_MAO
-			# TODO(CONTENT.pt.md): texto de A.C.
-			_dito.text = "leva a cruz à boca do forno e larga-a lá"
+		# Na mira OU ao alcance do braco: quem esta encostado a cruz nao
+		# tem de a enquadrar ao pixel para lhe pegar.
+		var cam := get_viewport().get_camera_3d()
+		var encostado: bool = (cam != null
+			and cam.global_position.distance_to(_cruz.global_position) <= perto_da_cruz)
+		if encostado or _na_mira(_cruz.global_position, alcance_da_cruz):
+			_pegar_a_cruz()
 	elif _fase == CRUZ_NA_MAO:
-		if _no_ecra(_cruz.global_position).distance_to(_no_ecra(boca)) <= alcance_da_boca:
+		if _na_mira(boca, alcance_da_boca):
 			_atirar()
 		else:
-			# TODO(CONTENT.pt.md): texto de A.C.
-			_dito.text = "em cima da boca do forno"
+			# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
+			_dito.text = "olha para a boca do forno"
 
 
-## A cruz esta debaixo do rato? Sem corpos de colisao: mede-se no ecra, e
-## chega para um objeto so.
-func _sob_o_rato(onde: Vector2) -> bool:
+## Esta este ponto do mundo debaixo da mira, a menos de `raio` pixeis?
+func _na_mira(mundo: Vector3, raio: float) -> bool:
 	var cam := get_viewport().get_camera_3d()
-	if cam == null or _cruz == null:
+	if cam == null or cam.is_position_behind(mundo):
 		return false
-	return cam.unproject_position(_cruz.global_position).distance_to(onde) < 90.0
+	var meio := get_viewport().get_visible_rect().size * 0.5
+	return cam.unproject_position(mundo).distance_to(meio) <= raio
 
 
-## Onde o rato aponta, num plano de frente para a camara e a profundidade
-## a que a cruz ja esta. A cruz anda pelo ecra, nao pelo chao.
-func _no_plano(ecra: Vector2) -> Vector3:
+## A cruz passa para a mao: fica agarrada a camara e vai com quem anda.
+func _pegar_a_cruz() -> void:
+	_fase = CRUZ_NA_MAO
 	var cam := get_viewport().get_camera_3d()
-	if cam == null or _cruz == null:
-		return Vector3.ZERO
-	var frente := -cam.global_transform.basis.z
-	var plano := Plane(frente, _cruz.global_position.dot(frente))
-	var p = plano.intersects_ray(cam.project_ray_origin(ecra), cam.project_ray_normal(ecra))
-	return p if p != null else _cruz.global_position
-
-
-func _no_ecra(mundo: Vector3) -> Vector2:
-	var cam := get_viewport().get_camera_3d()
-	return cam.unproject_position(mundo) if cam != null else Vector2.ZERO
+	if cam != null:
+		_cruz.reparent(cam, true)
+		_cruz.position = cruz_na_mao
+		_cruz.rotation = Vector3(0, 0, 0)
+	# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
+	_dito.text = "leva-a ao forno e larga-a na boca"
 
 
 # --- o fogo ------------------------------------------------------------
@@ -386,6 +395,8 @@ func _atirar() -> void:
 	_cruz.queue_free()
 	_cruz = null
 	_dito.text = ""
+	if _mira != null:
+		_mira.visible = false
 
 	# Num quad virado a camara, nao numa esfera: ver `fogo.gdshader`.
 	_fogo = MeshInstance3D.new()
@@ -423,31 +434,15 @@ func _atirar() -> void:
 		get_tree().create_timer(6.0).timeout.connect(_musica_acabou)
 
 
-## As formas so aparecem com o fogo. Os lugares estao na cena, em
-## `Dancantes` — marcas que se arrastam no editor.
+## As formas ja estao na cena, em `Dancantes`. Aqui so se lhes da vida:
+## elas so dancam com o fogo, nao antes.
 func _por_as_formas() -> void:
-	var lugares := get_node_or_null("Dancantes")
-	if lugares == null:
+	var grupo := get_node_or_null("Dancantes")
+	if grupo == null:
 		return
-	var i := 0
-	for marca in lugares.get_children():
-		if i >= quantas_formas or not marca is Node3D:
-			break
-		var f := FormaDancante.new()
-		f.name = "Forma%d" % (i + 1)
-		# §16: cada figura recebe valores diferentes. Nao se sincronizam.
-		f.semente = float(i) * 2.7 + 0.83
-		f.ritmo = 0.72 + fmod(float(i) * 0.37, 0.55)
-		f.tamanho = 0.92 + fmod(float(i) * 0.23, 0.26)
-		f.espelhar = (i % 2) == 1
-		f.eco = 0.022 + fmod(float(i) * 0.011, 0.02)
-		f.cor = cor_das_formas
-		f.cor_da_borda = borda_das_formas
-		f.bruma = bruma_das_formas
-		add_child(f)
-		f.global_transform = (marca as Node3D).global_transform
-		_formas.append(f)
-		i += 1
+	for f in grupo.get_children():
+		if f is FormaDancante:
+			_formas.append(f)
 
 
 func _musica_acabou() -> void:
@@ -464,11 +459,10 @@ func _process(delta: float) -> void:
 	_tempo += delta
 
 	if _fase == CRUZ_NA_MAO and _cruz != null:
-		_cruz.global_position = _no_plano(get_viewport().get_mouse_position())
-		# Perto do forno a cruz avisa que ja chega, sem uma palavra.
-		var perto: float = clampf(1.0 - _no_ecra(_cruz.global_position).distance_to(
-			_no_ecra(boca)) / alcance_da_boca, 0.0, 1.0)
-		_cruz.rotation.z = sin(_tempo * 6.0) * 0.06 * perto
+		# Vai agarrada a camara: anda com quem a leva. So se mexe um
+		# pouco, para nao parecer colada ao ecra.
+		_cruz.rotation.z = sin(_tempo * 2.4) * 0.05
+		_cruz.position = cruz_na_mao + Vector3(0, sin(_tempo * 1.7) * 0.012, 0)
 
 	if _fase >= A_ARDER and _fogo != null:
 		# A bola cresce depressa no principio e depois assenta.

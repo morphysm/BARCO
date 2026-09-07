@@ -11,6 +11,11 @@
 ## que se quer. A arquitectura e a mesma; o movimento nao.
 ##
 ## Cada figura recebe valores proprios e nunca se sincronizam.
+##
+## E `@tool`: desenha-se e danca no editor, para se poder escolher a cor
+## e a luz a olhar em vez de adivinhar. Na cena ha uma destas por figura,
+## em `Dancantes` — sao nos a serio, cada um com os seus valores.
+@tool
 class_name FormaDancante
 extends Node3D
 
@@ -22,18 +27,46 @@ extends Node3D
 ## Quanto o corpo-eco se afasta do primeiro.
 @export var eco := 0.03
 ## Luz eletrica azul. O `a` da cor e a opacidade da figura.
-@export var cor := Color(0.16, 0.44, 0.95, 0.9)
-@export var cor_da_borda := Color(0.62, 0.92, 1.0)
+@export var cor := Color(0.16, 0.44, 0.95, 0.9):
+	set(v):
+		cor = v
+		_afinar()
+@export var cor_da_borda := Color(0.62, 0.92, 1.0):
+	set(v):
+		cor_da_borda = v
+		_afinar()
+## Quanta luz a figura deita. Baixar torna-a discreta contra o fogo.
+@export_range(0.0, 3.0) var brilho := 1.0:
+	set(v):
+		brilho = v
+		_afinar()
 ## Quanto a figura se acende so nas bordas — alto e mais oco, mais
 ## fantasma.
-@export_range(0.5, 6.0) var contorno := 1.5
+@export_range(0.5, 6.0) var contorno := 1.5:
+	set(v):
+		contorno = v
+		_afinar()
+## Quanto a figura se acende por dentro, e nao so na borda.
+@export_range(0.0, 1.0) var miolo := 0.34:
+	set(v):
+		miolo = v
+		_afinar()
 ## O tremor eletrico.
-@export_range(0.0, 1.0) var faisca := 0.35
+@export_range(0.0, 1.0) var faisca := 0.35:
+	set(v):
+		faisca = v
+		_afinar()
 ## Ate que altura a bruma come a figura, a contar do chao.
-@export_range(0.0, 2.0) var bruma := 0.62
+@export_range(0.0, 2.0) var bruma := 0.62:
+	set(v):
+		bruma = v
+		_afinar()
 
 ## Quanto da danca esta a acontecer, de 0 (parada) a 1 (inteira). E o que
 ## faz as formas entrarem com o fogo em vez de ja la estarem.
+##
+## No editor esta sempre a 1: uma figura parada e invisivel de mais para
+## se lhe escolher a cor.
 var vigor := 0.0
 
 const OSSOS := [
@@ -69,6 +102,8 @@ func _ready() -> void:
 	_mat.set_shader_parameter("faisca", faisca)
 	_mat.set_shader_parameter("bruma", bruma)
 	_mat.set_shader_parameter("fase", semente)
+	if Engine.is_editor_hint():
+		vigor = 1.0
 	_primario = _montar_corpo("Primario", 1.0)
 	# §29: o segundo corpo fica um pouco fora do primeiro. E ele que faz a
 	# figura tremer sem se mexer.
@@ -79,6 +114,35 @@ func _ready() -> void:
 	_eco = _montar_corpo("Eco", 0.16)
 	_eco.position = Vector3((1.0 if not espelhar else -1.0) * eco, 0.017, 0.046)
 	set_process(true)
+
+
+## Repoe os valores nos materiais. Chamado por cada `@export` para se ver
+## a mudanca no editor sem fechar e abrir a cena.
+func _afinar() -> void:
+	if _mat == null:
+		return
+	_mat.set_shader_parameter("cor_nucleo", Color(cor.r, cor.g, cor.b))
+	_mat.set_shader_parameter("cor_borda", cor_da_borda)
+	_mat.set_shader_parameter("contorno", contorno)
+	_mat.set_shader_parameter("miolo", miolo)
+	_mat.set_shader_parameter("faisca", faisca)
+	_mat.set_shader_parameter("bruma", bruma)
+	_mat.set_shader_parameter("brilho", brilho)
+	for corpo in [_primario, _eco]:
+		if corpo == null:
+			continue
+		var op: float = cor.a * (1.0 if corpo == _primario else 0.16)
+		for filho in corpo.get_children():
+			var m = (filho as MeshInstance3D).material_override
+			if m is ShaderMaterial:
+				m.set_shader_parameter("cor_nucleo", Color(cor.r, cor.g, cor.b))
+				m.set_shader_parameter("cor_borda", cor_da_borda)
+				m.set_shader_parameter("contorno", contorno)
+				m.set_shader_parameter("miolo", miolo)
+				m.set_shader_parameter("faisca", faisca)
+				m.set_shader_parameter("bruma", bruma)
+				m.set_shader_parameter("brilho", brilho)
+				m.set_shader_parameter("opacidade", op)
 
 
 func _montar_corpo(nome: String, opacidade: float) -> Node3D:
