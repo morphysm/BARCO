@@ -53,7 +53,7 @@ extends Node3D
 ## O que se le quando a musica acaba, antes de a iris fechar.
 ## TODO(CONTENT.pt.md): texto de A.C.
 @export var boas_vindas := "Bem-vindo de volta ao lar!"
-@export_range(0.5, 10.0) var demora_das_boas_vindas := 4.2
+@export_range(0.5, 14.0) var demora_das_boas_vindas := 7.2
 ## Quanto tempo a frase leva a ser escrita, letra a letra.
 @export_range(0.2, 6.0) var demora_a_escrever := 1.9
 ## Tamanho da letra das boas-vindas. Grande: quem le esta longe.
@@ -66,6 +66,14 @@ extends Node3D
 ## Quanto a iris demora a fechar, depois das boas-vindas. Fecha aqui e
 ## volta a abrir no `assentamento`: a iris atravessa as duas cenas.
 @export_range(0.2, 8.0) var fecho_da_iris := 0.8
+
+## Quanto se fica no escuro DEPOIS de a iris fechar de todo, antes de
+## trocar de cena.
+##
+## Sem esta pausa a troca acontecia no mesmo quadro em que a iris chegava
+## a zero: fechava por completo e ninguem via, porque o `assentamento` ja
+## estava por baixo. O corte precisa de um instante de nada.
+@export_range(0.0, 2.0) var pausa_no_escuro := 0.45
 
 ## O no do modelo que e a boca do forno. A cruz vai para onde ele esta —
 ## a posicao sai do proprio modelo e nao de um numero escrito a mao, para
@@ -562,7 +570,8 @@ func _process(delta: float) -> void:
 		var v := get_viewport().get_visible_rect().size
 		_iris.material.set_shader_parameter("proporcao", v.x / maxf(v.y, 1.0))
 		_iris.material.set_shader_parameter("abertura", 1.0 - a)
-		if a >= 1.0:
+		# Fechada de todo, fica-se no escuro um instante antes de trocar.
+		if _tempo >= fecho_da_iris + pausa_no_escuro:
 			_fase = IDO
 			# A iris fecha aqui e abre la: e a mesma iris, nao duas.
 			Passagem.iris_a_abrir = true
