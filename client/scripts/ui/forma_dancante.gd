@@ -62,6 +62,28 @@ extends Node3D
 		bruma = v
 		_afinar()
 
+## A face. §27 do documento: um quad na cabeca, com a orientacao dela.
+@export var face: Texture2D:
+	set(v):
+		face = v
+		if is_inside_tree():
+			_montar_face()
+## A cor da face. Uma das seis e vermelha; as outras seguem o corpo.
+@export var cor_da_face := Color(0.62, 0.92, 1.0):
+	set(v):
+		cor_da_face = v
+		_afinar()
+@export_range(0.05, 1.2) var altura_da_face := 0.34:
+	set(v):
+		altura_da_face = v
+		if is_inside_tree():
+			_montar_face()
+## Quanto a chapa da face esta estragada (§28).
+@export_range(0.0, 1.0) var estrago := 0.35:
+	set(v):
+		estrago = v
+		_afinar()
+
 ## Quanto da danca esta a acontecer, de 0 (parada) a 1 (inteira). E o que
 ## faz as formas entrarem com o fogo em vez de ja la estarem.
 ##
@@ -90,7 +112,15 @@ var _eco: Node3D
 var _segmentos := {}
 var _bolas := {}
 var _mat: ShaderMaterial
+var _face: MeshInstance3D
+var _mat_face: ShaderMaterial
+var _fumo: MeshInstance3D
+var _mat_fumo: ShaderMaterial
 var _tempo := 0.0
+
+## Quanto da aparicao ja aconteceu, de 0 (nao esta ca) a 1 (inteira). O
+## fumo abre e a figura vem de dentro dele.
+var surgir := 0.0
 
 
 func _ready() -> void:
@@ -113,6 +143,10 @@ func _ready() -> void:
 	# nao como tremor.
 	_eco = _montar_corpo("Eco", 0.16)
 	_eco.position = Vector3((1.0 if not espelhar else -1.0) * eco, 0.017, 0.046)
+	_montar_face()
+	_montar_fumo()
+	if Engine.is_editor_hint():
+		surgir = 1.0
 	set_process(true)
 
 
@@ -128,6 +162,12 @@ func _afinar() -> void:
 	_mat.set_shader_parameter("faisca", faisca)
 	_mat.set_shader_parameter("bruma", bruma)
 	_mat.set_shader_parameter("brilho", brilho)
+	if _mat_face != null:
+		_mat_face.set_shader_parameter("cor", cor_da_face)
+		_mat_face.set_shader_parameter("estrago", estrago)
+		_mat_face.set_shader_parameter("fase", semente)
+	if _mat_fumo != null:
+		_mat_fumo.set_shader_parameter("cor", Color(cor.r, cor.g, cor.b))
 	for corpo in [_primario, _eco]:
 		if corpo == null:
 			continue
@@ -143,6 +183,45 @@ func _afinar() -> void:
 				m.set_shader_parameter("bruma", bruma)
 				m.set_shader_parameter("brilho", brilho)
 				m.set_shader_parameter("opacidade", op)
+
+
+## A face, na cabeca. Segue a orientacao da figura — nao e um cartaz
+## sempre virado a camara (§27: evitar faces permanentemente billboard).
+func _montar_face() -> void:
+	if _face == null:
+		_face = MeshInstance3D.new()
+		_face.name = "Face"
+		_face.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(_face)
+	_face.visible = face != null
+	if face == null:
+		return
+	var q := QuadMesh.new()
+	var proporcao := float(face.get_width()) / maxf(float(face.get_height()), 1.0)
+	q.size = Vector2(altura_da_face * proporcao, altura_da_face)
+	_face.mesh = q
+	if _mat_face == null:
+		_mat_face = ShaderMaterial.new()
+		_mat_face.shader = load("res://shaders/face.gdshader")
+		_face.material_override = _mat_face
+	_mat_face.set_shader_parameter("desenho", face)
+	_afinar()
+
+
+## O fumo de onde a figura vem.
+func _montar_fumo() -> void:
+	_fumo = MeshInstance3D.new()
+	_fumo.name = "Fumo"
+	var q := QuadMesh.new()
+	q.size = Vector2(1.5, 2.0)
+	_fumo.mesh = q
+	_mat_fumo = ShaderMaterial.new()
+	_mat_fumo.shader = load("res://shaders/fumo.gdshader")
+	_mat_fumo.set_shader_parameter("fase", semente)
+	_fumo.material_override = _mat_fumo
+	_fumo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_fumo.position = Vector3(0, 0.95, 0)
+	add_child(_fumo)
 
 
 func _montar_corpo(nome: String, opacidade: float) -> Node3D:
@@ -217,12 +296,39 @@ func _por_segmento(seg: MeshInstance3D, a: Vector3, b: Vector3, raio: float) -> 
 
 func _process(delta: float) -> void:
 	_tempo += delta
+	# Enquanto nao surgir, nao esta ca. Nao esta escondida: nao existe.
+	visible = surgir > 0.002
+	if not visible:
+		return
+
 	# §17: a fase da o movimento assincrono.
 	var f := _tempo * 3.25 * ritmo + semente * 2.11
 	var juntas := _juntas(f)
 	_vestir(_primario, juntas)
 	_vestir(_eco, _juntas(f - 0.035))
 	scale = Vector3.ONE * tamanho
+
+	# A face vai na cabeca e olha para onde a figura olha.
+	if _face != null and _face.visible:
+		_face.position = juntas["cabeca"] + Vector3(0.0, 0.015, -0.125)
+
+	# O corpo vem de dentro do fumo: o fumo abre primeiro e a figura
+	# aparece por dentro dele.
+	var corpo_visivel: float = smoothstep(0.25, 0.95, surgir)
+	if _mat_fumo != null:
+		_mat_fumo.set_shader_parameter("abrir", surgir)
+		_fumo.visible = surgir < 0.999
+		_fumo.scale = Vector3.ONE * (0.55 + 0.85 * surgir)
+	if _mat_face != null:
+		_mat_face.set_shader_parameter("opacidade", corpo_visivel)
+	for corpo in [_primario, _eco]:
+		if corpo == null:
+			continue
+		var op: float = cor.a * corpo_visivel * (1.0 if corpo == _primario else 0.16)
+		for filho in corpo.get_children():
+			var m = (filho as MeshInstance3D).material_override
+			if m is ShaderMaterial:
+				m.set_shader_parameter("opacidade", op)
 
 
 func _vestir(corpo: Node3D, j: Dictionary) -> void:

@@ -35,6 +35,12 @@ extends Node3D
 			_vestir_a_fornalha()
 @export_range(0.0, 1.0) var ferrugem := 0.62
 
+## Quanto tempo uma forma leva a sair do fumo, e quanto a seguinte
+## espera. Nao saem todas ao mesmo tempo: juntas leem-se como um
+## interruptor.
+@export_range(0.2, 6.0) var demora_a_surgir := 1.8
+@export_range(0.0, 2.0) var espera_entre_formas := 0.35
+
 ## As formas dancantes estao NA CENA, em `Dancantes`, uma por figura.
 ## Cor, brilho, contorno, faisca, bruma, ritmo e tamanho sao `@export` de
 ## cada uma e veem-se no editor — `FormaDancante` e `@tool`. Aqui nao ha
@@ -81,6 +87,7 @@ var _fase := PERGUNTA
 var _cruz: Node3D
 var _fogo: MeshInstance3D
 var _formas: Array[FormaDancante] = []
+var _esperas: Array[float] = []
 var _luz_do_fogo: OmniLight3D
 var _tocador: AudioStreamPlayer
 var _iris: ColorRect
@@ -89,6 +96,7 @@ var _dito: Label
 var _mira: Label
 var _tempo := 0.0
 var _crescimento := 0.0
+var _tempo_do_fogo := 0.0
 
 
 func _ready() -> void:
@@ -434,15 +442,20 @@ func _atirar() -> void:
 		get_tree().create_timer(6.0).timeout.connect(_musica_acabou)
 
 
-## As formas ja estao na cena, em `Dancantes`. Aqui so se lhes da vida:
-## elas so dancam com o fogo, nao antes.
+## As formas ja estao na cena, em `Dancantes`. Aqui so se lhes da vida.
+##
+## So aparecem com o fogo, e uma de cada vez: cada uma tem a sua espera,
+## para nao acenderem todas juntas como um interruptor.
 func _por_as_formas() -> void:
 	var grupo := get_node_or_null("Dancantes")
 	if grupo == null:
 		return
+	var i := 0
 	for f in grupo.get_children():
 		if f is FormaDancante:
 			_formas.append(f)
+			_esperas.append(float(i) * espera_entre_formas)
+			i += 1
 
 
 func _musica_acabou() -> void:
@@ -464,6 +477,8 @@ func _process(delta: float) -> void:
 		_cruz.rotation.z = sin(_tempo * 2.4) * 0.05
 		_cruz.position = cruz_na_mao + Vector3(0, sin(_tempo * 1.7) * 0.012, 0)
 
+	if _fase >= A_ARDER:
+		_tempo_do_fogo += delta
 	if _fase >= A_ARDER and _fogo != null:
 		# A bola cresce depressa no principio e depois assenta.
 		_crescimento = minf(_crescimento + delta * 0.5, 1.0)
@@ -472,9 +487,12 @@ func _process(delta: float) -> void:
 		_fogo.scale = Vector3(r * pulsar, r * 1.25 * pulsar, r * pulsar)
 		_fogo.material_override.set_shader_parameter("crescimento", _crescimento)
 		_luz_do_fogo.light_energy = 6.5 * _crescimento * pulsar
-		# As formas entram com o fogo, nao antes.
-		for f in _formas:
-			f.vigor = _crescimento
+		# As formas entram com o fogo, nao antes: primeiro o fumo, depois
+		# elas por dentro dele.
+		for i in _formas.size():
+			var desde: float = _tempo_do_fogo - _esperas[i]
+			_formas[i].surgir = clampf(desde / maxf(demora_a_surgir, 0.001), 0.0, 1.0)
+			_formas[i].vigor = _formas[i].surgir
 
 	if _fase == A_SAUDAR and _tempo >= demora_das_boas_vindas:
 		_fase = A_FECHAR

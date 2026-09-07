@@ -17,6 +17,13 @@ const REDSKIN := "res://resources/imagens/mmorph REDskin_para_as_paredes.png"
 const SIGILO_CHAO := "res://resources/imagens/MORPHISTIC SIGIL_para o chão.jpg"
 const SIGILO_PANO := "res://resources/imagens/morphysm sigil STONE.png"
 const BAPHOMET := "res://resources/imagens/BAPHOMET777SUBLIMINALL.jpg"
+const FACES := [
+	"res://resources/imagens/face_fornalha_model_1.png",
+	"res://resources/imagens/face_fornalha_model_2.png",
+]
+## A cor das faces. Uma so e vermelha — ver `_formas`.
+const FACE_FRIA := Color(0.62, 0.92, 1.0)
+const FACE_VERMELHA := Color(1.0, 0.20, 0.12)
 const FORNALHA := "res://resources/modelos/fornalha.glb"
 const MUSICA := "res://resources/audio/Entrego Minha Alma.ogg"
 
@@ -333,6 +340,17 @@ func _formas() -> void:
 		Vector3(-3.0, 0.0, 1.9), Vector3(0.0, 0.0, 1.9),
 		Vector3(-2.92, 0.0, 2.7), Vector3(-0.08, 0.0, 2.7),
 	]
+	# Qual delas leva a face vermelha: a PRIMEIRA DO LADO ESQUERDO, ou
+	# seja, das que estao a esquerda do meio da sala, a que esta mais
+	# perto de quem entra. E uma so; as outras cinco ficam frias.
+	var vermelha := -1
+	var melhor_z := -1e9
+	for i in lugares.size():
+		var l: Vector3 = lugares[i]
+		if l.x < -1.5 and l.z > melhor_z:
+			melhor_z = l.z
+			vermelha = i
+
 	for i in lugares.size():
 		var f := FormaDancante.new()
 		f.name = "Forma%d" % (i + 1)
@@ -344,6 +362,9 @@ func _formas() -> void:
 		f.tamanho = 0.92 + fmod(float(i) * 0.23, 0.26)
 		f.espelhar = (i % 2) == 1
 		f.eco = 0.022 + fmod(float(i) * 0.011, 0.02)
+		# As duas faces alternam pelas seis.
+		f.face = load(FACES[i % FACES.size()])
+		f.cor_da_face = FACE_VERMELHA if i == vermelha else FACE_FRIA
 		grupo.add_child(f)
 		f.owner = raiz
 
