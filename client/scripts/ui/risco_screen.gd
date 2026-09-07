@@ -50,7 +50,15 @@ var _espera := 0.0
 
 ## Quanto se ve o ultimo risco antes de o sol comecar a ser tapado. O
 ## resultado tem de assentar; a passagem nao lhe rouba o lugar.
-const ESPERA_ATE_AO_ECLIPSE := 2.6
+##
+## Eram 2.6 e nao chegavam: A.C. viu aparecer alguma coisa em baixo e nao
+## teve tempo de a ler. E a unica vez que esta frase aparece.
+const ESPERA_ATE_AO_ECLIPSE := 5.0
+
+## O tamanho da letra do rotulo, e o tamanho a que a ultima frase se le.
+## Maior: e o fim da primeira fase e diz-se uma vez so.
+const LETRA_DO_ROTULO := 26
+const LETRA_DO_FIM := 42
 
 ## SPEC.md §6.2: quem resolve a `hora_asmodeica` e o servidor, a partir de
 ## UTC mais `profiles.tz`. O cliente so exibe o que o servidor reporta.
@@ -229,6 +237,10 @@ func _fechar_risco() -> void:
 		# palavra, e A.C. carregava outra vez a pensar que o botao nao
 		# tinha pegado — parecia que eram precisos dois cliques.
 		# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
+		#
+		# Maior do que o resto: em letra de rotulo ficava encostada ao
+		# nome do `reino` e aos botoes, e nao se lia.
+		_rotulo.add_theme_font_size_override("font_size", LETRA_DO_FIM)
 		_rotulo.text = "os três estão riscados"
 		# E desligar os botoes: um botao que ainda carrega mas ja nao faz
 		# nada diz a pessoa que ela e que fez mal.
@@ -287,6 +299,7 @@ func _limpar() -> void:
 	for filho in _tracos_no.get_children():
 		filho.queue_free()
 	_rotulo.text = ""
+	_rotulo.add_theme_font_size_override("font_size", LETRA_DO_ROTULO)
 	_atualizar_rotulo_guia()
 
 
