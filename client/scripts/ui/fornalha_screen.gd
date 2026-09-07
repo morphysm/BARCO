@@ -23,6 +23,10 @@ extends Node3D
 ## A cruz que se queima. Modelo de A.C.
 @export var cruz: PackedScene
 @export_range(0.1, 2.0) var tamanho_da_cruz := 0.55
+## Como o modelo tem de rodar para a cruz ficar DE PE. O `cruz_pro_fogo`
+## vem deitado — o braco comprido dele corre em z — e deitada nao se via:
+## 0.55 m de fundo por 0.09 m de alto, de canto para a camara.
+@export var giro_da_cruz := Vector3(-90.0, 0.0, 0.0)
 
 ## Ferro enferrujado por cima da fornalha. Desligar mostra os materiais
 ## que o modelo traz de fabrica.
@@ -271,17 +275,29 @@ func _por_a_cruz() -> void:
 	_cruz.name = "Cruz"
 	add_child(_cruz)
 
-	if cruz != null:
-		var modelo: Node3D = cruz.instantiate()
-		_cruz.add_child(modelo)
-		# Pelo maior lado, para uma cruz achatada nao sair gigante.
-		var c := _caixa(modelo)
-		var maior: float = maxf(c.size.x, maxf(c.size.y, c.size.z))
-		if maior > 0.0:
-			modelo.scale = Vector3.ONE * (tamanho_da_cruz / maior)
-			modelo.position = -c.get_center() * modelo.scale.x
-	else:
-		push_warning("sem modelo de cruz — nada para pegar")
+	if cruz == null:
+		push_warning("sem modelo de cruz — nao ha nada para pegar")
+		return
+
+	var modelo: Node3D = cruz.instantiate()
+	_cruz.add_child(modelo)
+	modelo.rotation_degrees = giro_da_cruz
+
+	# A caixa MEDE-SE EM MUNDO e nao com `malha.transform`.
+	#
+	# O transform de um `MeshInstance3D` e so o dele, relativo ao pai. Num
+	# modelo do Sketchfab a malha esta aninhada sob dois nos que carregam
+	# a escala toda, e medir sem eles da um numero que nao quer dizer
+	# nada: esta cruz saiu com 2617 x 874 x 5500 metros, a volta da
+	# camara, e o que se via era nada. E o mesmo erro que a faca deu.
+	var caixa := _caixa_em(modelo, _cruz)
+	var maior: float = maxf(caixa.size.x, maxf(caixa.size.y, caixa.size.z))
+	if maior > 0.0:
+		var factor := tamanho_da_cruz / maior
+		modelo.scale *= factor
+		# Recentrar depois de escalar, para a cruz ficar onde se manda e
+		# nao onde o modelo tinha a origem.
+		modelo.position = -caixa.get_center() * factor
 
 	# A frente da pessoa, e nao num sitio escrito a mao: onde a camara
 	# estiver, a cruz aparece a sua frente.
@@ -289,18 +305,21 @@ func _por_a_cruz() -> void:
 	if cam != null:
 		_cruz.global_position = (cam.global_position
 			- cam.global_transform.basis.z * 1.7
-			- cam.global_transform.basis.y * 0.42)
+			- cam.global_transform.basis.y * 0.34)
 	else:
 		_cruz.position = Vector3(0.0, 0.55, 1.05)
 
 
-func _caixa(no: Node3D) -> AABB:
+## Caixa envolvente de `no`, no espaco de `referencia`. Em mundo e depois
+## trazida para o referencial pedido — nunca com transforms locais.
+func _caixa_em(no: Node3D, referencia: Node3D) -> AABB:
+	var para_dentro := referencia.global_transform.affine_inverse()
 	var total := AABB()
 	var primeiro := true
 	for malha in _malhas(no):
 		if malha.mesh == null:
 			continue
-		var c: AABB = malha.transform * malha.mesh.get_aabb()
+		var c: AABB = (para_dentro * malha.global_transform) * malha.mesh.get_aabb()
 		total = c if primeiro else total.merge(c)
 		primeiro = false
 	return total
