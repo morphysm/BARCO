@@ -49,7 +49,12 @@ func _unhandled_input(evento: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if not solto:
 		return
-	var querer := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	# As accoes sao do projeto e nao as `ui_*` do Godot. As de fabrica so
+	# estao ligadas as SETAS — o ecra dizia WASD e o WASD nao andava.
+	# Agora andam as duas, por `physical_keycode`, que e o que faz o WASD
+	# continuar a ser WASD num teclado AZERTY.
+	var querer := Input.get_vector(
+		"andar_esquerda", "andar_direita", "andar_frente", "andar_tras")
 	var direcao := (transform.basis * Vector3(querer.x, 0.0, querer.y)).normalized()
 	velocity.x = direcao.x * velocidade
 	velocity.z = direcao.z * velocidade
