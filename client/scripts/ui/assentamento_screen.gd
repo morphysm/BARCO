@@ -340,7 +340,7 @@ func _montar_tira() -> void:
 
 	var coluna := VBoxContainer.new()
 	coluna.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	coluna.offset_top = -196
+	coluna.offset_top = -170
 	coluna.offset_bottom = -14
 	coluna.offset_left = 12
 	coluna.offset_right = -12
@@ -348,7 +348,7 @@ func _montar_tira() -> void:
 	folha.add_child(coluna)
 
 	# Ninguem adivinha que se arrasta. TODO(CONTENT.pt.md): texto autoral.
-	var como := Pagina.texto("arrasta uma oferenda para o assentamento", 16)
+	var como := Pagina.texto("arrasta uma oferenda para o assentamento", 19)
 	como.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	como.modulate = Color(1, 1, 1, 0.62)
 	coluna.add_child(como)
@@ -360,30 +360,28 @@ func _montar_tira() -> void:
 	# O ESC continua a servir, mas ninguem adivinha uma tecla que nao
 	# esta escrita em lado nenhum.
 	# TODO(CONTENT.pt.md): rotulo autoral.
-	var escrever := Pagina.botao("escrever um pedido · grátis", 17)
+	var escrever := Pagina.botao("escrever um pedido · grátis", 20)
 	escrever.pressed.connect(_alternar_menu)
 	linha_livre.add_child(escrever)
 
-	# E o que se paga, com o preco a vista.
+	# E o que se paga, com o preco a vista. Numa linha so.
 	#
-	# Em duas linhas e nao numa: com o preco no rotulo, oito oferendas
-	# nao cabem na largura e as ultimas saíam do ecra.
-	var todas := _oferendas_disponiveis()
-	var por_linha: int = int(ceil(todas.size() / 2.0))
-	var tira: HBoxContainer = null
-	for i in todas.size():
-		if i % por_linha == 0:
-			tira = HBoxContainer.new()
-			tira.alignment = BoxContainer.ALIGNMENT_CENTER
-			tira.add_theme_constant_override("separation", 8)
-			coluna.add_child(tira)
-		var o: Oferenda = load(todas[i])
+	# A letra e a folga sao contidas de proposito: com `aspect=expand` a
+	# viewport passa a ser a janela de verdade, entao a tira tem de caber
+	# na mais estreita que alguem venha a usar — nao nos 1600 do projeto.
+	var tira := HBoxContainer.new()
+	tira.alignment = BoxContainer.ALIGNMENT_CENTER
+	tira.add_theme_constant_override("separation", 6)
+	coluna.add_child(tira)
+
+	for caminho in _oferendas_disponiveis():
+		var o: Oferenda = load(caminho)
 		if o == null:
 			continue
 		var rotulo := o.nome
 		if o.cafes > 0:
-			rotulo += " · %d %s" % [o.cafes * POR_CAFE, MOEDA]
-		var b := Pagina.botao(rotulo, 16)
+			rotulo += "  %d %s" % [o.cafes * POR_CAFE, MOEDA]
+		var b := Pagina.botao(rotulo, 18)
 		b.button_down.connect(_comecar_a_depor.bind(o))
 		tira.add_child(b)
 

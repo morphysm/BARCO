@@ -10,8 +10,13 @@ extends Node2D
 const MARGEM := 0.92
 ## Faixas reservadas a pagina impressa: o nome em cima, os rotulos em
 ## baixo. O `ponto` nunca entra nelas.
-const FAIXA_TOPO := 96.0
-const FAIXA_BASE := 246.0
+## As faixas de cima e de baixo, em FRACCAO da altura — nao em pixeis.
+##
+## Eram 96 e 246 pixeis, medidos num ecra de 1920 de alto. Numa janela de
+## secretaria de 720 as mesmas duas faixas comiam metade do ecra e o
+## `ponto` ficava do tamanho de um selo, impossivel de riscar.
+const FAIXA_TOPO := 0.09
+const FAIXA_BASE := 0.24
 const COR_MARCA := Color(0.937, 0.925, 0.882, 0.55)
 const COR_GUIA := Color(0.937, 0.925, 0.882, 0.14)
 const COR_TINTA := Color(0.937, 0.925, 0.882)
@@ -31,6 +36,7 @@ var _lugar: Label
 var _botao_fechar: Button
 var _botao_refazer: Button
 var _botao_atravessar: Button
+var _barra: HBoxContainer
 
 var _tracos: Array[PackedVector2Array] = []
 var _traco_atual: PackedVector2Array = PackedVector2Array()
@@ -100,28 +106,22 @@ func _montar() -> void:
 	# se anuncia uma entidade antes de o risco a nomear.
 	_titulo = _texto("", 34)
 	_titulo.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_titulo.offset_top = 48
 	_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	folha.add_child(_titulo)
 
-	_rotulo = _texto("", 26)
+	_rotulo = _texto("", LETRA_DO_ROTULO)
 	_rotulo.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	_rotulo.offset_top = -222
-	_rotulo.offset_bottom = -164
 	_rotulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	folha.add_child(_rotulo)
 
 	_lugar = _texto(irmandade.nome, 22)
 	_lugar.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	_lugar.offset_top = -158
-	_lugar.offset_bottom = -122
 	_lugar.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	folha.add_child(_lugar)
 
-	var barra := HBoxContainer.new()
+	_barra = HBoxContainer.new()
+	var barra := _barra
 	barra.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	barra.offset_top = -110
-	barra.offset_bottom = -46
 	barra.offset_left = 40
 	barra.offset_right = -40
 	barra.add_theme_constant_override("separation", 20)
@@ -148,15 +148,31 @@ func _montar() -> void:
 	_atualizar_rotulo_guia()
 
 
+## Poe os rotulos e a barra em fraccao da altura, para caberem tanto num
+## ecra ao alto como numa janela de secretaria.
+func _arrumar_folha(vista: Vector2) -> void:
+	if _titulo == null:
+		return
+	_titulo.offset_top = vista.y * 0.035
+	_rotulo.offset_top = -vista.y * 0.185
+	_rotulo.offset_bottom = -vista.y * 0.125
+	_lugar.offset_top = -vista.y * 0.122
+	_lugar.offset_bottom = -vista.y * 0.075
+	_barra.offset_top = -vista.y * 0.072
+	_barra.offset_bottom = -vista.y * 0.012
+
+
 func _ajustar_campo() -> void:
 	var vista := get_viewport_rect().size
 	var ref: Vector2 = _referencia()
-	var util := maxf(vista.y - FAIXA_TOPO - FAIXA_BASE, 1.0)
+	var topo := vista.y * FAIXA_TOPO
+	var util := maxf(vista.y * (1.0 - FAIXA_TOPO - FAIXA_BASE), 1.0)
 	var escala: float = minf(vista.x * MARGEM / ref.x, util / ref.y)
 	_campo.scale = Vector2(escala, escala)
 	_campo.position = Vector2(
 		(vista.x - ref.x * escala) * 0.5,
-		FAIXA_TOPO + (util - ref.y * escala) * 0.5)
+		topo + (util - ref.y * escala) * 0.5)
+	_arrumar_folha(vista)
 	_marcas.queue_redraw()
 	_guia.queue_redraw()
 
