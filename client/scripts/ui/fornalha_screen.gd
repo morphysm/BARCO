@@ -40,7 +40,11 @@ extends Node3D
 ## Quantas formas dancam. Os LUGARES estao na cena, em `Dancantes` — sao
 ## marcas que se arrastam no editor. Isto so diz quantas se usam.
 @export_range(0, 12) var quantas_formas := 6
-@export var cor_das_formas := Color(0.18, 0.05, 0.04, 0.86)
+## Luz eletrica azul. O `a` e a opacidade da figura.
+@export var cor_das_formas := Color(0.16, 0.44, 0.95, 0.9)
+@export var borda_das_formas := Color(0.62, 0.92, 1.0)
+## Ate que altura a bruma come as figuras, a contar do chao.
+@export_range(0.0, 2.0) var bruma_das_formas := 0.62
 
 ## A musica. A iris so abre quando ela acabar — nao ha duracao escrita a
 ## mao: troca-se o ficheiro e o compasso vai atras.
@@ -438,6 +442,8 @@ func _por_as_formas() -> void:
 		f.espelhar = (i % 2) == 1
 		f.eco = 0.022 + fmod(float(i) * 0.011, 0.02)
 		f.cor = cor_das_formas
+		f.cor_da_borda = borda_das_formas
+		f.bruma = bruma_das_formas
 		add_child(f)
 		f.global_transform = (marca as Node3D).global_transform
 		_formas.append(f)

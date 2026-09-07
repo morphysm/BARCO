@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/eclipse_screen.gd" id="1_eclipse"]
-[ext_resource type="AudioStream" uid="uid://cc1v32t40bwsy" path="res://resources/audio/passagem_provisorio.ogg" id="2_som"]
+[ext_resource type="AudioStream" uid="uid://c2nqvkehtnytk" path="res://resources/audio/Empty Corridor Echo.ogg" id="2_som"]
 
 [node name="Eclipse" type="Node2D"]
 script = ExtResource("1_eclipse")

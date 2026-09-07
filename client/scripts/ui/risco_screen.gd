@@ -225,7 +225,15 @@ func _fechar_risco() -> void:
 	var seguinte := Passagem.proximo(irmandade)
 	if seguinte == null:
 		_rotulo.remove_theme_color_override("font_color")
-		_rotulo.text = ""
+		# NAO deixar mudo. Ficavam 2.6 segundos de ecra parado sem uma
+		# palavra, e A.C. carregava outra vez a pensar que o botao nao
+		# tinha pegado — parecia que eram precisos dois cliques.
+		# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
+		_rotulo.text = "os três estão riscados"
+		# E desligar os botoes: um botao que ainda carrega mas ja nao faz
+		# nada diz a pessoa que ela e que fez mal.
+		_botao_fechar.disabled = true
+		_botao_refazer.disabled = true
 		_a_passar = true
 		_espera = 0.0
 		set_process(true)

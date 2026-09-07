@@ -18,10 +18,13 @@ extends Node2D
 ## da altura, e a coroa vai muito alem dele.
 @export_range(0.05, 1.2) var tamanho := 0.26
 
-## O que toca por cima. Fica vazio ate haver som proprio; sem stream a
-## passagem corre em silencio, que e melhor do que correr com o som
-## errado.
+## O que toca por cima. Sem stream a passagem corre em silencio, que e
+## melhor do que correr com o som errado.
 @export var som: AudioStream
+
+## Se o som for mais curto do que a travessia, volta ao principio. Um
+## corredor vazio nao acaba a meio.
+@export var repetir_o_som := true
 
 var _tela: ColorRect
 var _material: ShaderMaterial
@@ -48,6 +51,8 @@ func _ready() -> void:
 		_tocador = AudioStreamPlayer.new()
 		_tocador.stream = som
 		add_child(_tocador)
+		if repetir_o_som:
+			_tocador.finished.connect(_tocador.play)
 		_tocador.play()
 
 	get_viewport().size_changed.connect(_medir)

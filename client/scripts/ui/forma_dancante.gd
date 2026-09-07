@@ -21,7 +21,16 @@ extends Node3D
 @export var espelhar := false
 ## Quanto o corpo-eco se afasta do primeiro.
 @export var eco := 0.03
-@export var cor := Color(0.16, 0.05, 0.04, 0.85)
+## Luz eletrica azul. O `a` da cor e a opacidade da figura.
+@export var cor := Color(0.16, 0.44, 0.95, 0.9)
+@export var cor_da_borda := Color(0.62, 0.92, 1.0)
+## Quanto a figura se acende so nas bordas — alto e mais oco, mais
+## fantasma.
+@export_range(0.5, 6.0) var contorno := 1.5
+## O tremor eletrico.
+@export_range(0.0, 1.0) var faisca := 0.35
+## Ate que altura a bruma come a figura, a contar do chao.
+@export_range(0.0, 2.0) var bruma := 0.62
 
 ## Quanto da danca esta a acontecer, de 0 (parada) a 1 (inteira). E o que
 ## faz as formas entrarem com o fogo em vez de ja la estarem.
@@ -54,12 +63,20 @@ var _tempo := 0.0
 func _ready() -> void:
 	_mat = ShaderMaterial.new()
 	_mat.shader = load("res://shaders/forma.gdshader")
-	_mat.set_shader_parameter("tinta", cor)
+	_mat.set_shader_parameter("cor_nucleo", Color(cor.r, cor.g, cor.b))
+	_mat.set_shader_parameter("cor_borda", cor_da_borda)
+	_mat.set_shader_parameter("contorno", contorno)
+	_mat.set_shader_parameter("faisca", faisca)
+	_mat.set_shader_parameter("bruma", bruma)
 	_mat.set_shader_parameter("fase", semente)
 	_primario = _montar_corpo("Primario", 1.0)
 	# §29: o segundo corpo fica um pouco fora do primeiro. E ele que faz a
 	# figura tremer sem se mexer.
-	_eco = _montar_corpo("Eco", 0.28)
+		# §30: o eco anda entre 0.05 e 0.10 em repouso. Estava em 0.42 com um
+	# atraso grande, e como os bracos se mexem depressa o eco ficava
+	# meio metro ao lado do corpo — liam-se como lascas soltas a flutuar,
+	# nao como tremor.
+	_eco = _montar_corpo("Eco", 0.16)
 	_eco.position = Vector3((1.0 if not espelhar else -1.0) * eco, 0.017, 0.046)
 	set_process(true)
 
@@ -70,19 +87,21 @@ func _montar_corpo(nome: String, opacidade: float) -> Node3D:
 	add_child(corpo)
 
 	var m: ShaderMaterial = _mat.duplicate()
-	var c := cor
-	c.a *= opacidade
-	m.set_shader_parameter("tinta", c)
+	m.set_shader_parameter("opacidade", cor.a * opacidade)
 
 	for osso in OSSOS:
 		var seg := MeshInstance3D.new()
 		seg.name = osso[0]
 		var cil := CylinderMesh.new()
-		cil.top_radius = 1.0
-		cil.bottom_radius = 1.0
+		# Raio 0.5 e altura 1: um cilindro de DIAMETRO unitario, que e com
+		# o que a formula do documento conta (`radius * 2.0` na escala).
+		# Com raio 1 os membros saiam com o dobro da grossura e liam-se
+		# como blocos, nao como bracos.
+		cil.top_radius = 0.5
+		cil.bottom_radius = 0.5
 		cil.height = 1.0
-		cil.radial_segments = 8
-		cil.rings = 1
+		cil.radial_segments = 14
+		cil.rings = 2
 		seg.mesh = cil
 		seg.material_override = m
 		seg.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -95,8 +114,8 @@ func _montar_corpo(nome: String, opacidade: float) -> Node3D:
 		var esf := SphereMesh.new()
 		esf.radius = par[1]
 		esf.height = par[1] * 2.0
-		esf.radial_segments = 8
-		esf.rings = 5
+		esf.radial_segments = 14
+		esf.rings = 8
 		b.mesh = esf
 		b.material_override = m
 		b.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -120,8 +139,15 @@ func _por_segmento(seg: MeshInstance3D, a: Vector3, b: Vector3, raio: float) -> 
 		ajuda = Vector3.RIGHT
 	var eixo_x := ajuda.cross(eixo_y).normalized()
 	var eixo_z := eixo_x.cross(eixo_y).normalized()
+	# Os eixos ja saem escalados, em vez de `Basis.scaled()`.
+	#
+	# O documento usa `.scaled()`, mas no Godot 4 esse metodo multiplica as
+	# LINHAS da base, nao os eixos: para uma base rodada isso escala nos
+	# eixos do mundo e nao nos da peca. Um braco na diagonal saia esmagado
+	# — curto e grosso — e liam-se como lascas soltas ao lado do corpo em
+	# vez de bracos presos ao ombro.
 	seg.transform = Transform3D(
-		Basis(eixo_x, eixo_y, eixo_z).scaled(Vector3(raio * 2.0, comp, raio * 2.0)),
+		Basis(eixo_x * (raio * 2.0), eixo_y * comp, eixo_z * (raio * 2.0)),
 		(a + b) * 0.5)
 
 
@@ -131,7 +157,7 @@ func _process(delta: float) -> void:
 	var f := _tempo * 3.25 * ritmo + semente * 2.11
 	var juntas := _juntas(f)
 	_vestir(_primario, juntas)
-	_vestir(_eco, _juntas(f - 0.09))
+	_vestir(_eco, _juntas(f - 0.035))
 	scale = Vector3.ONE * tamanho
 
 

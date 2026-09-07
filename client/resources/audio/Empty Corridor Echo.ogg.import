@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://c2nqvkehtnytk"
+path="res://.godot/imported/Empty Corridor Echo.ogg-793ee3c6ae7326db623479825d19842a.oggvorbisstr"
+
+[deps]
+
+source_file="res://resources/audio/Empty Corridor Echo.ogg"
+dest_files=["res://.godot/imported/Empty Corridor Echo.ogg-793ee3c6ae7326db623479825d19842a.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
