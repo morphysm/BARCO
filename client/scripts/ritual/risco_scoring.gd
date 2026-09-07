@@ -28,7 +28,11 @@ const RAZAO_INDEFINIDA := 0.7
 ##
 ## Nao e 1.0 de proposito: falhar um pingo de chuva de quatro pixeis nao e
 ## desistir. O limiar separa quem parou de quem errou.
-const COBERTURA_MINIMA := 0.75
+##
+## 0.70 por decisao de A.C.: e a mesma porta por onde se passa de um
+## `ponto` para o seguinte. Um numero so, para a porta nao poder
+## discordar da nota — quem abandona nao entra.
+const COBERTURA_MINIMA := 0.70
 
 ## Tracos mais curtos que isto (no espaco de referencia) sao toques
 ## acidentais, nao tracos.
@@ -183,6 +187,29 @@ static func avaliar(
 			r.firmeza = int(round(float(r.firmeza_bruta) * 0.6))
 
 	return r
+
+
+## Mede os tracos contra UMA assinatura, a que foi pedida — nao contra a
+## melhor de todas.
+##
+## `avaliar` responde "quem atendeu?", e para isso procura. Aqui a
+## pergunta e outra: "risquei o ponto que me foi posto a frente?". Nao ha
+## nada a descobrir, ha um desenho a completar.
+static func medir(tracos: Array, ponto: PontoData) -> Dictionary:
+	var finas: Array[PackedVector2Array] = []
+	var grossas: Array[PackedVector2Array] = []
+	var caixas: Array[Rect2] = []
+	for bruto in tracos:
+		var traco: PackedVector2Array = bruto
+		if Polilinha.comprimento(traco) < COMPRIMENTO_MINIMO:
+			continue
+		var f := Polilinha.condicionar(traco)
+		finas.append(f)
+		grossas.append(Polilinha.reamostrar(f, AMOSTRAS_TRIAGEM))
+		caixas.append(Polilinha.caixa(f))
+	if finas.is_empty() or ponto == null:
+		return {"cobertura": 0.0}
+	return _contra_assinatura(finas, grossas, caixas, ponto)
 
 
 ## Mede um conjunto de tracos ja condicionados contra uma `assinatura`.

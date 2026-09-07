@@ -24,22 +24,23 @@ The app opens in three phases, in this order. A.C. set them. Each is a
 gate: the next does not exist for a person who has not passed the one
 before it.
 
-**1. The `ponto`.** The person opens the app onto a signature with the
-guide drawn under it, traces, and asks the guide: *posso passar?* One
-measure answers — how much of the drawing was traced. **Whoever
-abandons does not enter** (A.C.): the door is the `abandonado` threshold
-itself, `RiscoScoring.COBERTURA_MINIMA`, and not a number of its own.
-Below it the answer is no, in red, and they trace more.
+**1. The three `pontos`, one at a time.** The app opens on the first
+signature of the `irmandade` with the guide drawn under it. The person
+traces over it and asks the guide: *posso passar?* One measure answers —
+how much of **that** drawing was traced, measured against that signature
+alone and not against the best of the three (`RiscoScoring.medir`).
 
-One number, so the door cannot disagree with the mark: a risco that
-passed on a lower threshold would still read `firmeza 0`, because an
-`abandonado` `ponto` is worth nothing at any hour (§5.3). If the abandono
-threshold moves, the door moves with it.
+Enough, and the guide puts up the next one: `Exu Caveira`, then
+`Rosa Negra`, then `Exu Aranha`, in the order of the `irmandade`. Not
+enough, and it says so in red and the same drawing stays. Nobody chooses
+anything along the way: there is the `ponto` in front of you.
 
-`firmeza` is still computed and shown: it is what the risco is worth. It
-is not what opens the door.
+The threshold is `RiscoScoring.COBERTURA_MINIMA`, **0.70**, and the door
+has no number of its own — it is the `abandonado` threshold itself
+(§5.3), so the door cannot disagree with the mark. Whoever abandons does
+not enter (A.C.).
 
-Crossed once. After that the app opens on the `assentamento`.
+Crossed once. After the third the app opens on the `assentamento`.
 
 Between 1 and 2 there is a passage: **the eclipse.** A huge sun, the moon
 crossing it, the black sun, and the light going out — then the
@@ -212,14 +213,14 @@ time, never money.
 
 ### 4.3 The guide
 
-The guide draws the signature under the field, to be traced over. It
-starts on, so a person who opens the app has something in front of them.
-The `guia` button turns it off and cycles between signatures; with it off
-the field is bare, because the start marks of a signature are exactly the
-answer the person has to know by heart (§4.1).
+The guide is always on and cannot be turned off. It draws the signature
+under the field, to be traced over, and it is what carries the person
+from one `ponto` to the next. There is no toggle and no way to pick a
+different one.
 
-A guided risco counts like any other. Practice is what the guide is for,
-and the measure that opens the door is coverage, not memory.
+A field with no guide is a black sheet, and a black sheet teaches nobody
+to trace. Tracing from memory belongs to the `trabalho`, later — not to
+the way in.
 
 ---
 

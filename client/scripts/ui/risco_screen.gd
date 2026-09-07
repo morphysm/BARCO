@@ -30,7 +30,6 @@ var _titulo: Label
 var _lugar: Label
 var _botao_fechar: Button
 var _botao_refazer: Button
-var _botao_guia: Button
 
 var _tracos: Array[PackedVector2Array] = []
 var _traco_atual: PackedVector2Array = PackedVector2Array()
@@ -38,11 +37,12 @@ var _linha_atual: PembaTraco
 var _dedo := -1
 var _fechado := false
 
-## O guia mostra o desenho por baixo, para se riscar por cima. Indice da
-## assinatura mostrada; -1 = guia desligado.
+## O `ponto` que esta a frente. O guia esta SEMPRE ligado: sem ele o
+## campo e uma folha preta, e uma folha preta nao ensina ninguem a riscar.
 ##
-## Comeca ligado: a pessoa abre o app e tem o que riscar a frente.
-var _guiado := 0
+## Nao ha como desliga-lo e nao ha por onde escolher outro — ha o ponto
+## que esta a frente, e passa-se ao seguinte riscando este.
+var _ponto: Entidade
 
 ## O compasso de espera entre o "podes" e o eclipse.
 var _a_passar := false
@@ -61,7 +61,7 @@ var _hora_asmodeica := false
 
 func _ready() -> void:
 	# Atravessa-se uma vez. Quem ja passou abre no `assentamento`.
-	if not Engine.is_editor_hint() and Passagem.passou():
+	if not Engine.is_editor_hint() and Passagem.completa(irmandade):
 		call_deferred("_ir_para_o_assentamento")
 		return
 	if irmandade == null:
@@ -128,13 +128,13 @@ func _montar() -> void:
 
 	# TODO(CONTENT.pt.md): rotulos definitivos sao texto autoral. Ver §2 —
 	# descrever o ato, nunca o efeito. Estes sao estruturais.
-	_botao_guia = _botao("guia", _alternar_guia)
 	_botao_fechar = _botao("posso passar?", _fechar_risco)
 	_botao_refazer = _botao("riscar de novo", _limpar)
-	barra.add_child(_botao_guia)
 	barra.add_child(_botao_fechar)
 	barra.add_child(_botao_refazer)
 
+	# O ponto da vez. A ordem e a da `irmandade`.
+	_ponto = Passagem.proximo(irmandade)
 	_atualizar_rotulo_guia()
 
 
@@ -198,35 +198,49 @@ func _terminar_traco() -> void:
 
 ## A pergunta ao guia: "posso passar?"
 ##
-## Uma so medida decide — quanto do desenho foi riscado. Quem abandonou
-## nao entra: e o mesmo limiar do `abandonado` (SPEC.md §5.3), para a
-## porta nao poder discordar da nota.
+## Mede-se contra O PONTO QUE ESTA A FRENTE, nao contra a melhor
+## assinatura das tres: a pergunta nao e "quem atendeu?", e "risquei o
+## que me foi posto?".
 ##
-## A `firmeza` continua a ser calculada e mostrada: e o que o risco vale.
-## Nao e ela que abre a porta.
+## Riscado o suficiente, o guia poe o seguinte. Riscado o terceiro, o
+## eclipse. Abaixo do limiar, a resposta e nao, em vermelho.
 func _fechar_risco() -> void:
-	if _fechado or _tracos.is_empty():
+	if _fechado or _tracos.is_empty() or _ponto == null:
 		return
 
-	_fechado = true
-	var r := RiscoScoring.avaliar(_tracos, irmandade, _hora_asmodeica)
+	var m := RiscoScoring.medir(_tracos, _ponto.ponto_riscado)
+	var cobertura: float = m.get("cobertura", 0.0)
 
-	if r.abandonado:
+	if cobertura < Passagem.COBERTURA_PARA_PASSAR:
 		# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
 		_rotulo.text = "Ainda não, risca mais!"
 		_rotulo.add_theme_color_override("font_color", COR_RECUSA)
-		_titulo.text = ""
 		return
 
+	_fechado = true
+	Passagem.passar(_ponto.slug)
+	var seguinte := Passagem.proximo(irmandade)
+	if seguinte == null:
+		_rotulo.remove_theme_color_override("font_color")
+		_rotulo.text = ""
+		_a_passar = true
+		_espera = 0.0
+		set_process(true)
+		return
+
+	# Empurra para o seguinte: o guia troca de desenho e a pessoa
+	# continua, sem ter de carregar em nada.
+	_ponto = seguinte
 	_rotulo.remove_theme_color_override("font_color")
-	_rotulo.text = _ler(r)
-	Passagem.passar()
-	_a_passar = true
-	_espera = 0.0
-	set_process(true)
+	_limpar()
+	_ajustar_campo()
+	_guia.queue_redraw()
+	_marcas.queue_redraw()
+	# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
+	_rotulo.text = "agora o ponto de %s" % seguinte.nome
 
 
-## Depois do "podes", o eclipse. Nao ha botao: o resultado assenta e
+## Riscado o terceiro, o eclipse. Nao ha botao: o resultado assenta e
 ## atravessa-se, e daqui nao se volta.
 func _process(delta: float) -> void:
 	if not _a_passar:
@@ -267,20 +281,8 @@ func _limpar() -> void:
 
 ## SPEC.md §4.3: o primeiro contato e por entidade. O guia percorre as
 ## assinaturas da `irmandade` e depois se apaga.
-func _alternar_guia() -> void:
-	_guiado += 1
-	if _guiado >= irmandade.entidades.size():
-		_guiado = -1
-	_guia.queue_redraw()
-	_marcas.queue_redraw()
-	_limpar()
-	_atualizar_rotulo_guia()
-
-
 func _assinatura_guiada() -> Entidade:
-	if _guiado < 0 or _guiado >= irmandade.entidades.size():
-		return null
-	return irmandade.entidades[_guiado]
+	return _ponto
 
 
 func _referencia() -> Vector2:
@@ -290,18 +292,16 @@ func _referencia() -> Vector2:
 	return Vector2(640, 1000)
 
 
+## O alto diz de quem e o `ponto` que esta a frente; o baixo diz o que
+## fazer com ele. Aqui nao ha nada a descobrir — ha um desenho a
+## completar, e o guia acompanha.
 func _atualizar_rotulo_guia() -> void:
-	var e := _assinatura_guiada()
-	_titulo.text = e.nome if e != null else ""
-	if _rotulo != null:
-		_rotulo.remove_theme_color_override("font_color")
-		# TODO(CONTENT.pt.md): texto autoral. Estes sao estruturais.
-		if not _fechado and _tracos.is_empty():
-			_rotulo.text = "risca, depois pergunta" if e != null else "risca de memória"
-		else:
-			_rotulo.text = ""
-	if _botao_guia != null:
-		_botao_guia.text = "sem guia" if e != null else "guia"
+	_titulo.text = _ponto.nome if _ponto != null else ""
+	if _rotulo == null:
+		return
+	_rotulo.remove_theme_color_override("font_color")
+	# TODO(CONTENT.pt.md): texto autoral. Estes sao estruturais.
+	_rotulo.text = "risca o ponto, depois pergunta" if _ponto != null else ""
 
 
 # --- desenho -----------------------------------------------------------

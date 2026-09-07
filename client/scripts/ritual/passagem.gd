@@ -1,13 +1,15 @@
-## A porta entre riscar e o `assentamento` (SPEC.md §1.1).
+## O caminho ate ao `assentamento` (SPEC.md §1.1).
 ##
-## Uma so pergunta: chegou-se ao fim do desenho? Quem abandonou nao
-## entra — e o mesmo limiar que faz um `ponto` ser `abandonado`.
+## Tres `pontos`, um de cada vez, sempre com o guia por baixo. Risca-se o
+## que esta a frente e pergunta-se ao guia: posso passar? Se o desenho
+## estiver riscado o suficiente, o guia poe o seguinte; senao diz que
+## ainda nao.
 ##
-## Nao ha contagem de assinaturas, nao ha sequencia de primeiros
-## contatos, nao ha nada a desbloquear por partes. Risca-se, pergunta-se,
-## passa-se ou nao.
+## Riscado o terceiro, o eclipse, e depois o `assentamento`. Atravessa-se
+## uma vez: dai em diante o app abre no `assentamento`.
 ##
-## Atravessa-se uma vez. Depois disso o app abre no `assentamento`.
+## A ordem e a da `irmandade`, e nao ha escolha nenhuma pelo caminho —
+## nao ha menu, ha o ponto que esta a frente.
 ##
 ## Isto vive no aparelho e e provisorio. O `caderno` e o registo a serio e
 ## e do servidor (AGENTS.md, SPEC.md §3.3).
@@ -16,25 +18,45 @@ extends RefCounted
 
 const REGISTO := "user://passagem.json"
 
-## Quem abandona nao entra (decisao de A.C.). E por isso que a porta nao
-## tem numero proprio: e o mesmo limiar do `abandonado`, e um `ponto`
-## abandonado vale zero a qualquer hora (SPEC.md §5.3).
+## Quanto de um `ponto` tem de estar riscado para se passar ao seguinte.
 ##
-## Dois numeros diferentes davam um risco que passava a porta e valia
-## zero. Um so nao pode discordar de si mesmo. Se o limiar do abandono
-## mudar, a porta acompanha.
+## Nao tem numero proprio: e o limiar do `abandonado` (SPEC.md §5.3), para
+## a porta nao poder discordar da nota. Quem abandona nao entra.
 const COBERTURA_PARA_PASSAR := RiscoScoring.COBERTURA_MINIMA
 
 
-static func passou() -> bool:
-	return _ler().get("passou", false)
+## Os `pontos` ja riscados, por slug, pela ordem em que caíram.
+static func passados() -> Array:
+	return _ler().get("passados", [])
 
 
-## Regista a passagem. Nao se desfaz — como tudo aqui, so cresce (GDD §2).
-static func passar() -> void:
+## O `ponto` que esta a frente, ou `null` se ja se riscaram os tres.
+static func proximo(irm: Irmandade) -> Entidade:
+	if irm == null:
+		return null
+	var feitos := passados()
+	for e in irm.entidades:
+		if e != null and not feitos.has(e.slug):
+			return e
+	return null
+
+
+## Regista um `ponto` riscado. Nao se desfaz (GDD §2).
+static func passar(slug: String) -> void:
+	if slug == "":
+		return
 	var d := _ler()
-	d["passou"] = true
+	var lista: Array = d.get("passados", [])
+	if lista.has(slug):
+		return
+	lista.append(slug)
+	d["passados"] = lista
 	_guardar(d)
+
+
+## Riscaram-se os tres?
+static func completa(irm: Irmandade) -> bool:
+	return proximo(irm) == null
 
 
 static func _ler() -> Dictionary:
