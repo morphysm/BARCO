@@ -11,7 +11,7 @@ func _initialize() -> void:
 	var e: Entidade = irm.entidades[0]
 	var todos := e.ponto_riscado.segmentos
 	print("assinatura de prova: %s, %d segmentos" % [e.slug, todos.size()])
-	print("porta: cobertura >= %.2f" % Passagem.COBERTURA_PARA_PASSAR)
+	print("porta: nao abandonado, ou seja cobertura >= %.2f" % Passagem.COBERTURA_PARA_PASSAR)
 	print("")
 	print("  fatia   cobertura   firmeza   passa?")
 	for fatia in [0.40, 0.60, 0.69, 0.72, 0.85, 1.00]:
@@ -22,5 +22,5 @@ func _initialize() -> void:
 		var r := RiscoScoring.avaliar(tracos, irm, false)
 		print("  %4.0f%%   %8.2f   %7d   %s" % [
 			fatia * 100.0, r.cobertura, r.firmeza,
-			"sim" if r.cobertura >= Passagem.COBERTURA_PARA_PASSAR else "AINDA NAO"])
+			"sim" if not r.abandonado else "AINDA NAO"])
 	quit()

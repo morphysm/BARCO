@@ -198,9 +198,9 @@ func _terminar_traco() -> void:
 
 ## A pergunta ao guia: "posso passar?"
 ##
-## Uma so medida decide — quanto do desenho foi riscado. Setenta por
-## cento chega (`Passagem.COBERTURA_PARA_PASSAR`). Abaixo disso a resposta
-## e nao, em vermelho, e risca-se mais.
+## Uma so medida decide — quanto do desenho foi riscado. Quem abandonou
+## nao entra: e o mesmo limiar do `abandonado` (SPEC.md §5.3), para a
+## porta nao poder discordar da nota.
 ##
 ## A `firmeza` continua a ser calculada e mostrada: e o que o risco vale.
 ## Nao e ela que abre a porta.
@@ -211,7 +211,7 @@ func _fechar_risco() -> void:
 	_fechado = true
 	var r := RiscoScoring.avaliar(_tracos, irmandade, _hora_asmodeica)
 
-	if r.cobertura < Passagem.COBERTURA_PARA_PASSAR:
+	if r.abandonado:
 		# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
 		_rotulo.text = "Ainda não, risca mais!"
 		_rotulo.add_theme_color_override("font_color", COR_RECUSA)

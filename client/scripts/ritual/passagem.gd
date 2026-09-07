@@ -1,7 +1,7 @@
 ## A porta entre riscar e o `assentamento` (SPEC.md §1.1).
 ##
-## Uma so pergunta: riscou-se o suficiente do desenho? Setenta por cento
-## chega. Abaixo disso nao — risca mais.
+## Uma so pergunta: chegou-se ao fim do desenho? Quem abandonou nao
+## entra — e o mesmo limiar que faz um `ponto` ser `abandonado`.
 ##
 ## Nao ha contagem de assinaturas, nao ha sequencia de primeiros
 ## contatos, nao ha nada a desbloquear por partes. Risca-se, pergunta-se,
@@ -16,14 +16,14 @@ extends RefCounted
 
 const REGISTO := "user://passagem.json"
 
-## Quanto do desenho tem de estar riscado para se passar. Decisao de A.C.
+## Quem abandona nao entra (decisao de A.C.). E por isso que a porta nao
+## tem numero proprio: e o mesmo limiar do `abandonado`, e um `ponto`
+## abandonado vale zero a qualquer hora (SPEC.md §5.3).
 ##
-## ATENCAO: `RiscoScoring.COBERTURA_MINIMA` e 0.75 e serve para outra
-## coisa — abaixo dela o risco conta como `abandonado` (SPEC.md §5.3).
-## Sendo este limiar mais baixo, um risco entre 0.70 e 0.75 passa a porta
-## e mesmo assim vale zero de `firmeza`. Os dois numeros tem de se
-## encontrar, e qual deles cede e decisao de A.C.
-const COBERTURA_PARA_PASSAR := 0.70
+## Dois numeros diferentes davam um risco que passava a porta e valia
+## zero. Um so nao pode discordar de si mesmo. Se o limiar do abandono
+## mudar, a porta acompanha.
+const COBERTURA_PARA_PASSAR := RiscoScoring.COBERTURA_MINIMA
 
 
 static func passou() -> bool:

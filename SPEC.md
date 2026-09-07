@@ -26,17 +26,20 @@ before it.
 
 **1. The `ponto`.** The person opens the app onto a signature with the
 guide drawn under it, traces, and asks the guide: *posso passar?* One
-measure answers — how much of the drawing was traced.
-`Passagem.COBERTURA_PARA_PASSAR` is **0.70**. Below it the answer is no,
-in red, and they trace more. `firmeza` is still computed and shown: it is
-what the risco is worth. It is not what opens the door.
+measure answers — how much of the drawing was traced. **Whoever
+abandons does not enter** (A.C.): the door is the `abandonado` threshold
+itself, `RiscoScoring.COBERTURA_MINIMA`, and not a number of its own.
+Below it the answer is no, in red, and they trace more.
+
+One number, so the door cannot disagree with the mark: a risco that
+passed on a lower threshold would still read `firmeza 0`, because an
+`abandonado` `ponto` is worth nothing at any hour (§5.3). If the abandono
+threshold moves, the door moves with it.
+
+`firmeza` is still computed and shown: it is what the risco is worth. It
+is not what opens the door.
 
 Crossed once. After that the app opens on the `assentamento`.
-
-**Open collision:** `RiscoScoring.COBERTURA_MINIMA` is 0.75, and below it
-a risco counts as `abandonado` — worth zero (§5.3). A risco between 0.70
-and 0.75 therefore passes the door and reads `firmeza 0`. The two numbers
-have to meet; which one gives is A.C.'s call.
 
 Between 1 and 2 there is a passage: **the eclipse.** A huge sun, the moon
 crossing it, the black sun, and the light going out — then the
