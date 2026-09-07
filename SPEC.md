@@ -88,6 +88,21 @@ wears `shaders/ferro.gdshader`: raw iron with rust that catches on the
 upward faces. The frame is portrait and narrow — about 4.6 m wide at the
 furnace — and anything placed outside that cone is simply not seen.
 
+**The three banners are the crucifixion** (A.C.). Each mast carries a
+finial: a crown of thorns on one, and on the other two a cloth — the two
+thieves. Nothing in the room says so, and nothing should; it is why there
+are three and not two or four.
+
+The two cloths ought to be white, and are the colour of the walls
+instead. White is not the problem — the room's light is. Before the fire
+catches, the only light is `luz_da_sala`, an ambient colour, and an
+ambient gives every face the same amount whatever way it points: a white
+cloth comes out a flat cut-out, not a hanging cloth, and reads as noise.
+The fire's `OmniLight3D` does have a direction, so once the fire is lit a
+white cloth would find its folds. What to do about the *before* is **not
+decided**. Meanwhile they wear `MatPanoDeCima`, a `material_override` on
+the scene, not a change to `cloth.glb` — one click undoes it.
+
 Crossed once, and marked at the throw, not at the end: whoever closes the
 app mid-fire has already burnt what they came to burn.
 
