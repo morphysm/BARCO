@@ -38,6 +38,18 @@ var recuo_possivel := 7.4
 ## aqui a cruz.
 var barreira: Node3D
 
+## Quanto o sopro do forno arrasta para tras, em metros.
+@export var recuo_do_sopro := 7.7
+## Quao depressa arrasta.
+@export_range(0.5, 30.0) var forca_do_sopro := 5.5
+## Ate onde o sopro pode levar. A parede de tras esta a 11.4.
+@export var z_limite := 10.6
+## Depois do sopro nao se olha para tras: so em frente e para os lados.
+@export_range(30.0, 180.0) var limite_depois_do_sopro := 90.0
+
+## Para onde o sopro esta a levar. NAN = nao ha sopro.
+var _sopro := NAN
+
 @onready var camara: Camera3D = $Camara
 
 
@@ -54,8 +66,15 @@ func _unhandled_input(evento: InputEvent) -> void:
 		return
 	if evento is InputEventMouseMotion:
 		var m := evento as InputEventMouseMotion
-		# Volta inteira: olhar para tras faz parte.
-		rotate_y(deg_to_rad(-m.relative.x * sensibilidade))
+		if arrastado():
+			# Depois do sopro a cabeca nao volta atras: o que ficou para
+			# tras ficou.
+			rotation_degrees.y = clampf(
+				rotation_degrees.y - m.relative.x * sensibilidade,
+				-limite_depois_do_sopro, limite_depois_do_sopro)
+		else:
+			# Antes disso, volta inteira: olhar para tras faz parte.
+			rotate_y(deg_to_rad(-m.relative.x * sensibilidade))
 		camara.rotation_degrees.x = clampf(
 			camara.rotation_degrees.x - m.relative.y * sensibilidade,
 			-limite_vertical, limite_vertical)
@@ -64,8 +83,26 @@ func _unhandled_input(evento: InputEvent) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
+## O sopro do forno. Arrasta para tras, tranca o andar, e dai em diante
+## so se olha em frente e para os lados — nao para tras.
+func soprar() -> void:
+	_sopro = minf(position.z + recuo_do_sopro, z_limite)
+
+
+func arrastado() -> bool:
+	return not is_nan(_sopro)
+
+
 func _process(delta: float) -> void:
-	if not solto or Engine.is_editor_hint():
+	if Engine.is_editor_hint():
+		return
+
+	if arrastado():
+		# Arrastado, nao teletransportado: chega la depressa mas ve-se ir.
+		position.z = move_toward(position.z, _sopro, forca_do_sopro * delta)
+		return
+
+	if not solto:
 		return
 	# Em linha reta e so em linha reta: a frente e a fornalha, atras e a
 	# entrada. Nao ha andar de lado.

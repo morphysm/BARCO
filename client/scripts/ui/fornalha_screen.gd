@@ -442,6 +442,11 @@ func _atirar() -> void:
 
 	_por_as_formas()
 
+	# O sopro do forno: arrasta para tras e tranca o andar.
+	var j := get_node_or_null("Jogador")
+	if j != null:
+		j.call("soprar")
+
 	if musica != null:
 		_tocador = AudioStreamPlayer.new()
 		_tocador.stream = musica
