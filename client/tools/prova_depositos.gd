@@ -23,6 +23,14 @@ var quadro := 0
 var fase := 0
 
 func _initialize() -> void:
+	# Provas nunca escrevem nos dados a serio: um `pedido` de prova ficava
+	# espetado no tridente de quem usa o app, a arder sete dias reais.
+	Pedido.REGISTO = "user://prova_pedidos.json"
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(Pedido.REGISTO))
+	var _ecra := load("res://scripts/ui/assentamento_screen.gd")
+	_ecra.REGISTO = "user://prova_depositos.json"
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(_ecra.REGISTO))
+
 	raiz = load("res://scenes/assentamento.tscn").instantiate()
 	root.add_child(raiz)
 

@@ -584,7 +584,10 @@ func _registar(oferenda: Oferenda, onde: Vector2) -> void:
 ## Substituto local da tabela `depositos` enquanto nao ha servidor. O
 ## servidor e que manda (SPEC.md §3.3); isto so guarda o que ja foi deposto
 ## para o `assentamento` nao esquecer entre sessoes.
-const REGISTO := "user://depositos.json"
+## Onde os `depositos` ficam. Nao e `const` pela mesma razao que em
+## `Pedido`: uma prova nao pode largar oferendas no `assentamento` de
+## quem esta a usar o app.
+static var REGISTO := "user://depositos.json"
 
 
 func _carregar_depositos() -> void:

@@ -17,7 +17,12 @@ extends RefCounted
 ## 168 horas.
 const DURACAO := 7 * 24 * 60 * 60.0
 
-const REGISTO := "user://pedidos.json"
+## Onde os `pedidos` ficam. As palavras nunca saem do aparelho.
+##
+## Nao e `const` para as provas poderem apontar para outro sitio. Uma
+## prova que escreva aqui deixa `pedidos` falsos no tridente de quem esta
+## a usar o app — e a arder sete dias reais. Ja aconteceu.
+static var REGISTO := "user://pedidos.json"
 
 var texto: String = ""
 ## Unix time em que foi posto no caldeirao.
