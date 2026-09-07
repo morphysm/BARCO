@@ -204,8 +204,10 @@ size = Vector2(0.78, 2.05)
 [node name="Fornalha" type="Node3D" unique_id=668287173]
 script = ExtResource("1_0g3bd")
 musica = ExtResource("2_vovy2")
+demora_das_boas_vindas = 4.2
 tamanho_das_boas_vindas = 96
 cursor = null
+pausa_no_escuro = null
 boca = Vector3(-1.5, 1.7549999, 0.212)
 
 [node name="Jogador" type="CharacterBody3D" parent="." unique_id=1596318837]
@@ -254,6 +256,7 @@ cast_shadow = 0
 mesh = SubResource("QuadMesh_pk6lk")
 
 [node name="fornalha" parent="." unique_id=350307604 instance=ExtResource("7_2vy2x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Baphomet" type="MeshInstance3D" parent="." unique_id=319379142]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 3.75, 0.05)
@@ -323,7 +326,7 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.30212784, 0)
 
 [node name="Forma1" type="Node3D" parent="Dancantes" unique_id=1111634319]
-transform = Transform3D(0.87502706, -0.044119723, 0.28067964, 0.04632845, 0.9188328, -3.2529535e-14, -0.28032354, 0.014134187, 0.8761387, -2.6, -0.069931746, 1.1)
+transform = Transform3D(0.8760569, -0.011971313, 0.28067964, 0.012570622, 0.9199141, -3.2529535e-14, -0.28065342, 0.0038351277, 0.8761387, -2.6, -0.069931746, 1.1)
 script = ExtResource("12_clqt3")
 semente = 0.83
 ritmo = 0.72
@@ -335,7 +338,7 @@ face = ExtResource("13_24jri")
 cor_da_face = Color(0.7510489, 0.947455, 0.9999998, 1)
 
 [node name="Forma2" type="Node3D" parent="Dancantes" unique_id=1475041566]
-transform = Transform3D(1.1423858, -0.03883983, 0.12627803, 0.039076127, 1.1493359, -1.0698419e-08, -0.1262051, 0.004290842, 1.1430459, -0.69584477, -0.09454763, 1.1)
+transform = Transform3D(1.1413516, 0.062211446, 0.12627803, -0.062589936, 1.1482954, -1.0698419e-08, -0.12609085, -0.0068728006, 1.1430459, -0.69584477, -0.09454763, 1.1)
 script = ExtResource("12_clqt3")
 semente = 3.53
 ritmo = 1.3
@@ -348,7 +351,7 @@ face = ExtResource("14_sasjo")
 cor_da_face = Color(0.90837055, 0.8783743, 0.8797685, 1)
 
 [node name="Forma3" type="Node3D" parent="Dancantes" unique_id=2071481370]
-transform = Transform3D(1.1175195, -0.062202763, -0.04100124, 0.062244486, 1.1182691, 4.4414344e-10, 0.04093788, -0.0022786625, 1.1192492, -2.1477382, -0.08897054, 1.9)
+transform = Transform3D(1.1192207, -0.0079941405, -0.04100124, 0.007999502, 1.1199714, 4.4414344e-10, 0.041000195, -0.00029284824, 1.1192492, -2.1477382, -0.08897054, 1.9)
 script = ExtResource("12_clqt3")
 semente = 6.23
 ritmo = 2.7
@@ -359,7 +362,7 @@ cor_da_borda = Color(0.5019608, 0, 0.09803922, 1)
 face = ExtResource("13_24jri")
 
 [node name="Forma4" type="Node3D" parent="Dancantes" unique_id=851773682]
-transform = Transform3D(0.98394746, -0.047404036, -0.46658367, 0.052452534, 1.0887372, -1.3969772e-09, 0.4660431, -0.022452744, 0.9850887, -0.1682682, 0.027587056, 1.8535117)
+transform = Transform3D(0.98374057, 0.051519528, -0.46658367, -0.05700632, 1.0885084, -1.3969772e-09, 0.46594512, 0.024402035, 0.9850887, -0.1682682, 0.027587056, 1.8535117)
 script = ExtResource("12_clqt3")
 semente = 8.930000000000001
 ritmo = 1.9
@@ -371,7 +374,7 @@ cor_da_borda = Color(0.5019608, 0, 0.09803922, 1)
 face = ExtResource("14_sasjo")
 
 [node name="Forma5" type="Node3D" parent="Dancantes" unique_id=1961648515]
-transform = Transform3D(0.995033, 0.010364719, 0.36524206, -0.011040843, 1.0599425, -6.2939756e-09, -0.36522228, -0.0038043153, 0.99508697, -2.6394823, 0.34331137, 2.9807403)
+transform = Transform3D(0.9939883, -0.04674809, 0.36524206, 0.04979764, 1.0588295, -6.2939756e-09, -0.36483878, 0.017158678, 0.99508697, -2.6394823, 0.34331137, 2.9807403)
 script = ExtResource("12_clqt3")
 semente = 11.67
 ritmo = 1.9100000000000001
@@ -383,7 +386,7 @@ face = ExtResource("13_24jri")
 cor_da_face = Color(0.90837055, 0.8783743, 0.8797685, 1)
 
 [node name="Forma6" type="Node3D" parent="Dancantes" unique_id=2086636133]
-transform = Transform3D(0.99158925, 0.08112826, -0.2665877, -0.05778925, 1.0238284, 0.09662191, 0.27260077, -0.0780615, 0.99019957, 0.30603296, 0.3965525, 3.3528032)
+transform = Transform3D(0.9943032, -0.034527287, -0.2665877, 0.061450936, 1.0236151, 0.09662191, 0.26169622, -0.10917819, 0.99019957, 0.30603296, 0.3965525, 3.3528032)
 script = ExtResource("12_clqt3")
 semente = 14.33
 ritmo = 2.0
