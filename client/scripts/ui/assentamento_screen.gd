@@ -323,6 +323,9 @@ func acender_pedido(texto: String) -> void:
 ## Os `.tres` guardam `cafes` — a unidade do Ko-fi (SPEC.md §10.1). O que
 ## se mostra e dinheiro a serio, porque AGENTS.md proibe moeda de faz de
 ## conta. Trocar de moeda e trocar estas duas linhas e mais nada.
+## A altura da faixa preta de baixo, em pixeis da viewport.
+const ALTURA_DA_FAIXA := 150
+
 const POR_CAFE := 2
 const MOEDA := "US$"
 
@@ -338,13 +341,23 @@ func _montar_tira() -> void:
 	folha.name = "Folha"
 	add_child(folha)
 
+	# A faixa de baixo e SO da UI. Preta e opaca: antes os botoes ficavam
+	# por cima do assentamento e liam-se os dois ao mesmo tempo, mal.
+	var faixa := ColorRect.new()
+	faixa.name = "Faixa"
+	faixa.color = Color.BLACK
+	faixa.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	faixa.offset_top = -ALTURA_DA_FAIXA
+	faixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	folha.add_child(faixa)
+
 	var coluna := VBoxContainer.new()
 	coluna.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	coluna.offset_top = -170
-	coluna.offset_bottom = -14
+	coluna.offset_top = -ALTURA_DA_FAIXA + 10
+	coluna.offset_bottom = -12
 	coluna.offset_left = 12
 	coluna.offset_right = -12
-	coluna.add_theme_constant_override("separation", 6)
+	coluna.add_theme_constant_override("separation", 8)
 	folha.add_child(coluna)
 
 	# Ninguem adivinha que se arrasta. TODO(CONTENT.pt.md): texto autoral.
@@ -386,31 +399,41 @@ func _montar_tira() -> void:
 		tira.add_child(b)
 
 
+## Largura da coluna do menu. Em paisagem, ocupar o ecra todo dava uma
+## folha de papel de metro e meio: o que se escreve e um bilhete.
+const LARGURA_DO_MENU := 760
+
+
 func _montar_menu() -> void:
 	_menu = CanvasLayer.new()
 	_menu.name = "Menu"
 	_menu.visible = false
 	add_child(_menu)
 
+	# Opaco. A 0.86 via-se o assentamento por tras e liam-se os dois ao
+	# mesmo tempo, mal.
 	var fundo := ColorRect.new()
-	fundo.color = Color(0, 0, 0, 0.86)
+	fundo.color = Color.BLACK
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_menu.add_child(fundo)
 
+	# Uma coluna estreita ao centro, e nao a largura toda.
+	var coluna := VBoxContainer.new()
+	coluna.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	coluna.offset_left = -LARGURA_DO_MENU * 0.5
+	coluna.offset_right = LARGURA_DO_MENU * 0.5
+	coluna.offset_top = 44
+	coluna.add_theme_constant_override("separation", 14)
+	_menu.add_child(coluna)
+
 	var titulo := Pagina.texto("escreva o que tu quer", 30)
-	titulo.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	titulo.offset_top = 62
 	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_menu.add_child(titulo)
+	coluna.add_child(titulo)
 
 	# O campo E o papel: cor de papel, tinta escura. Uma caixa preta e
 	# vazia no meio do escuro nao diz a ninguem que se escreve ali.
 	_escrita = TextEdit.new()
-	_escrita.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_escrita.offset_top = 118
-	_escrita.offset_bottom = 316
-	_escrita.offset_left = 52
-	_escrita.offset_right = -52
+	_escrita.custom_minimum_size = Vector2(0, 170)
 	_escrita.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
 	_escrita.add_theme_font_size_override("font_size", 24)
 	_escrita.add_theme_color_override("font_color", Color(0.12, 0.10, 0.09))
@@ -431,22 +454,14 @@ func _montar_menu() -> void:
 	papel.content_margin_bottom = 16
 	for estado in ["normal", "focus", "read_only"]:
 		_escrita.add_theme_stylebox_override(estado, papel)
-	_menu.add_child(_escrita)
+	coluna.add_child(_escrita)
 
-	# Num HBox e nao por offsets: com PRESET_TOP_WIDE o offset_left conta
-	# a partir da esquerda e o offset_right a partir da direita, e misturar
-	# os dois punha os botoes um por cima do outro.
 	var botoes := HBoxContainer.new()
-	botoes.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	botoes.offset_top = 332
-	botoes.offset_bottom = 386
-	botoes.offset_left = 52
-	botoes.offset_right = -52
-	botoes.add_theme_constant_override("separation", 12)
-	_menu.add_child(botoes)
+	botoes.alignment = BoxContainer.ALIGNMENT_CENTER
+	botoes.add_theme_constant_override("separation", 14)
+	coluna.add_child(botoes)
 
-	var deitar := Pagina.botao("deitar ao caldeirao", 22)
-	deitar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var deitar := Pagina.botao("deitar ao caldeirão", 22)
 	deitar.pressed.connect(_deitar_ao_caldeirao)
 	botoes.add_child(deitar)
 
@@ -455,34 +470,30 @@ func _montar_menu() -> void:
 	fechar.pressed.connect(_alternar_menu)
 	botoes.add_child(fechar)
 
-	# Bancada. Num build de release este botao NAO EXISTE — nao esta
-	# escondido nem desligado, nao chega a ser criado. O app a serio nao
-	# tem volta (AGENTS.md — Irreversibilidade).
-	if Dados.em_debug():
-		var limpar := Pagina.botao("recomeçar (debug)", 22)
-		limpar.pressed.connect(_recomecar_debug)
-		botoes.add_child(limpar)
-
-	_lista = Pagina.texto("", 19)
-	_lista.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_lista.offset_top = 408
-	_lista.offset_bottom = 446
-	_lista.offset_left = 56
-	_lista.offset_right = -56
+	_lista = Pagina.texto("", 20)
 	_lista.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_menu.add_child(_lista)
+	coluna.add_child(_lista)
 
 	# As folhas, como estao agora. E para isto que o menu serve: ver o
 	# papel a decompor-se, nao ler uma percentagem.
 	_folhas = HBoxContainer.new()
-	_folhas.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_folhas.offset_top = 452
-	_folhas.offset_bottom = 700
-	_folhas.offset_left = 40
-	_folhas.offset_right = -40
+	_folhas.custom_minimum_size = Vector2(0, 300)
 	_folhas.alignment = BoxContainer.ALIGNMENT_CENTER
-	_folhas.add_theme_constant_override("separation", 14)
-	_menu.add_child(_folhas)
+	_folhas.add_theme_constant_override("separation", 18)
+	coluna.add_child(_folhas)
+
+	# Bancada. LONGE do `voltar`: estavam lado a lado, e o que apaga tudo
+	# nao pode ficar ao pe do que fecha a janela.
+	if Dados.em_debug():
+		var limpar := Pagina.botao("recomeçar (debug)", 15)
+		limpar.modulate = Color(1, 1, 1, 0.45)
+		limpar.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+		limpar.offset_left = -190
+		limpar.offset_top = -46
+		limpar.offset_right = -14
+		limpar.offset_bottom = -12
+		limpar.pressed.connect(_recomecar_debug)
+		_menu.add_child(limpar)
 
 
 ## Apaga tudo o que foi guardado e volta ao risco. So em debug — ver
@@ -519,7 +530,7 @@ func _actualizar_lista() -> void:
 	for p in _pedidos:
 		if not p.acabou():
 			vivos += 1
-	_lista.text = "no caldeirao, a arder" if vivos > 0 else ""
+	_lista.text = "no caldeirão, a arder" if vivos > 0 else ""
 
 	if _folhas == null:
 		return
@@ -533,7 +544,7 @@ func _actualizar_lista() -> void:
 		caixa.add_theme_constant_override("separation", 6)
 		var folha := TextureRect.new()
 		folha.texture = papel.escrito()
-		folha.custom_minimum_size = Vector2(186, 124)
+		folha.custom_minimum_size = Vector2(288, 192)
 		folha.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		folha.stretch_mode = TextureRect.STRETCH_SCALE
 		var m := ShaderMaterial.new()
@@ -542,7 +553,7 @@ func _actualizar_lista() -> void:
 		folha.material = m
 		caixa.add_child(folha)
 		var falta: float = papel.pedido.duracao * (1.0 - papel.pedido.consumido())
-		var quanto := Pagina.texto("%dd %dh" % [int(falta / 86400.0), int(falta / 3600.0) % 24], 17)
+		var quanto := Pagina.texto("%dd %dh" % [int(falta / 86400.0), int(falta / 3600.0) % 24], 19)
 		quanto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		caixa.add_child(quanto)
 		_folhas.add_child(caixa)
