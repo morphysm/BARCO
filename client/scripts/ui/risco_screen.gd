@@ -15,6 +15,9 @@ const FAIXA_BASE := 246.0
 const COR_MARCA := Color(0.937, 0.925, 0.882, 0.55)
 const COR_GUIA := Color(0.937, 0.925, 0.882, 0.14)
 const COR_TINTA := Color(0.937, 0.925, 0.882)
+## O vermelho da recusa. `pemba` vermelha, nao vermelho de aviso de
+## software (GLOSSARY: a pemba e branca ou vermelha).
+const COR_RECUSA := Color(0.78, 0.18, 0.14)
 
 @export var irmandade: Irmandade
 
@@ -35,20 +38,13 @@ var _linha_atual: PembaTraco
 var _dedo := -1
 var _fechado := false
 
-## SPEC.md §4.3: o primeiro contato com cada entidade e um traçado
-## guiado, gratuito, sem nota e sem limite. So depois o `ponto` passa a
-## ser avaliado.
+## O guia mostra o desenho por baixo, para se riscar por cima. Indice da
+## assinatura mostrada; -1 = guia desligado.
 ##
-## O guia CONDUZ, nao e um modo a descobrir: o ecra abre na primeira
-## assinatura com quem ainda nao houve contato, e fechar um risco guiado
-## regista esse contato e passa a seguinte. Quando ja se conhecem as tres,
-## o guia apaga-se sozinho e o risco passa a valer.
-##
-## Indice da assinatura mostrada no guia; -1 = guia desligado.
+## Comeca ligado: a pessoa abre o app e tem o que riscar a frente.
 var _guiado := 0
 
-## As marcas da primeira fase, e o compasso de espera antes do eclipse.
-var _passagem: Node2D
+## O compasso de espera entre o "podes" e o eclipse.
 var _a_passar := false
 var _espera := 0.0
 
@@ -64,11 +60,19 @@ var _hora_asmodeica := false
 
 
 func _ready() -> void:
+	# Atravessa-se uma vez. Quem ja passou abre no `assentamento`.
+	if not Engine.is_editor_hint() and Passagem.passou():
+		call_deferred("_ir_para_o_assentamento")
+		return
 	if irmandade == null:
 		irmandade = load("res://resources/irmandades/calunga_pequena.tres")
 	_montar()
 	get_viewport().size_changed.connect(_ajustar_campo)
 	_ajustar_campo()
+
+
+func _ir_para_o_assentamento() -> void:
+	get_tree().change_scene_to_file("res://scenes/assentamento.tscn")
 
 
 func _montar() -> void:
@@ -112,13 +116,6 @@ func _montar() -> void:
 	_lugar.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	folha.add_child(_lugar)
 
-	# Quantas assinaturas ja foram nomeadas. Marcas, nao numeros nem
-	# nomes: a fase mede-se, mas o app nao diz quem falta (SPEC.md §5.1 —
-	# nunca ha lista).
-	_passagem = Node2D.new()
-	_passagem.draw.connect(_desenhar_passagem)
-	folha.add_child(_passagem)
-
 	var barra := HBoxContainer.new()
 	barra.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	barra.offset_top = -110
@@ -132,13 +129,12 @@ func _montar() -> void:
 	# TODO(CONTENT.pt.md): rotulos definitivos sao texto autoral. Ver §2 —
 	# descrever o ato, nunca o efeito. Estes sao estruturais.
 	_botao_guia = _botao("guia", _alternar_guia)
-	_botao_fechar = _botao("fechar o risco", _fechar_risco)
+	_botao_fechar = _botao("posso passar?", _fechar_risco)
 	_botao_refazer = _botao("riscar de novo", _limpar)
 	barra.add_child(_botao_guia)
 	barra.add_child(_botao_fechar)
 	barra.add_child(_botao_refazer)
 
-	_retomar()
 	_atualizar_rotulo_guia()
 
 
@@ -153,8 +149,6 @@ func _ajustar_campo() -> void:
 		FAIXA_TOPO + (util - ref.y * escala) * 0.5)
 	_marcas.queue_redraw()
 	_guia.queue_redraw()
-	if _passagem != null:
-		_passagem.queue_redraw()
 
 
 # --- captura -----------------------------------------------------------
@@ -202,52 +196,38 @@ func _terminar_traco() -> void:
 
 # --- avaliacao ---------------------------------------------------------
 
-## Onde o ecra abre: na primeira assinatura por conhecer, ou sem guia
-## nenhum se ja se conhecem todas.
-func _retomar() -> void:
-	var e := Passagem.por_conhecer(irmandade)
-	_guiado = -1
-	if e != null:
-		for i in irmandade.entidades.size():
-			if irmandade.entidades[i] == e:
-				_guiado = i
-				break
-
-
+## A pergunta ao guia: "posso passar?"
+##
+## Uma so medida decide — quanto do desenho foi riscado. Setenta por
+## cento chega (`Passagem.COBERTURA_PARA_PASSAR`). Abaixo disso a resposta
+## e nao, em vermelho, e risca-se mais.
+##
+## A `firmeza` continua a ser calculada e mostrada: e o que o risco vale.
+## Nao e ela que abre a porta.
 func _fechar_risco() -> void:
 	if _fechado or _tracos.is_empty():
-		return
-	if _guiado >= 0:
-		# SPEC.md §4.3: primeiro contato nao pontua. Fica registado que
-		# houve, e o guia passa a assinatura seguinte por conhecer — ou
-		# apaga-se, se ja nao houver nenhuma.
-		var e := _assinatura_guiada()
-		if e != null:
-			Passagem.conhecer(e.slug)
-		_limpar()
-		_retomar()
-		_guia.queue_redraw()
-		_marcas.queue_redraw()
-		_atualizar_rotulo_guia()
 		return
 
 	_fechado = true
 	var r := RiscoScoring.avaliar(_tracos, irmandade, _hora_asmodeica)
+
+	if r.cobertura < Passagem.COBERTURA_PARA_PASSAR:
+		# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
+		_rotulo.text = "Ainda não, risca mais!"
+		_rotulo.add_theme_color_override("font_color", COR_RECUSA)
+		_titulo.text = ""
+		return
+
+	_rotulo.remove_theme_color_override("font_color")
 	_rotulo.text = _ler(r)
-
-	# Primeira fase (SPEC.md §1.1). So conta o risco que NOMEIA: uma
-	# `face_indefinida` nao avanca a fase, e um `abandonado` menos ainda.
-	if not r.indefinida and not r.abandonado and r.entidade_slug != "":
-		Passagem.marcar(r.entidade_slug, r.firmeza)
-		_passagem.queue_redraw()
-		if Passagem.aberta(irmandade):
-			_a_passar = true
-			_espera = 0.0
-			set_process(true)
+	Passagem.passar()
+	_a_passar = true
+	_espera = 0.0
+	set_process(true)
 
 
-## Depois da terceira assinatura, o eclipse. Nao ha botao: quem riscou as
-## tres atravessa, e daqui nao se volta.
+## Depois do "podes", o eclipse. Nao ha botao: o resultado assenta e
+## atravessa-se, e daqui nao se volta.
 func _process(delta: float) -> void:
 	if not _a_passar:
 		set_process(false)
@@ -257,28 +237,6 @@ func _process(delta: float) -> void:
 		_a_passar = false
 		set_process(false)
 		get_tree().change_scene_to_file("res://scenes/eclipse.tscn")
-
-
-## Uma marca por assinatura da `irmandade`: cheia se ja foi nomeada, so o
-## contorno se ainda nao.
-func _desenhar_passagem() -> void:
-	if irmandade == null:
-		return
-	var feitos := Passagem.riscados()
-	var n := irmandade.entidades.size()
-	if n == 0:
-		return
-	var vista := get_viewport_rect().size
-	var passo := 26.0
-	var y := vista.y - 244.0
-	var x := vista.x * 0.5 - passo * float(n - 1) * 0.5
-	for i in n:
-		var e: Entidade = irmandade.entidades[i]
-		var centro := Vector2(x + passo * float(i), y)
-		if e != null and feitos.has(e.slug):
-			_passagem.draw_circle(centro, 4.5, COR_TINTA)
-		else:
-			_passagem.draw_arc(centro, 4.5, 0.0, TAU, 18, COR_GUIA, 1.5, true)
 
 
 ## Diz o que foi feito, nunca o que vai acontecer (CONTENT_pt.md §2).
@@ -335,24 +293,14 @@ func _referencia() -> Vector2:
 func _atualizar_rotulo_guia() -> void:
 	var e := _assinatura_guiada()
 	_titulo.text = e.nome if e != null else ""
-	var por_conhecer := Passagem.por_conhecer(irmandade) != null
-	# TODO(CONTENT.pt.md): texto definitivo e autoral. Estes sao
-	# estruturais — dizem o estado, nunca o efeito.
-	#
-	# O estado vazio precisa de linha propria: sem guia o campo fica nu de
-	# proposito — as marcas de uma assinatura sao a resposta — e um ecra
-	# preto sem uma palavra nao se distingue de uma avaria.
-	if e != null:
-		_rotulo.text = "primeiro contato — este risco não conta"
-	elif not _fechado and _tracos.is_empty():
-		_rotulo.text = "risca de memória"
-	else:
-		_rotulo.text = ""
+	if _rotulo != null:
+		_rotulo.remove_theme_color_override("font_color")
+		# TODO(CONTENT.pt.md): texto autoral. Estes sao estruturais.
+		if not _fechado and _tracos.is_empty():
+			_rotulo.text = "risca, depois pergunta" if e != null else "risca de memória"
+		else:
+			_rotulo.text = ""
 	if _botao_guia != null:
-		# Enquanto houver primeiro contato por fazer, o guia nao e opcao:
-		# e por onde se vai. Deixar carregar so servia para o desligar e
-		# ficar com um ecra vazio sem se perceber porque.
-		_botao_guia.disabled = por_conhecer
 		_botao_guia.text = "sem guia" if e != null else "guia"
 
 

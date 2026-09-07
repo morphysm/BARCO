@@ -24,14 +24,19 @@ The app opens in three phases, in this order. A.C. set them. Each is a
 gate: the next does not exist for a person who has not passed the one
 before it.
 
-**1. The three `pontos`.** The person traces the three `assinaturas` of
-the `irmandade` — `Exu Caveira`, `Rosa Negra`, `Exu Aranha`. This is the
-only content at first launch, and passing it is what opens the
-`assentamento`. The threshold `firmeza` per `ponto`, and whether all
-three must be traced in one sitting, are **not decided** —
-`Passagem.FIRMEZA_MINIMA` is 0 for now, so naming the entity is enough.
-A `face_indefinida` never counts, and an `abandonado` less so: the phase
-asks for the three signatures, not three attempts.
+**1. The `ponto`.** The person opens the app onto a signature with the
+guide drawn under it, traces, and asks the guide: *posso passar?* One
+measure answers — how much of the drawing was traced.
+`Passagem.COBERTURA_PARA_PASSAR` is **0.70**. Below it the answer is no,
+in red, and they trace more. `firmeza` is still computed and shown: it is
+what the risco is worth. It is not what opens the door.
+
+Crossed once. After that the app opens on the `assentamento`.
+
+**Open collision:** `RiscoScoring.COBERTURA_MINIMA` is 0.75, and below it
+a risco counts as `abandonado` — worth zero (§5.3). A risco between 0.70
+and 0.75 therefore passes the door and reads `firmeza 0`. The two numbers
+have to meet; which one gives is A.C.'s call.
 
 Between 1 and 2 there is a passage: **the eclipse.** A huge sun, the moon
 crossing it, the black sun, and the light going out — then the
@@ -202,24 +207,16 @@ Lifting the finger mid-segment counts as a break. `firmeza` travels with the
 A poor trace produces a weak `trabalho` and the app says so. Retracing costs
 time, never money.
 
-### 4.3 First contact
+### 4.3 The guide
 
-The first encounter with each entity is a guided trace: free, unscored,
-unlimited. Scoring begins only after that.
+The guide draws the signature under the field, to be traced over. It
+starts on, so a person who opens the app has something in front of them.
+The `guia` button turns it off and cycles between signatures; with it off
+the field is bare, because the start marks of a signature are exactly the
+answer the person has to know by heart (§4.1).
 
-The guide **drives**; it is not a mode to be discovered. The screen opens
-on the first signature not yet met, with the reference drawn. Closing a
-guided risco records that contact and moves to the next one not yet met.
-When all three have been met the guide switches itself off and tracing
-starts to count. While guided, the label says so, and the guide button is
-disabled — turning it off there would leave a blank field with no way to
-know why.
-
-After first contact the field is bare on purpose: the start marks of a
-signature are exactly the answer the person has to know by heart (§4.1).
-The `guia` button brings the reference back, and a guided risco never
-counts. The empty state carries a line of its own — a black screen with
-no word in it does not read as a screen waiting for a trace.
+A guided risco counts like any other. Practice is what the guide is for,
+and the measure that opens the door is coverage, not memory.
 
 ---
 

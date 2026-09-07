@@ -1,58 +1,40 @@
-## O que ja foi riscado, e se a passagem para o `assentamento` esta aberta.
+## A porta entre riscar e o `assentamento` (SPEC.md §1.1).
 ##
-## Primeira fase (SPEC.md §1.1): riscar as tres `assinaturas` da
-## `irmandade`. Enquanto faltar uma, o `assentamento` nao existe para
-## quem esta a jogar — nao esta trancado, nao esta la.
+## Uma so pergunta: riscou-se o suficiente do desenho? Setenta por cento
+## chega. Abaixo disso nao — risca mais.
 ##
-## Conta o risco que NOMEIA a entidade. Uma `face_indefinida` nao conta,
-## e um `ponto` `abandonado` muito menos: a fase pede as tres assinaturas,
-## nao tres tentativas.
+## Nao ha contagem de assinaturas, nao ha sequencia de primeiros
+## contatos, nao ha nada a desbloquear por partes. Risca-se, pergunta-se,
+## passa-se ou nao.
+##
+## Atravessa-se uma vez. Depois disso o app abre no `assentamento`.
 ##
 ## Isto vive no aparelho e e provisorio. O `caderno` e o registo a serio e
-## e do servidor (AGENTS.md, SPEC.md §3.3); quando ele existir, isto passa
-## a ser so a copia local.
+## e do servidor (AGENTS.md, SPEC.md §3.3).
 class_name Passagem
 extends RefCounted
 
 const REGISTO := "user://passagem.json"
 
-## `firmeza` minima para um `ponto` contar. ZERO por enquanto: basta
-## nomear a entidade. Quanto tem de ser esta por decidir (SPEC.md §1.1) e
-## e decisao de A.C., nao minha.
-const FIRMEZA_MINIMA := 0
+## Quanto do desenho tem de estar riscado para se passar. Decisao de A.C.
+##
+## ATENCAO: `RiscoScoring.COBERTURA_MINIMA` e 0.75 e serve para outra
+## coisa — abaixo dela o risco conta como `abandonado` (SPEC.md §5.3).
+## Sendo este limiar mais baixo, um risco entre 0.70 e 0.75 passa a porta
+## e mesmo assim vale zero de `firmeza`. Os dois numeros tem de se
+## encontrar, e qual deles cede e decisao de A.C.
+const COBERTURA_PARA_PASSAR := 0.70
 
 
-## Com quem ja houve primeiro contato (SPEC.md §4.3): o traçado guiado,
-## gratuito e sem nota. Diferente de `riscados`, que e quem ja foi
-## NOMEADO por um risco a valer.
-static func conhecidos() -> Array:
-	return _ler().get("conhecidos", [])
+static func passou() -> bool:
+	return _ler().get("passou", false)
 
 
-## Regista o primeiro contato. Devolve `true` se e a primeira vez.
-static func conhecer(slug: String) -> bool:
-	if slug == "":
-		return false
+## Regista a passagem. Nao se desfaz — como tudo aqui, so cresce (GDD §2).
+static func passar() -> void:
 	var d := _ler()
-	var lista: Array = d.get("conhecidos", [])
-	if lista.has(slug):
-		return false
-	lista.append(slug)
-	d["conhecidos"] = lista
-	return _guardar(d)
-
-
-## A primeira entidade da `irmandade` com quem ainda nao houve contato,
-## ou `null` se ja se conhecem todas. E o que decide o que o ecra mostra
-## quando abre: nao ha menu, a ordem e a da `irmandade`.
-static func por_conhecer(irm: Irmandade) -> Entidade:
-	if irm == null:
-		return null
-	var lista := conhecidos()
-	for e in irm.entidades:
-		if e != null and not lista.has(e.slug):
-			return e
-	return null
+	d["passou"] = true
+	_guardar(d)
 
 
 static func _ler() -> Dictionary:
@@ -66,53 +48,15 @@ static func _ler() -> Dictionary:
 	return d if typeof(d) == TYPE_DICTIONARY else {}
 
 
-static func _guardar(d: Dictionary) -> bool:
+static func _guardar(d: Dictionary) -> void:
 	var f := FileAccess.open(REGISTO, FileAccess.WRITE)
 	if f == null:
-		return false
+		return
 	f.store_string(JSON.stringify(d))
 	f.close()
-	return true
 
 
-static func riscados() -> Array:
-	return _ler().get("riscados", [])
-
-
-## Regista que uma entidade foi nomeada. Devolve `true` se e a primeira
-## vez — e o que faz a fase avancar.
-##
-## Nao se desmarca. Como tudo o resto aqui, so cresce (GDD §2).
-static func marcar(slug: String, firmeza: int) -> bool:
-	if slug == "" or firmeza < FIRMEZA_MINIMA:
-		return false
-	var d := _ler()
-	var lista: Array = d.get("riscados", [])
-	if lista.has(slug):
-		return false
-	lista.append(slug)
-	d["riscados"] = lista
-	return _guardar(d)
-
-
-## Faltam quantas assinaturas desta `irmandade`.
-static func faltam(irm: Irmandade) -> int:
-	if irm == null:
-		return 0
-	var lista := riscados()
-	var n := 0
-	for e in irm.entidades:
-		if e != null and not lista.has(e.slug):
-			n += 1
-	return n
-
-
-static func aberta(irm: Irmandade) -> bool:
-	return faltam(irm) == 0
-
-
-## So para provas: apaga o progresso. Nao ha caminho nenhum para isto a
-## partir do app — a fase nao se desfaz.
+## So para provas. Nao ha caminho nenhum para isto a partir do app.
 static func esquecer() -> void:
 	if FileAccess.file_exists(REGISTO):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(REGISTO))
