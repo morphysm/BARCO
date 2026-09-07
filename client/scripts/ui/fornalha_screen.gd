@@ -78,7 +78,7 @@ extends Node3D
 ## O no do modelo que e a boca do forno. A cruz vai para onde ele esta —
 ## a posicao sai do proprio modelo e nao de um numero escrito a mao, para
 ## nao se desencontrarem quando a fornalha se mexer na cena.
-@export var no_da_boca := "Bay2_MouthInterior"
+@export var no_da_boca := "Bay3_MouthInterior"
 ## Usada so se o no acima nao aparecer.
 @export var boca := Vector3(-1.62, 1.30, 0.30)
 ## A que distancia da MIRA, em pixeis, a boca do forno tem de estar para

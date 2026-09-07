@@ -26,8 +26,21 @@ ORIGEM = pathlib.Path(
     "exu_caveira_furnace_bank_v2_atmosphere_v1.glb")
 DESTINO = pathlib.Path("client/resources/modelos/fornalha.glb")
 
-# As bocas que ficam de fora. A `Bay2` fica, e e a unica aberta.
-FORA = ("Bay1_", "Bay3_", "Bay4_", "Bay5_")
+# A boca que fica e a `Bay3` — a do MEIO da bancada, centro em x = 0.
+#
+# Antes era a `Bay2` (centro -1.24), que ja vinha aberta de fabrica. Mas
+# com a bancada centrada na sala, uma boca a -1.24 fica torta, e
+# empurrar a bancada para a endireitar enfia-a na parede do lado. A do
+# meio e a unica que fica ao centro sem mover nada.
+#
+# A `Bay3` vem SELADA, entao tira-se-lhe a porta. Nao e alterar
+# geometria: e nao referir um no, exactamente como se faz as outras
+# bocas. Nada e movido, cortado nem redimensionado.
+FORA = ("Bay1_", "Bay2_", "Bay4_", "Bay5_",
+        # A porta selada e o tapume que estava por tras dela. Sem tirar
+        # os dois, o vao continua fechado: via-se um arco escuro e a
+        # brasa nao passava.
+        "Bay3_UpperDoor_SealedBurning", "Bay3_DoorRefractoryInset")
 
 
 def ler(caminho):
