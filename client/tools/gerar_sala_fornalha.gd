@@ -14,16 +14,17 @@ extends SceneTree
 const CENA := "res://scenes/fornalha.tscn"
 
 const REDSKIN := "res://resources/imagens/mmorph REDskin_para_as_paredes.png"
-const SIGILO_CHAO := "res://resources/imagens/MORPHISTIC SIGIL_para o chão.jpg"
+## O JPG de A.C. e vermelho sobre PRETO e sem alfa. `tools/recortar_sigilo.py`
+## recorta o fundo e grava este PNG; e este que vai para o chao.
+const SIGILO_CHAO := "res://resources/imagens/sigilo_chao.png"
 const SIGILO_PANO := "res://resources/imagens/morphysm sigil STONE.png"
 const BAPHOMET := "res://resources/imagens/BAPHOMET777SUBLIMINALL.jpg"
 const FACES := [
 	"res://resources/imagens/face_fornalha_model_1.png",
 	"res://resources/imagens/face_fornalha_model_2.png",
 ]
-## A cor das faces. Uma so e vermelha — ver `_formas`.
-const FACE_FRIA := Color(0.62, 0.92, 1.0)
-const FACE_VERMELHA := Color(1.0, 0.20, 0.12)
+## A cor das faces. Todas iguais: A.C. tirou a vermelha.
+const FACE_FRIA := Color(0.90, 0.88, 0.88)
 const FORNALHA := "res://resources/modelos/fornalha.glb"
 const MUSICA := "res://resources/audio/Entrego Minha Alma.ogg"
 
@@ -103,7 +104,10 @@ func _camara() -> void:
 	c.name = "Camara"
 	c.fov = 58.0
 	c.current = true
-	c.position = Vector3(0, 1.62, 0)
+	# De pe e a olhar um pouco para baixo: a direito, o sigilo do chao caía
+	# no rebordo do ecra e nao se via.
+	c.position = Vector3(0, 2.0, 0)
+	c.rotation_degrees = Vector3(-10.0, 0.0, 0.0)
 	j.add_child(c)
 	c.owner = raiz
 
@@ -158,10 +162,26 @@ func _chao() -> void:
 	var sig := MeshInstance3D.new()
 	var q := QuadMesh.new()
 	q.size = Vector2(2.4, 2.28)
-	q.material = _material_de_imagem(SIGILO_CHAO, false)
+	# O sigilo do chao.
+	#
+	# Sem luz e sem emissao: `unshaded`. A textura ja traz a marca clara e
+	# o fundo recortado, e assim ela le-se numa sala em que a unica luz e
+	# a boca do forno.
+	#
+	# `render_priority` porque o chao TAMBEM e transparente, e materiais
+	# transparentes ordenam-se pela distancia do centro a camara: o centro
+	# do chao esta mais perto, entao vinha por cima e tapava o sigilo por
+	# inteiro. Nao era z-fighting nem falta de luz — era ordem.
+	var mat := _material_de_imagem(SIGILO_CHAO, false)
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.render_priority = 1
+	q.material = mat
 	sig.mesh = q
 	sig.rotation_degrees = Vector3(-90, 0, 0)
-	_por(sig, "SigiloDoChao", Vector3(-1.5, 0.006, 2.6))
+	# 4 cm acima do chao, nao 6 mm: a 6 mm o plano do chao ganhava o
+	# teste de profundidade e desenhava por cima — o sigilo estava la e
+	# nao se via.
+	_por(sig, "SigiloDoChao", Vector3(-1.5, 0.04, 2.6))
 
 
 ## Duas paredes de lado e uma atras da fornalha — a fornalha e a terceira,
@@ -340,17 +360,6 @@ func _formas() -> void:
 		Vector3(-3.0, 0.0, 1.9), Vector3(0.0, 0.0, 1.9),
 		Vector3(-2.92, 0.0, 2.7), Vector3(-0.08, 0.0, 2.7),
 	]
-	# Qual delas leva a face vermelha: a PRIMEIRA DO LADO ESQUERDO, ou
-	# seja, das que estao a esquerda do meio da sala, a que esta mais
-	# perto de quem entra. E uma so; as outras cinco ficam frias.
-	var vermelha := -1
-	var melhor_z := -1e9
-	for i in lugares.size():
-		var l: Vector3 = lugares[i]
-		if l.x < -1.5 and l.z > melhor_z:
-			melhor_z = l.z
-			vermelha = i
-
 	for i in lugares.size():
 		var f := FormaDancante.new()
 		f.name = "Forma%d" % (i + 1)
@@ -364,7 +373,7 @@ func _formas() -> void:
 		f.eco = 0.022 + fmod(float(i) * 0.011, 0.02)
 		# As duas faces alternam pelas seis.
 		f.face = load(FACES[i % FACES.size()])
-		f.cor_da_face = FACE_VERMELHA if i == vermelha else FACE_FRIA
+		f.cor_da_face = FACE_FRIA
 		grupo.add_child(f)
 		f.owner = raiz
 

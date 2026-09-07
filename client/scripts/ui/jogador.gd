@@ -1,7 +1,8 @@
 ## Quem anda na sala da `fornalha`.
 ##
-## Primeira pessoa, com rato preso e uma mira ao centro. Nao ha salto, nao
-## ha corrida, nao ha agachar: anda-se e olha-se, e mais nada.
+## POR OMISSAO NAO SE ANDA. A.C.: "Andar tirou o relaxamento de observar
+## as figuras dancando." Fica-se de pe, olha-se, e pega-se na cruz com o
+## ponteiro. Ligar `andar` devolve a primeira pessoa com rato preso.
 ##
 ## Os limites nao estao aqui — estao na cena, em `Corredor`, feitos de
 ## caixas que se veem e se arrastam no editor. Sao estreitos de proposito:
@@ -9,6 +10,10 @@
 ## a fornalha.
 class_name Jogador
 extends CharacterBody3D
+
+## Ligar para voltar a andar e a olhar com o rato preso. Desligado,
+## isto e so um sitio onde a camara esta.
+@export var andar := false
 
 @export_range(0.5, 6.0) var velocidade := 2.1
 @export_range(0.02, 1.0) var sensibilidade := 0.16
@@ -18,7 +23,9 @@ extends CharacterBody3D
 ## Enquanto isto for falso nao se anda nem se olha: e o tempo da pergunta.
 var solto := false:
 	set(valor):
-		solto = valor
+		solto = valor and andar
+		# Sem andar o ponteiro fica sempre a vista: e com ele que se pega
+		# na cruz.
 		Input.mouse_mode = (Input.MOUSE_MODE_CAPTURED if solto
 			else Input.MOUSE_MODE_VISIBLE)
 

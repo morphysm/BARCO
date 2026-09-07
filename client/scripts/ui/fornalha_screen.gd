@@ -282,7 +282,7 @@ func _responder_sim() -> void:
 	_fase = CRUZ_POUSADA
 	_painel.get_node("Respostas").queue_free()
 	# TODO(CONTENT.pt.md): texto de A.C. Este e estrutural.
-	_dito.text = "anda com WASD · duplo clique na cruz"
+	_dito.text = "duplo clique pegue a cruz"
 	_por_a_cruz()
 	# So agora se anda. Durante a pergunta o rato e para responder, e uma
 	# sala que se pode percorrer antes de responder convida a adiar.
@@ -290,7 +290,7 @@ func _responder_sim() -> void:
 	if j != null:
 		j.solto = true
 	if _mira != null:
-		_mira.visible = true
+		_mira.visible = _a_andar()
 
 
 # --- a cruz ------------------------------------------------------------
@@ -337,9 +337,9 @@ func _caixa_em(no: Node3D, referencia: Node3D) -> AABB:
 	return total
 
 
-## Em primeira pessoa aponta-se com a MIRA, nao com o ponteiro: o rato
-## esta preso a olhar. Duplo clique com a cruz na mira pega nela; duplo
-## clique com a boca do forno na mira atira-a la para dentro.
+## Aponta-se com o PONTEIRO quando se esta parado, e com a mira quando se
+## anda. Duplo clique na cruz pega nela; duplo clique no forno atira-a la
+## para dentro.
 func _input(evento: InputEvent) -> void:
 	if Engine.is_editor_hint() or _fase == PERGUNTA or _fase >= A_ARDER:
 		return
@@ -348,37 +348,39 @@ func _input(evento: InputEvent) -> void:
 	var e := evento as InputEventMouseButton
 	if not e.pressed or e.button_index != MOUSE_BUTTON_LEFT:
 		return
-	# Depois de largar o rato com ESC, o primeiro clique so o volta a
-	# prender — nao age no mundo.
-	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+	# A andar, depois de largar o rato com ESC, o primeiro clique so o
+	# volta a prender — nao age no mundo.
+	if _a_andar() and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		return
 	if not e.double_click:
 		return
 
+	var onde: Vector2 = (get_viewport().get_visible_rect().size * 0.5
+		if _a_andar() else e.position)
+
 	if _fase == CRUZ_POUSADA:
-		# Na mira OU ao alcance do braco: quem esta encostado a cruz nao
-		# tem de a enquadrar ao pixel para lhe pegar.
-		var cam := get_viewport().get_camera_3d()
-		var encostado: bool = (cam != null
-			and cam.global_position.distance_to(_cruz.global_position) <= perto_da_cruz)
-		if encostado or _na_mira(_cruz.global_position, alcance_da_cruz):
+		if _perto_no_ecra(_cruz.global_position, onde, alcance_da_cruz):
 			_pegar_a_cruz()
 	elif _fase == CRUZ_NA_MAO:
-		if _na_mira(boca, alcance_da_boca):
+		if _perto_no_ecra(boca, onde, alcance_da_boca):
 			_atirar()
 		else:
 			# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
-			_dito.text = "olha para a boca do forno"
+			_dito.text = "duplo clique no forno"
 
 
-## Esta este ponto do mundo debaixo da mira, a menos de `raio` pixeis?
-func _na_mira(mundo: Vector3, raio: float) -> bool:
+func _a_andar() -> bool:
+	var j := get_node_or_null("Jogador")
+	return j != null and j.get("andar")
+
+
+## Este ponto do mundo esta a menos de `raio` pixeis de `onde`?
+func _perto_no_ecra(mundo: Vector3, onde: Vector2, raio: float) -> bool:
 	var cam := get_viewport().get_camera_3d()
 	if cam == null or cam.is_position_behind(mundo):
 		return false
-	var meio := get_viewport().get_visible_rect().size * 0.5
-	return cam.unproject_position(mundo).distance_to(meio) <= raio
+	return cam.unproject_position(mundo).distance_to(onde) <= raio
 
 
 ## A cruz passa para a mao: fica agarrada a camara e vai com quem anda.
@@ -390,7 +392,7 @@ func _pegar_a_cruz() -> void:
 		_cruz.position = cruz_na_mao
 		_cruz.rotation = Vector3(0, 0, 0)
 	# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
-	_dito.text = "leva-a ao forno e larga-a na boca"
+	_dito.text = "duplo clique atire no fogo"
 
 
 # --- o fogo ------------------------------------------------------------

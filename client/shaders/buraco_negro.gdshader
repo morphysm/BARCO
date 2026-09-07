@@ -1,9 +1,11 @@
 // O buraco no teto, e as estrelas negras a volta.
 //
-// Estrelas negras sao uma contradicao e e assim que se desenham: nao sao
-// pontos de luz, sao FALTAS. Cada uma e um furo escuro com um fio frio a
-// volta, sobre um ceu que ja e quase preto — ve-se pelo que apaga, nao
-// pelo que acende.
+// As estrelas sao pontos de luz — pontinhos, nao argolas.
+//
+// A primeira versao desenhava-as como FALTAS, furos escuros com um fio a
+// volta. Lidas de perto no teto, o furo desaparecia contra o escuro e
+// so restava o fio: viam-se bolas. Agora e o contrario — um nucleo
+// pequeno e duro, um halo curto, e nada mais.
 //
 // O buraco roda por dentro mais depressa do que por fora, como uma coisa
 // a cair. Um disco que rodasse todo ao mesmo passo leria-se como um
@@ -23,10 +25,12 @@ uniform float rotacao : hint_range(-2.0, 2.0) = 0.12;
 /// Quanto o centro roda mais depressa do que a borda.
 uniform float arrasto : hint_range(0.0, 4.0) = 1.6;
 /// Quantas estrelas, e quao grandes.
-uniform float densidade : hint_range(4.0, 120.0) = 52.0;
-uniform float tamanho_da_estrela : hint_range(0.01, 0.4) = 0.11;
-/// O fio frio a volta de cada estrela negra.
-uniform vec3 cor_do_fio : source_color = vec3(0.42, 0.46, 0.72);
+uniform float densidade : hint_range(4.0, 160.0) = 78.0;
+uniform float tamanho_da_estrela : hint_range(0.005, 0.3) = 0.045;
+/// A cor dos pontos.
+uniform vec3 cor_da_estrela : source_color = vec3(0.86, 0.90, 1.0);
+/// Quao apertado e o nucleo. Alto = ponto mais fino.
+uniform float dureza : hint_range(1.0, 12.0) = 5.0;
 /// O ceu por tras de tudo. Quase preto, mas NAO preto: uma estrela negra
 /// so se ve pelo que apaga, e sobre o nada nao apaga nada. Sem esta
 /// nevoa as estrelas liam-se como argolinhas a flutuar.
@@ -65,12 +69,11 @@ vec2 hash2(vec2 p) {
 	return vec2(hash(p), hash(p + vec2(37.2, 11.9)));
 }
 
-/// Estrelas negras numa grelha desarrumada. Devolve (falta, fio).
-vec2 estrelas(vec2 p) {
+/// Pontos numa grelha desarrumada. Devolve o brilho acumulado.
+float estrelas(vec2 p) {
 	vec2 celula = floor(p);
 	vec2 dentro = fract(p);
-	float falta = 0.0;
-	float fio = 0.0;
+	float luz = 0.0;
 	for (int y = -1; y <= 1; y++) {
 		for (int x = -1; x <= 1; x++) {
 			vec2 v = vec2(float(x), float(y));
@@ -81,13 +84,20 @@ vec2 estrelas(vec2 p) {
 			}
 			vec2 onde = v + hash2(c) * 0.9 + 0.05;
 			float d = length(dentro - onde);
-			float r = tamanho_da_estrela * (0.45 + 0.9 * hash(c + vec2(9.1, 4.4)));
-			falta = max(falta, 1.0 - smoothstep(r * 0.72, r, d));
-			fio = max(fio, (1.0 - smoothstep(r, r * 1.45, d)) * smoothstep(r * 0.72, r, d));
+			// Cada uma com o seu brilho: um ceu de estrelas todas iguais
+			// nao e um ceu.
+			float forca = 0.25 + 0.95 * hash(c + vec2(9.1, 4.4));
+			float r = max(tamanho_da_estrela, 0.001);
+			// Nucleo duro e halo curto. Sem o halo os pontos cintilam
+			// contra a grelha de pixeis; com halo a mais viram bolas.
+			float nucleo = exp(-pow(d / r, dureza));
+			float halo = exp(-d / (r * 2.6)) * 0.22;
+			luz += (nucleo + halo) * forca;
 		}
 	}
-	return vec2(falta, fio);
+	return luz;
 }
+
 
 void fragment() {
 	vec2 p = UV - vec2(0.5);
@@ -100,7 +110,7 @@ void fragment() {
 	vec2 rodado = vec2(cos(a), sin(a)) * r;
 
 	// As estrelas vivem no campo rodado, entao caem para dentro com ele.
-	vec2 e = estrelas(rodado * densidade);
+	float e = estrelas(rodado * densidade);
 
 	// A nevoa roda com o resto — e o que da a sensacao de que tudo esta a
 	// ser puxado para dentro.
@@ -110,10 +120,7 @@ void fragment() {
 	// nada — leem-se como argolinhas.
 	float ceu = 0.38 + 0.62 * smoothstep(0.20, 0.78, n);
 	vec3 cor = cor_do_ceu + cor_da_nevoa * nevoa * ceu;
-	// O fio primeiro, a falta por cima: uma estrela negra apaga o proprio
-	// contorno se lhe passar por cima.
-	cor += cor_do_fio * e.y * 0.55;
-	cor *= 1.0 - e.x;
+	cor += cor_da_estrela * e;
 
 	// Perto do horizonte tudo se estica e apaga.
 	float queda = smoothstep(horizonte * 3.2, horizonte * 1.05, r);
