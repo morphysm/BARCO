@@ -187,7 +187,10 @@ func _abrir_iris() -> void:
 
 
 ## Quanto a iris demora a abrir a chegada.
-const ABERTURA_DA_IRIS := 3.4
+##
+## Curta: A.C. pediu a travessia pelo menos 5 segundos mais rapida, e
+## eram 3.2 a fechar mais 3.4 a abrir para nada acontecer.
+const ABERTURA_DA_IRIS := 0.8
 
 
 ## Mantem as folhas do menu a arder enquanto o menu esta aberto.

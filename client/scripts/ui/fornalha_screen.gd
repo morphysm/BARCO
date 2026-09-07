@@ -53,11 +53,17 @@ extends Node3D
 ## O que se le quando a musica acaba, antes de a iris fechar.
 ## TODO(CONTENT.pt.md): texto de A.C.
 @export var boas_vindas := "Bem-vindo de volta ao lar!"
-@export_range(0.5, 8.0) var demora_das_boas_vindas := 3.4
+@export_range(0.5, 10.0) var demora_das_boas_vindas := 4.2
+## Quanto tempo a frase leva a ser escrita, letra a letra.
+@export_range(0.2, 6.0) var demora_a_escrever := 1.9
+## Tamanho da letra das boas-vindas. Grande: quem le esta longe.
+@export_range(20, 200) var tamanho_das_boas_vindas := 96
+## Onde a frase assenta, em fraccao da altura do ecra a contar de cima.
+@export_range(0.1, 0.95) var altura_das_boas_vindas := 0.62
 
 ## Quanto a iris demora a fechar, depois das boas-vindas. Fecha aqui e
 ## volta a abrir no `assentamento`: a iris atravessa as duas cenas.
-@export_range(0.5, 8.0) var fecho_da_iris := 3.2
+@export_range(0.2, 8.0) var fecho_da_iris := 0.8
 
 ## O no do modelo que e a boca do forno. A cruz vai para onde ele esta —
 ## a posicao sai do proprio modelo e nao de um numero escrito a mao, para
@@ -94,6 +100,7 @@ var _iris: ColorRect
 var _painel: CanvasLayer
 var _dito: Label
 var _mira: Label
+var _saudacao: Label
 var _tempo := 0.0
 var _crescimento := 0.0
 var _tempo_do_fogo := 0.0
@@ -256,6 +263,20 @@ func _montar_painel() -> void:
 	_mira.modulate = Color(1, 1, 1, 0.55)
 	_mira.visible = false
 	_painel.add_child(_mira)
+
+	# As boas-vindas tem rotulo proprio: grande, em baixo, e escritas a
+	# tinta de fogo. O `_dito` e letra pequena no alto, boa para uma
+	# instrucao e ma para isto.
+	_saudacao = Pagina.texto("", tamanho_das_boas_vindas)
+	_saudacao.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_saudacao.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_saudacao.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	_saudacao.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var tinta := ShaderMaterial.new()
+	tinta.shader = load("res://shaders/tinta_de_fogo.gdshader")
+	_saudacao.material = tinta
+	_saudacao.visible = false
+	_painel.add_child(_saudacao)
 
 	_iris = ColorRect.new()
 	var m := ShaderMaterial.new()
@@ -479,7 +500,13 @@ func _musica_acabou() -> void:
 		return
 	_fase = A_SAUDAR
 	_tempo = 0.0
-	_dito.text = boas_vindas
+	_dito.text = ""
+	var alto := get_viewport().get_visible_rect().size.y
+	_saudacao.offset_top = alto * altura_das_boas_vindas
+	_saudacao.text = boas_vindas
+	# A maquina de escrever: comeca sem nenhuma letra a vista.
+	_saudacao.visible_ratio = 0.0
+	_saudacao.visible = true
 
 
 func _process(delta: float) -> void:
@@ -509,6 +536,11 @@ func _process(delta: float) -> void:
 			var desde: float = _tempo_do_fogo - _esperas[i]
 			_formas[i].surgir = clampf(desde / maxf(demora_a_surgir, 0.001), 0.0, 1.0)
 			_formas[i].vigor = _formas[i].surgir
+
+	if _fase == A_SAUDAR and _saudacao != null:
+		# Letra a letra, e nao de uma vez: e uma frase a ser escrita.
+		_saudacao.visible_ratio = clampf(
+			_tempo / maxf(demora_a_escrever, 0.001), 0.0, 1.0)
 
 	if _fase == A_SAUDAR and _tempo >= demora_das_boas_vindas:
 		_fase = A_FECHAR

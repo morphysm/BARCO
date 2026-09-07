@@ -14,8 +14,8 @@
 [ext_resource type="Script" uid="uid://cm36s50im82v6" path="res://scripts/ui/forma_dancante.gd" id="12_clqt3"]
 [ext_resource type="Texture2D" uid="uid://du80serhv138r" path="res://resources/imagens/face_fornalha_model_1.png" id="13_24jri"]
 [ext_resource type="Texture2D" uid="uid://yo3prg0k18ov" path="res://resources/imagens/face_fornalha_model_2.png" id="14_sasjo"]
+[ext_resource type="Texture2D" uid="uid://b7bkam8pna5e0" path="res://resources/imagens/parede_de_tras.png" id="97_partras"]
 [ext_resource type="Texture2D" uid="uid://d4hwbf32mxguu" path="res://resources/imagens/sigilo_chao.png" id="98_sigpng"]
-[ext_resource type="Texture2D" path="res://resources/imagens/parede_de_tras.png" id="97_partras"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_23ijq"]
 radius = 0.32
@@ -63,6 +63,13 @@ albedo_texture = ExtResource("5_1f6v6")
 
 [sub_resource type="QuadMesh" id="QuadMesh_of1bw"]
 material = SubResource("StandardMaterial3D_l70n5")
+size = Vector2(9, 5.4)
+
+[sub_resource type="StandardMaterial3D" id="MatParedeDeTras"]
+albedo_texture = ExtResource("97_partras")
+
+[sub_resource type="QuadMesh" id="MalhaParedeDeTras"]
+material = SubResource("MatParedeDeTras")
 size = Vector2(9, 5.4)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_41une"]
@@ -194,13 +201,6 @@ albedo_texture = ExtResource("10_77jdi")
 material = SubResource("StandardMaterial3D_xh8vr")
 size = Vector2(0.78, 2.05)
 
-[sub_resource type="StandardMaterial3D" id="MatParedeDeTras"]
-albedo_texture = ExtResource("97_partras")
-
-[sub_resource type="QuadMesh" id="MalhaParedeDeTras"]
-material = SubResource("MatParedeDeTras")
-size = Vector2(9, 5.4)
-
 [node name="Fornalha" type="Node3D" unique_id=668287173]
 script = ExtResource("1_0g3bd")
 musica = ExtResource("2_vovy2")
@@ -230,19 +230,19 @@ material_override = SubResource("MatSigiloChao")
 mesh = SubResource("QuadMesh_t4oqo")
 
 [node name="ParedeEsquerda" type="MeshInstance3D" parent="." unique_id=1497026345]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6, 2.7, 3.3)
+transform = Transform3D(-8.742278e-08, 0, 1, 0, 2, 0, -2, 0, -4.371139e-08, -6, 2.7, 3.3)
 mesh = SubResource("QuadMesh_xpqns")
 
 [node name="ParedeDireita" type="MeshInstance3D" parent="." unique_id=1644502052]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 3, 2.7, 3.3)
+transform = Transform3D(-8.742278e-08, 0, -1, 0, 2, 0, 2, 0, -4.371139e-08, 3, 2.7, 3.3)
 mesh = SubResource("QuadMesh_of1bw")
 
 [node name="ParedeDeTras" type="MeshInstance3D" parent="." unique_id=771224409]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -1.5, 2.7, 11.4)
+transform = Transform3D(-1, 0, -1.509958e-07, 0, 2, 0, 1.509958e-07, 0, -1, -1.5, 2.7, 11.4)
 mesh = SubResource("MalhaParedeDeTras")
 
 [node name="ParedeAtras" type="MeshInstance3D" parent="." unique_id=715211337]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 2.7, -0.9)
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, -1.5, 2.7, -0.9)
 mesh = SubResource("QuadMesh_0p5lt")
 
 [node name="Teto" type="MeshInstance3D" parent="." unique_id=1497693470]
@@ -321,7 +321,7 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.30212784, 0)
 
 [node name="Forma1" type="Node3D" parent="Dancantes" unique_id=1111634319]
-transform = Transform3D(0.8745623, -0.05253219, 0.28067964, 0.05516206, 0.9183448, -3.2529535e-14, -0.28017464, 0.016829202, 0.8761387, -2.6, -0.069931746, 1.1)
+transform = Transform3D(0.87466115, 0.050860934, 0.28067964, -0.05340714, 0.9184485, -3.2529535e-14, -0.2802063, -0.0162938, 0.8761387, -2.6, -0.069931746, 1.1)
 script = ExtResource("12_clqt3")
 semente = 0.83
 ritmo = 0.72
@@ -333,10 +333,10 @@ face = ExtResource("13_24jri")
 cor_da_face = Color(0.7510489, 0.947455, 0.9999998, 1)
 
 [node name="Forma2" type="Node3D" parent="Dancantes" unique_id=1475041566]
-transform = Transform3D(1.1410552, -0.0674302, 0.12627806, 0.067840435, 1.1479973, -9.385097e-09, -0.12605813, 0.0074493648, 1.1430459, -0.69584477, -0.09454763, 1.1)
+transform = Transform3D(1.1416616, 0.0562362, 0.12627804, -0.05657833, 1.1486074, -1.0728991e-08, -0.12612511, -0.0062126857, 1.1430459, -0.69584477, -0.09454763, 1.1)
 script = ExtResource("12_clqt3")
 semente = 3.53
-ritmo = 1.09
+ritmo = 1.3
 tamanho = 1.15
 espelhar = true
 eco = 0.033
@@ -346,10 +346,10 @@ face = ExtResource("14_sasjo")
 cor_da_face = Color(0.90837055, 0.8783743, 0.8797685, 1)
 
 [node name="Forma3" type="Node3D" parent="Dancantes" unique_id=2071481370]
-transform = Transform3D(1.11908, 0.01946769, -0.04100123, -0.019480746, 1.1198306, 5.016004e-10, 0.040995028, 0.0007131553, 1.1192492, -2.0043142, -0.08897054, 1.9)
+transform = Transform3D(1.1172363, 0.0670967, -0.04100123, -0.067141704, 1.1179857, 5.5320215e-10, 0.04092749, 0.0024579393, 1.1192492, -2.0043142, -0.08897054, 1.9)
 script = ExtResource("12_clqt3")
 semente = 6.23
-ritmo = 0.91
+ritmo = 2.0
 tamanho = 1.12
 eco = 0.02399999999999999
 cor = Color(0.84313726, 0.8980392, 0.99607843, 0.9019608)
@@ -357,10 +357,10 @@ cor_da_borda = Color(0.5019608, 0, 0.09803922, 1)
 face = ExtResource("13_24jri")
 
 [node name="Forma4" type="Node3D" parent="Dancantes" unique_id=851773682]
-transform = Transform3D(0.9841727, 0.042472918, -0.46658367, -0.04699626, 1.0889864, 1.7488875e-09, 0.46614978, 0.020117141, 0.9850887, -0.1682682, 0.027587056, 1.8535117)
+transform = Transform3D(0.984813, 0.023306329, -0.46658367, -0.025788438, 1.089695, -1.3969772e-09, 0.46645308, 0.011038958, 0.9850887, -0.1682682, 0.027587056, 1.8535117)
 script = ExtResource("12_clqt3")
 semente = 8.930000000000001
-ritmo = 0.7299999999999998
+ritmo = 1.9
 tamanho = 1.09
 espelhar = true
 eco = 0.035
@@ -369,10 +369,10 @@ cor_da_borda = Color(0.5019608, 0, 0.09803922, 1)
 face = ExtResource("14_sasjo")
 
 [node name="Forma5" type="Node3D" parent="Dancantes" unique_id=1961648515]
-transform = Transform3D(0.9938696, 0.04920629, 0.36524206, -0.052416187, 1.0587032, -5.0844955e-09, -0.36479524, -0.018060938, 0.99508697, -3.0500455, 0.1558224, 2.7)
+transform = Transform3D(0.99425745, -0.04062142, 0.36524206, 0.043271292, 1.0591164, -3.224129e-09, -0.3649376, 0.014909906, 0.99508697, -3.0500455, 0.1558224, 2.7)
 script = ExtResource("12_clqt3")
-semente = 11.63
-ritmo = 1.1
+semente = 11.67
+ritmo = 1.6
 tamanho = 1.06
 eco = 0.02599999999999999
 cor = Color(0.84313726, 0.8980392, 0.99607843, 0.9019608)
@@ -381,13 +381,13 @@ face = ExtResource("13_24jri")
 cor_da_face = Color(0.90837055, 0.8783743, 0.8797685, 1)
 
 [node name="Forma6" type="Node3D" parent="Dancantes" unique_id=2086636133]
-transform = Transform3D(0.9935157, -0.052512016, -0.26658782, 0.054364502, 1.0285642, 5.6074185e-09, 0.2662162, -0.014070796, 0.99490243, 0.20513408, 0.16399151, 2.7)
+transform = Transform3D(0.99296415, 0.062073655, -0.26658776, -0.038119916, 1.0247493, 0.09662192, 0.27105173, -0.08328137, 0.9901995, 0.37902802, 0.25136167, 2.824936)
 script = ExtResource("12_clqt3")
 semente = 14.33
-ritmo = 0.92
+ritmo = 2.0
 tamanho = 1.0300000000000002
 espelhar = true
 eco = 0.03699999999999999
 cor = Color(0.84313726, 0.8980392, 0.99607843, 0.9019608)
 cor_da_borda = Color(0.5019608, 0, 0.09803922, 1)
-face = ExtResource("14_sasjo")
+face = ExtResource("13_24jri")
