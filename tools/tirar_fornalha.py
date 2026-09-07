@@ -6,11 +6,14 @@ sozinho nao se sustenta — fica a flutuar. Entao leva-se a parede inteira
 e uma boca so: a `Bay2`, que e a que esta aberta (as `Bay1`, `Bay3` e
 `Bay5` estao seladas a arder e nao se pode atirar nada la para dentro).
 
-NAO ALTERA GEOMETRIA. Nao move, nao corta, nao redimensiona, nao mexe em
-materiais. A malha, os acessores e o binario saem byte a byte como
-entraram; a unica diferenca e que a lista de filhos da raiz deixa de
-nomear os nos das outras quatro bocas. O que nao e nomeado nao e
-importado.
+NAO ALTERA GEOMETRIA. Nao corta, nao redimensiona, nao mexe em materiais.
+A malha, os acessores e o binario saem byte a byte como entraram.
+
+UMA EXCEPCAO, a pedido de A.C.: a caveira e os ossos que estavam soltos
+dentro da `Bay2` sao TRANSLADADOS 1.5 em x para o vao do meio. E a unica
+coisa que se move, e move-se inteira — sao pecas pousadas dentro da
+boca, nao parte da fornalha. Sem isto o vao do meio ficava vazio, porque
+so as bocas `Bay2` e `Bay4` traziam ossos.
 
 A origem e SO DE LEITURA e nunca e tocada.
 
@@ -36,6 +39,14 @@ DESTINO = pathlib.Path("client/resources/modelos/fornalha.glb")
 # A `Bay3` vem SELADA, entao tira-se-lhe a porta. Nao e alterar
 # geometria: e nao referir um no, exactamente como se faz as outras
 # bocas. Nada e movido, cortado nem redimensionado.
+## As pecas soltas que vem com a caveira, e que acompanham a boca.
+OSSOS = ("Bay2_BoneSkull", "Bay2_BoneSkull_EyeSocket1", "Bay2_BoneSkull_EyeSocket2",
+         "Bay2_DryBone01", "Bay2_DryBone02", "Bay2_DryBone03", "Bay2_DryBone04",
+         "Bay2_DryBone05", "Bay2_DryBone06", "Bay2_DryBone07")
+
+## De quanto se deslocam: do centro da `Bay2` para o da `Bay3`.
+PASSO = 1.5
+
 FORA = ("Bay1_", "Bay2_", "Bay4_", "Bay5_",
         # A porta selada e o tapume que estava por tras dela. Sem tirar
         # os dois, o vao continua fechado: via-se um arco escuro e a
@@ -79,15 +90,26 @@ def main():
             continue
         j = json.loads(dados)
         nos = j["nodes"]
+
+        # Os ossos mudam de boca antes de se decidir o que fica.
+        movidos = 0
+        for n in nos:
+            if n.get("name") in OSSOS:
+                t = n.get("translation", [0.0, 0.0, 0.0])
+                n["translation"] = [t[0] + PASSO, t[1], t[2]]
+                movidos += 1
+
         for n in nos:
             filhos = n.get("children")
             if not filhos:
                 continue
             fica = [i for i in filhos
-                    if not nos[i].get("name", "").startswith(FORA)]
+                    if nos[i].get("name", "") in OSSOS
+                    or not nos[i].get("name", "").startswith(FORA)]
             tirados += len(filhos) - len(fica)
             n["children"] = fica
         saida.append((ty, json.dumps(j, separators=(",", ":")).encode()))
+        print("  ossos mudados de boca: %d (+%.1f em x)" % (movidos, PASSO))
 
     DESTINO.parent.mkdir(parents=True, exist_ok=True)
     escrever(DESTINO, saida)
