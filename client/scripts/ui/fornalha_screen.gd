@@ -57,7 +57,9 @@ extends Node3D
 ## Quanto tempo a frase leva a ser escrita, letra a letra.
 @export_range(0.2, 6.0) var demora_a_escrever := 1.9
 ## Tamanho da letra das boas-vindas. Grande: quem le esta longe.
-@export_range(20, 200) var tamanho_das_boas_vindas := 96
+@export_range(20, 200) var tamanho_das_boas_vindas := 74
+## O cursor que pisca a frente do que ainda nao foi escrito. Vazio tira-o.
+@export var cursor := "_"
 ## Onde a frase assenta, em fraccao da altura do ecra a contar de cima.
 @export_range(0.1, 0.95) var altura_das_boas_vindas := 0.62
 
@@ -268,12 +270,17 @@ func _montar_painel() -> void:
 	# tinta de fogo. O `_dito` e letra pequena no alto, boa para uma
 	# instrucao e ma para isto.
 	_saudacao = Pagina.texto("", tamanho_das_boas_vindas)
+	# Letra de maquina: mono, para as letras cairem em coluna como num
+	# terminal. A serifa da `Pagina` e para papel impresso, nao para isto.
+	var mono := load("res://resources/fonts/DejaVuSansMono-Bold.ttf")
+	if mono != null:
+		_saudacao.add_theme_font_override("font", mono)
 	_saudacao.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_saudacao.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_saudacao.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	_saudacao.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var tinta := ShaderMaterial.new()
-	tinta.shader = load("res://shaders/tinta_de_fogo.gdshader")
+	tinta.shader = load("res://shaders/fosforo.gdshader")
 	_saudacao.material = tinta
 	_saudacao.visible = false
 	_painel.add_child(_saudacao)
@@ -503,9 +510,7 @@ func _musica_acabou() -> void:
 	_dito.text = ""
 	var alto := get_viewport().get_visible_rect().size.y
 	_saudacao.offset_top = alto * altura_das_boas_vindas
-	_saudacao.text = boas_vindas
-	# A maquina de escrever: comeca sem nenhuma letra a vista.
-	_saudacao.visible_ratio = 0.0
+	_saudacao.text = ""
 	_saudacao.visible = true
 
 
@@ -538,9 +543,13 @@ func _process(delta: float) -> void:
 			_formas[i].vigor = _formas[i].surgir
 
 	if _fase == A_SAUDAR and _saudacao != null:
-		# Letra a letra, e nao de uma vez: e uma frase a ser escrita.
-		_saudacao.visible_ratio = clampf(
-			_tempo / maxf(demora_a_escrever, 0.001), 0.0, 1.0)
+		# Letra a letra. Corta-se o TEXTO e nao o `visible_ratio`: assim o
+		# cursor anda com a ultima letra escrita, como num terminal, em vez
+		# de ficar parado no fim da frase inteira.
+		var quantas := int(boas_vindas.length() * clampf(
+			_tempo / maxf(demora_a_escrever, 0.001), 0.0, 1.0))
+		var pisca: bool = fmod(_tempo, 0.9) < 0.55
+		_saudacao.text = boas_vindas.substr(0, quantas) + (cursor if pisca else "")
 
 	if _fase == A_SAUDAR and _tempo >= demora_das_boas_vindas:
 		_fase = A_FECHAR
