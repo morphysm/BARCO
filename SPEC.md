@@ -30,6 +30,16 @@ traces over it and asks the guide: *posso passar?* One measure answers —
 how much of **that** drawing was traced, measured against that signature
 alone and not against the best of the three (`RiscoScoring.medir`).
 
+Coverage is **geometric**, not a pairing count. A reference segment
+counts as traced when most of its length has ink within tolerance,
+whatever drew it — one long stroke or twenty short ones. It used to be
+`segments_with_a_stroke_assigned / segments`, with the pairing one-to-one,
+which answers a different question: *did you make one stroke per
+segment?* Tracing the whole `ponto` with the hand down, in long
+continuous strokes, covered dozens of segments with one stroke and had
+all the others counted as untraced — with 143 segments and 25 strokes the
+ceiling was 17%, so 70% could not be reached at all.
+
 Enough, and the guide puts up the next one: `Exu Caveira`, then
 `Rosa Negra`, then `Exu Aranha`, in the order of the `irmandade`. Not
 enough, and it says so in red and the same drawing stays. Nobody chooses

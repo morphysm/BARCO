@@ -320,7 +320,7 @@ static func _contra_assinatura(
 	var order := float(_maior_subsequencia_crescente(ordem_primeiro)) / float(n)
 
 	return {
-		"cobertura": float(n - ausentes) / float(n),
+		"cobertura": _cobertura(finas, caixas, r_finas, r_caixas, tol),
 		"accuracy": soma_acc / float(n),
 		"order": order,
 		"continuity": clampf(1.0 - float(breaks) / float(n), 0.0, 1.0),
@@ -329,6 +329,65 @@ static func _contra_assinatura(
 		"breaks": breaks,
 		"ausentes": ausentes,
 	}
+
+
+## Quanto do desenho foi riscado, por cima.
+##
+## Mede GEOMETRIA, nao emparelhamento. A conta antiga era
+## `segmentos_com_traco_atribuido / segmentos`, com o emparelhamento a ser
+## um-para-um — e isso responde a outra pergunta: "fizeste um traco por
+## segmento?". Quem risca o `ponto` inteiro com a mao pousada, em traços
+## longos e continuos, cobria dezenas de segmentos com um so traco e via
+## todos os outros contados como nao riscados. Com 143 segmentos e 25
+## traços, o tecto era 17%: os 70%% eram inalcancaveis.
+##
+## Agora: um segmento conta como riscado se a maior parte do seu
+## comprimento tem tinta por perto, venha ela de um traco ou de vinte.
+static func _cobertura(
+	finas: Array[PackedVector2Array],
+	caixas: Array[Rect2],
+	r_finas: Array[PackedVector2Array],
+	r_caixas: Array[Rect2],
+	tol: float
+) -> float:
+	var n := r_finas.size()
+	if n == 0:
+		return 0.0
+	var feitos := 0
+	for i in n:
+		# So os tracos que passam perto deste segmento. A distancia entre
+		# caixas nunca e maior que a real, entao isto nao deita fora
+		# nenhum que contasse.
+		var perto: Array[int] = []
+		for t in finas.size():
+			if Polilinha.distancia_entre_caixas(caixas[t], r_caixas[i]) <= tol:
+				perto.append(t)
+		if perto.is_empty():
+			continue
+		var pontos: PackedVector2Array = r_finas[i]
+		var tocados := 0
+		for p in pontos:
+			for t in perto:
+				if _perto_da_linha(p, finas[t], tol):
+					tocados += 1
+					break
+		if float(tocados) / float(pontos.size()) >= FRACAO_DO_SEGMENTO:
+			feitos += 1
+	return float(feitos) / float(n)
+
+
+## Quanto de um segmento precisa de ter tinta por cima para ele contar.
+## Nao e 1.0: as pontas de um traco a mao ficam sempre curtas.
+const FRACAO_DO_SEGMENTO := 0.6
+
+
+static func _perto_da_linha(p: Vector2, linha: PackedVector2Array, tol: float) -> bool:
+	var t2 := tol * tol
+	for j in range(linha.size() - 1):
+		if p.distance_squared_to(
+				Geometry2D.get_closest_point_to_segment(p, linha[j], linha[j + 1])) <= t2:
+			return true
+	return false
 
 
 static func _maior_subsequencia_crescente(seq: Array[int]) -> int:
