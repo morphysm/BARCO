@@ -94,7 +94,16 @@ app mid-fire has already burnt what they came to burn.
 The furnace is one bay of the Exu Caveira furnace bank from *Iovana Is
 DEAD*, copied without alteration by `tools/tirar_fornalha.py` — the
 source project is read-only and never touched. Four of the five bays are
-simply not referenced; `Bay2` is the one with an open door.
+simply not referenced; the one that stays is `Bay3`, the middle one, the
+only bay that sits centred without the bank having to be shoved sideways.
+It came sealed, so two pieces of `Bay2` — the one that came open — are
+moved 1.5 in x into it, whole and unrotated: the skull and bones, and the
+open iron door. What the mouth does *not* wear is the pale refractory
+ring `Bay3_RefractoryArch`: in the reference photo
+(`the-ballerina/references/furnace-official.jpg`) the light firebrick is
+on the inner face of the swung-open door, and the mouth itself is dark
+iron and soot. The sealed door's ember seam goes with it — with no door
+to run across, it hung in the air in front of the opening.
 
 **3. The `assentamento`.** The room is now reachable. This is **the paid
 phase** — the only one. `oferendas` are bought (§10.1: 1 coffee = 2 USD;
