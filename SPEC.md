@@ -65,10 +65,28 @@ você serviu?* — with one answer, **SIM**. There is no "no": the person
 who reached this room traced the three `pontos` and crossed the eclipse,
 and the app does not ask twice.
 
-SIM puts a cross in front of them. Double-click takes it, they carry it
-to the furnace mouth, and another double-click throws it in. A fireball
-grows, the music enters, and when the music ends an iris closes over the
-fire and opens again on the `assentamento` — one iris across two scenes.
+There are two answers and both are real. **NÃO** closes the app: nobody
+is held in a room they refuse. **SIM** puts a cross in front of them —
+double-click takes it, they carry it to the furnace mouth, another
+double-click throws it in.
+
+Fire grows in the mouth (`shaders/fogo.gdshader` — a billboarded quad,
+not a sphere: a `SphereMesh` is a shell, every fragment sits at the same
+radius, so a radial falloff computed on it cuts nothing and the fire
+comes out an lit egg). Figures appear and dance in front of it, built
+from `FormaDancante` — the procedural body architecture of the
+`Hall_of_Repetition`, joints computed per frame, cylinders between them,
+a displaced echo body, no rig. The music plays. When it ends the screen
+says *Bem-vindo de volta ao lar!*, and then an iris closes over the fire
+and opens again on the `assentamento` — one iris across two scenes.
+
+The room is three walls and the furnace: `tools/gerar_sala_fornalha.gd`
+writes it with real nodes — walls, floor sigil, Baphomet, three banners
+(mast, crossbar, hanging cloth) and the marks where the figures stand —
+so all of it is dragged in the editor, not written in code. The furnace
+wears `shaders/ferro.gdshader`: raw iron with rust that catches on the
+upward faces. The frame is portrait and narrow — about 4.6 m wide at the
+furnace — and anything placed outside that cone is simply not seen.
 
 Crossed once, and marked at the throw, not at the end: whoever closes the
 app mid-fire has already burnt what they came to burn.

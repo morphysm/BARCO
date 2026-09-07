@@ -18,30 +18,36 @@ extends Node3D
 ## O que se pergunta. TODO(CONTENT.pt.md): texto de A.C.
 @export_multiline var pergunta := "Você renega o teu passado\ne tudo falso que você serviu?"
 @export var rotulo_sim := "SIM"
+@export var rotulo_nao := "NÃO"
 
-## A imagem ao fundo. Fica vazia ate A.C. dar a dele; sem imagem nao se
-## desenha nada e a sala funciona na mesma.
-##
-## Poe-se o PNG em `resources/imagens/`, importa-se, e escolhe-se aqui no
-## inspetor de `scenes/fornalha.tscn`.
-@export var baphomet: Texture2D:
+## A cruz que se queima. Modelo de A.C.
+@export var cruz: PackedScene
+@export_range(0.1, 2.0) var tamanho_da_cruz := 0.55
+
+## Ferro enferrujado por cima da fornalha. Desligar mostra os materiais
+## que o modelo traz de fabrica.
+@export var ferro_enferrujado := true:
 	set(valor):
-		baphomet = valor
+		ferro_enferrujado = valor
 		if is_inside_tree():
-			_montar_baphomet()
-@export_range(0.5, 6.0) var altura_do_baphomet := 2.6
-## A que altura ela fica, a contar do chao — por cima da fornalha.
-@export var lugar_do_baphomet := Vector3(-1.5, 4.5, 0.15)
+			_vestir_a_fornalha()
+@export_range(0.0, 1.0) var ferrugem := 0.62
 
-## O sigilo no chao.
-@export var sigilo: Texture2D
-@export_range(0.5, 6.0) var largura_do_sigilo := 1.8
+## Quantas formas dancam. Os LUGARES estao na cena, em `Dancantes` — sao
+## marcas que se arrastam no editor. Isto so diz quantas se usam.
+@export_range(0, 12) var quantas_formas := 6
+@export var cor_das_formas := Color(0.18, 0.05, 0.04, 0.86)
 
 ## A musica. A iris so abre quando ela acabar — nao ha duracao escrita a
 ## mao: troca-se o ficheiro e o compasso vai atras.
 @export var musica: AudioStream
 
-## Quanto a iris demora a fechar, depois de a musica acabar. Fecha aqui e
+## O que se le quando a musica acaba, antes de a iris fechar.
+## TODO(CONTENT.pt.md): texto de A.C.
+@export var boas_vindas := "Bem-vindo de volta ao lar!"
+@export_range(0.5, 8.0) var demora_das_boas_vindas := 3.4
+
+## Quanto a iris demora a fechar, depois das boas-vindas. Fecha aqui e
 ## volta a abrir no `assentamento`: a iris atravessa as duas cenas.
 @export_range(0.5, 8.0) var fecho_da_iris := 3.2
 
@@ -60,16 +66,17 @@ extends Node3D
 @export_range(20.0, 400.0) var alcance_da_boca := 130.0
 
 ## Quanta luz ha na sala antes de o fogo pegar.
-@export_range(0.0, 1.0) var luz_da_sala := 0.32
+@export_range(0.0, 1.5) var luz_da_sala := 0.62
 
 const COR_TINTA := Color(0.937, 0.925, 0.882)
 const COR_BRASA := Color(1.0, 0.42, 0.12)
 
-enum { PERGUNTA, CRUZ_POUSADA, CRUZ_NA_MAO, A_ARDER, A_FECHAR, IDO }
+enum { PERGUNTA, CRUZ_POUSADA, CRUZ_NA_MAO, A_ARDER, A_SAUDAR, A_FECHAR, IDO }
 
 var _fase := PERGUNTA
 var _cruz: Node3D
 var _fogo: MeshInstance3D
+var _formas: Array[FormaDancante] = []
 var _luz_do_fogo: OmniLight3D
 var _tocador: AudioStreamPlayer
 var _iris: ColorRect
@@ -82,7 +89,7 @@ var _crescimento := 0.0
 func _ready() -> void:
 	_achar_boca()
 	_montar_luz()
-	_montar_baphomet()
+	_vestir_a_fornalha()
 	_montar_brasa()
 	if not Engine.is_editor_hint():
 		_montar_painel()
@@ -146,29 +153,30 @@ func _montar_luz() -> void:
 	add_child(amb)
 
 
-## A imagem ao fundo, por cima da fornalha. Sem textura nao se desenha
-## nada: um retangulo vazio a espera de uma imagem le-se como um erro.
-func _montar_baphomet() -> void:
-	var ja := get_node_or_null("Baphomet")
-	if baphomet == null:
-		if ja != null:
-			ja.queue_free()
+## Ferro enferrujado por cima de tudo o que a fornalha traz.
+##
+## Percorre-se e poe-se `material_override`: o modelo e uma sub-cena
+## instanciada e nao se lhe mexe nos materiais a partir da cena de fora.
+func _vestir_a_fornalha() -> void:
+	var f := get_node_or_null("fornalha")
+	if f == null:
 		return
-	var no: MeshInstance3D = ja if ja is MeshInstance3D else MeshInstance3D.new()
-	no.name = "Baphomet"
-	var quad := QuadMesh.new()
-	var proporcao := float(baphomet.get_width()) / maxf(float(baphomet.get_height()), 1.0)
-	quad.size = Vector2(altura_do_baphomet * proporcao, altura_do_baphomet)
-	var m := StandardMaterial3D.new()
-	m.albedo_texture = baphomet
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.cull_mode = BaseMaterial3D.CULL_DISABLED
-	m.roughness = 1.0
-	quad.material = m
-	no.mesh = quad
-	no.position = lugar_do_baphomet
-	if ja == null:
-		add_child(no)
+	var m: ShaderMaterial = null
+	if ferro_enferrujado:
+		m = ShaderMaterial.new()
+		m.shader = load("res://shaders/ferro.gdshader")
+		m.set_shader_parameter("ferrugem", ferrugem)
+	for malha in _malhas(f):
+		malha.material_override = m
+
+
+func _malhas(raiz: Node) -> Array[MeshInstance3D]:
+	var saida: Array[MeshInstance3D] = []
+	if raiz is MeshInstance3D:
+		saida.append(raiz)
+	for filho in raiz.get_children():
+		saida.append_array(_malhas(filho))
+	return saida
 
 
 ## A brasa que ja la esta. O forno nao se acende: esta aceso, e e por
@@ -203,17 +211,28 @@ func _montar_painel() -> void:
 	_dito.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_painel.add_child(_dito)
 
-	# Um botao so. Nao ha "nao": quem chegou aqui riscou os tres `pontos`
-	# e atravessou o eclipse, e o app nao pergunta duas vezes.
+	# Duas respostas, e as duas valem. Quem diz NAO nao fica preso num
+	# quarto que nao quer: o app fecha-se.
+	var respostas := HBoxContainer.new()
+	respostas.name = "Respostas"
+	respostas.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	respostas.offset_top = -180
+	respostas.offset_bottom = -120
+	respostas.offset_left = -150
+	respostas.offset_right = 150
+	respostas.alignment = BoxContainer.ALIGNMENT_CENTER
+	respostas.add_theme_constant_override("separation", 40)
+	_painel.add_child(respostas)
+
 	var sim := Pagina.botao(rotulo_sim, 26)
-	sim.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	sim.offset_top = -180
-	sim.offset_bottom = -120
-	sim.offset_left = -70
-	sim.offset_right = 70
 	sim.pressed.connect(_responder_sim)
 	sim.name = "Sim"
-	_painel.add_child(sim)
+	respostas.add_child(sim)
+
+	var nao := Pagina.botao(rotulo_nao, 26)
+	nao.pressed.connect(_responder_nao)
+	nao.name = "Nao"
+	respostas.add_child(nao)
 
 	_iris = ColorRect.new()
 	var m := ShaderMaterial.new()
@@ -226,11 +245,19 @@ func _montar_painel() -> void:
 	_painel.add_child(_iris)
 
 
+## Quem diz NAO sai. Nao ha ecra de despedida e nao ha volta atras dentro
+## da mesma sessao: a pergunta e a serio, e uma recusa e uma recusa.
+func _responder_nao() -> void:
+	if _fase != PERGUNTA:
+		return
+	get_tree().quit()
+
+
 func _responder_sim() -> void:
 	if _fase != PERGUNTA:
 		return
 	_fase = CRUZ_POUSADA
-	_painel.get_node("Sim").queue_free()
+	_painel.get_node("Respostas").queue_free()
 	# TODO(CONTENT.pt.md): texto de A.C. Este e estrutural.
 	_dito.text = "duplo clique na cruz"
 	_por_a_cruz()
@@ -238,27 +265,24 @@ func _responder_sim() -> void:
 
 # --- a cruz ------------------------------------------------------------
 
-## Duas travessas de madeira, postas a frente de quem olha. Nao ha modelo
-## de cruz no projeto e nao vou inventar um: isto e um lugar guardado, e
-## troca-se por um `.glb` quando houver.
+## A cruz de A.C., posta a frente de quem olha.
 func _por_a_cruz() -> void:
 	_cruz = Node3D.new()
 	_cruz.name = "Cruz"
-	var madeira := StandardMaterial3D.new()
-	madeira.albedo_color = Color(0.20, 0.14, 0.10)
-	madeira.roughness = 1.0
-	for medida in [Vector3(0.055, 0.62, 0.045), Vector3(0.34, 0.055, 0.045)]:
-		var b := MeshInstance3D.new()
-		var caixa := BoxMesh.new()
-		caixa.size = medida
-		caixa.material = madeira
-		b.mesh = caixa
-		if medida.x > medida.y:
-			b.position.y = 0.12
-		_cruz.add_child(b)
-	# Na arvore primeiro: `global_position` num no solto nao vale nada, e
-	# a cruz caía na origem da cena.
 	add_child(_cruz)
+
+	if cruz != null:
+		var modelo: Node3D = cruz.instantiate()
+		_cruz.add_child(modelo)
+		# Pelo maior lado, para uma cruz achatada nao sair gigante.
+		var c := _caixa(modelo)
+		var maior: float = maxf(c.size.x, maxf(c.size.y, c.size.z))
+		if maior > 0.0:
+			modelo.scale = Vector3.ONE * (tamanho_da_cruz / maior)
+			modelo.position = -c.get_center() * modelo.scale.x
+	else:
+		push_warning("sem modelo de cruz — nada para pegar")
+
 	# A frente da pessoa, e nao num sitio escrito a mao: onde a camara
 	# estiver, a cruz aparece a sua frente.
 	var cam := get_viewport().get_camera_3d()
@@ -268,6 +292,18 @@ func _por_a_cruz() -> void:
 			- cam.global_transform.basis.y * 0.42)
 	else:
 		_cruz.position = Vector3(0.0, 0.55, 1.05)
+
+
+func _caixa(no: Node3D) -> AABB:
+	var total := AABB()
+	var primeiro := true
+	for malha in _malhas(no):
+		if malha.mesh == null:
+			continue
+		var c: AABB = malha.transform * malha.mesh.get_aabb()
+		total = c if primeiro else total.merge(c)
+		primeiro = false
+	return total
 
 
 func _input(evento: InputEvent) -> void:
@@ -328,27 +364,30 @@ func _atirar() -> void:
 	_cruz = null
 	_dito.text = ""
 
+	# Num quad virado a camara, nao numa esfera: ver `fogo.gdshader`.
 	_fogo = MeshInstance3D.new()
 	_fogo.name = "Fogo"
-	var bola := SphereMesh.new()
-	bola.radius = 1.0
-	bola.height = 2.0
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.albedo_color = COR_BRASA
-	bola.material = m
-	_fogo.mesh = bola
-	_fogo.position = boca
-	_fogo.scale = Vector3.ONE * 0.01
+	var q := QuadMesh.new()
+	q.size = Vector2(1.0, 1.35)
+	_fogo.mesh = q
+	var m := ShaderMaterial.new()
+	m.shader = load("res://shaders/fogo.gdshader")
+	m.set_shader_parameter("crescimento", 0.0)
+	_fogo.material_override = m
+	_fogo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(_fogo)
+	_fogo.global_position = boca
+	_fogo.scale = Vector3.ONE * 0.05
 
 	_luz_do_fogo = OmniLight3D.new()
 	_luz_do_fogo.light_color = COR_BRASA
-	_luz_do_fogo.omni_range = 6.0
-	_luz_do_fogo.omni_attenuation = 1.6
+	_luz_do_fogo.omni_range = 9.0
+	_luz_do_fogo.omni_attenuation = 1.4
 	_luz_do_fogo.light_energy = 0.0
-	_luz_do_fogo.position = boca
 	add_child(_luz_do_fogo)
+	_luz_do_fogo.global_position = boca + Vector3(0, 0.2, 0.5)
+
+	_por_as_formas()
 
 	if musica != null:
 		_tocador = AudioStreamPlayer.new()
@@ -357,17 +396,41 @@ func _atirar() -> void:
 		_tocador.finished.connect(_musica_acabou)
 		_tocador.play()
 	else:
-		# Sem musica nao se fica preso: espera-se um pouco e abre.
+		# Sem musica nao se fica preso: espera-se um pouco e segue.
 		get_tree().create_timer(6.0).timeout.connect(_musica_acabou)
+
+
+## As formas so aparecem com o fogo. Os lugares estao na cena, em
+## `Dancantes` — marcas que se arrastam no editor.
+func _por_as_formas() -> void:
+	var lugares := get_node_or_null("Dancantes")
+	if lugares == null:
+		return
+	var i := 0
+	for marca in lugares.get_children():
+		if i >= quantas_formas or not marca is Node3D:
+			break
+		var f := FormaDancante.new()
+		f.name = "Forma%d" % (i + 1)
+		# §16: cada figura recebe valores diferentes. Nao se sincronizam.
+		f.semente = float(i) * 2.7 + 0.83
+		f.ritmo = 0.72 + fmod(float(i) * 0.37, 0.55)
+		f.tamanho = 0.92 + fmod(float(i) * 0.23, 0.26)
+		f.espelhar = (i % 2) == 1
+		f.eco = 0.022 + fmod(float(i) * 0.011, 0.02)
+		f.cor = cor_das_formas
+		add_child(f)
+		f.global_transform = (marca as Node3D).global_transform
+		_formas.append(f)
+		i += 1
 
 
 func _musica_acabou() -> void:
 	if _fase != A_ARDER:
 		return
-	_fase = A_FECHAR
+	_fase = A_SAUDAR
 	_tempo = 0.0
-	_iris.visible = true
-	_iris.material.set_shader_parameter("abertura", 1.0)
+	_dito.text = boas_vindas
 
 
 func _process(delta: float) -> void:
@@ -380,15 +443,25 @@ func _process(delta: float) -> void:
 		# Perto do forno a cruz avisa que ja chega, sem uma palavra.
 		var perto: float = clampf(1.0 - _no_ecra(_cruz.global_position).distance_to(
 			_no_ecra(boca)) / alcance_da_boca, 0.0, 1.0)
-		_cruz.rotation.z = sin(_tempo * 6.0) * 0.05 * perto
+		_cruz.rotation.z = sin(_tempo * 6.0) * 0.06 * perto
 
-	if _fase == A_ARDER and _fogo != null:
+	if _fase >= A_ARDER and _fogo != null:
 		# A bola cresce depressa no principio e depois assenta.
-		_crescimento = minf(_crescimento + delta * 0.55, 1.0)
-		var r: float = 0.05 + 0.62 * sqrt(_crescimento)
-		var pulsar := 1.0 + 0.05 * sin(_tempo * 7.3) + 0.03 * sin(_tempo * 13.1)
-		_fogo.scale = Vector3.ONE * r * pulsar
-		_luz_do_fogo.light_energy = 5.5 * _crescimento * pulsar
+		_crescimento = minf(_crescimento + delta * 0.5, 1.0)
+		var r: float = 0.25 + 1.15 * sqrt(_crescimento)
+		var pulsar := 1.0 + 0.045 * sin(_tempo * 7.3) + 0.03 * sin(_tempo * 13.1)
+		_fogo.scale = Vector3(r * pulsar, r * 1.25 * pulsar, r * pulsar)
+		_fogo.material_override.set_shader_parameter("crescimento", _crescimento)
+		_luz_do_fogo.light_energy = 6.5 * _crescimento * pulsar
+		# As formas entram com o fogo, nao antes.
+		for f in _formas:
+			f.vigor = _crescimento
+
+	if _fase == A_SAUDAR and _tempo >= demora_das_boas_vindas:
+		_fase = A_FECHAR
+		_tempo = 0.0
+		_iris.visible = true
+		_iris.material.set_shader_parameter("abertura", 1.0)
 
 	if _fase == A_FECHAR:
 		var a: float = clampf(_tempo / maxf(fecho_da_iris, 0.001), 0.0, 1.0)
