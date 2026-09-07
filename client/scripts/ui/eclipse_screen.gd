@@ -74,8 +74,14 @@ func _process(delta: float) -> void:
 		_entrar()
 
 
-## Entrar na sala da `fornalha`. Daqui nao se volta ao risco.
+## Sair para onde a pessoa ainda nao foi. Daqui nao se volta ao risco.
+##
+## Quase sempre e a `fornalha`. Mas quem ja queimou o passado nao o volta
+## a queimar: essa vai direita ao `assentamento`. Sem isto, apagar so o
+## `passados` e riscar os tres outra vez punha a pergunta da cruz a ser
+## feita a quem ja tinha respondido.
 func _entrar() -> void:
 	if Engine.is_editor_hint():
 		return
-	get_tree().change_scene_to_file("res://scenes/fornalha.tscn")
+	get_tree().change_scene_to_file("res://scenes/fornalha.tscn"
+		if not Passagem.queimou() else "res://scenes/assentamento.tscn")

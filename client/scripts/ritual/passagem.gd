@@ -18,7 +18,12 @@
 class_name Passagem
 extends RefCounted
 
-const REGISTO := "user://passagem.json"
+## Onde o progresso fica.
+##
+## Nao e `const` para as provas poderem apontar para outro sitio. Uma
+## prova que escreva aqui mexe no progresso de quem esta a usar o app —
+## ja aconteceu com os `pedidos`, e voltou a acontecer aqui.
+static var REGISTO := "user://passagem.json"
 
 ## A iris que fecha na `fornalha` tem de abrir no `assentamento`. Vive so
 ## na memoria e so entre as duas cenas: nao se guarda, porque nao e
