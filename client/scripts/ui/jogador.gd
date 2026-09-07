@@ -1,8 +1,11 @@
 ## Quem olha, e quem avanca, na sala da `fornalha`.
 ##
-## Olha-se em volta e para cima com o rato — o teto e para se ver. Anda-se
-## SO EM LINHA RETA, para a frente e para tras, entre dois limites: a
+## Olha-se para TODOS OS LADOS com o rato — para cima, que o teto e para
+## se ver, e para tras. Anda-se SO EM LINHA RETA, entre dois limites: a
 ## sala nao e para passear, e a linha acaba na boca do forno.
+##
+## O recuo aperta-se por tras: passada a cruz, ela passa a ser o limite e
+## nao se volta atras dela. Assim quem avancou nao a perde de vista.
 ##
 ## Sem fisica nenhuma. A posicao e escrita e presa entre `z_recuado` e
 ## `z_avancado`; nao ha nada em que bater, nao ha por onde cair, e nao ha
@@ -23,13 +26,17 @@ var solto := false:
 ## Ate onde se pode olhar para cima e para baixo, em graus. Para cima
 ## chega ao teto.
 @export_range(10.0, 89.0) var limite_vertical := 85.0
-## Ate onde se pode virar a cabeca para os lados, a contar da linha da
-## fornalha. Nao e uma volta inteira: a sala tem uma frente.
-@export_range(15.0, 180.0) var limite_horizontal := 120.0
-
 ## Os dois extremos da linha. `z_recuado` e onde se comeca.
 @export var z_recuado := 7.4
 @export var z_avancado := 3.0
+
+## Ate onde se pode recuar AGORA. Comeca em `z_recuado` e aperta quando
+## se passa a barreira; nunca alarga.
+var recuo_possivel := 7.4
+
+## O que fecha o caminho de volta, quando se passa por ele. A cena poe
+## aqui a cruz.
+var barreira: Node3D
 
 @onready var camara: Camera3D = $Camara
 
@@ -39,6 +46,7 @@ func _ready() -> void:
 		return
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	position.z = z_recuado
+	recuo_possivel = z_recuado
 
 
 func _unhandled_input(evento: InputEvent) -> void:
@@ -46,9 +54,8 @@ func _unhandled_input(evento: InputEvent) -> void:
 		return
 	if evento is InputEventMouseMotion:
 		var m := evento as InputEventMouseMotion
-		rotation_degrees.y = clampf(
-			rotation_degrees.y - m.relative.x * sensibilidade,
-			-limite_horizontal, limite_horizontal)
+		# Volta inteira: olhar para tras faz parte.
+		rotate_y(deg_to_rad(-m.relative.x * sensibilidade))
 		camara.rotation_degrees.x = clampf(
 			camara.rotation_degrees.x - m.relative.y * sensibilidade,
 			-limite_vertical, limite_vertical)
@@ -66,6 +73,13 @@ func _process(delta: float) -> void:
 		- Input.get_action_strength("andar_tras"))
 	if is_zero_approx(passo):
 		return
+	# Passar a barreira aperta o recuo: dai em diante ela fica sempre a
+	# frente, e nao se volta atras dela.
+	if barreira != null and is_instance_valid(barreira):
+		var z_barreira := barreira.global_position.z
+		if position.z < z_barreira:
+			recuo_possivel = minf(recuo_possivel, z_barreira)
+
 	position.z = clampf(
 		position.z - passo * velocidade * delta,
-		minf(z_avancado, z_recuado), maxf(z_avancado, z_recuado))
+		minf(z_avancado, recuo_possivel), maxf(z_avancado, recuo_possivel))

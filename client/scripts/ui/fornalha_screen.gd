@@ -282,13 +282,15 @@ func _responder_sim() -> void:
 	_fase = CRUZ_POUSADA
 	_painel.get_node("Respostas").queue_free()
 	# TODO(CONTENT.pt.md): texto de A.C. Este e estrutural.
-	_dito.text = "olha com o rato · anda com W · duplo clique pegue a cruz"
+	_dito.text = "W para andar · duplo clique pegue a cruz"
 	_por_a_cruz()
 	# So agora se anda. Durante a pergunta o rato e para responder, e uma
 	# sala que se pode percorrer antes de responder convida a adiar.
 	var j := get_node_or_null("Jogador")
 	if j != null:
 		j.solto = true
+		# A cruz fecha o caminho de volta assim que se passa por ela.
+		j.set("barreira", _cruz)
 	if _mira != null:
 		_mira.visible = true
 
@@ -388,6 +390,11 @@ func _perto_no_ecra(mundo: Vector3, onde: Vector2, raio: float) -> bool:
 ## A cruz passa para a mao: fica agarrada a camara e vai com quem anda.
 func _pegar_a_cruz() -> void:
 	_fase = CRUZ_NA_MAO
+	# A cruz deixa de ser barreira: na mao anda connosco, e uma barreira
+	# que anda connosco prendia-nos no sitio. O recuo ja apertado fica.
+	var j := get_node_or_null("Jogador")
+	if j != null:
+		j.set("barreira", null)
 	var cam := get_viewport().get_camera_3d()
 	if cam != null:
 		_cruz.reparent(cam, true)

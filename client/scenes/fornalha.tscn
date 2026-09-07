@@ -306,9 +306,10 @@ visible = false
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
 
 [node name="Dancantes" type="Node3D" parent="." unique_id=389074128]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.30212784, 0)
 
 [node name="Forma1" type="Node3D" parent="Dancantes" unique_id=1111634319]
-transform = Transform3D(0.8751886, 0.040791433, 0.2806795, -0.042833537, 0.91900235, -1.5420399e-09, -0.28037512, -0.013067928, 0.87613875, -2.6, 0, 1.1)
+transform = Transform3D(0.87593585, -0.018850155, 0.28067964, 0.019793833, 0.91978705, -3.2529535e-14, -0.28061464, 0.006038832, 0.8761387, -2.6, -0.069931746, 1.1)
 script = ExtResource("12_clqt3")
 semente = 0.83
 ritmo = 0.72
@@ -320,7 +321,7 @@ face = ExtResource("13_24jri")
 cor_da_face = Color(0.7510489, 0.947455, 0.9999998, 1)
 
 [node name="Forma2" type="Node3D" parent="Dancantes" unique_id=1475041566]
-transform = Transform3D(0.9445906, 0.020179698, 0.65562284, -0.024562344, 1.1497376, -9.3096103e-10, -0.65547323, -0.014003159, 0.94480616, -0.4, 0, 1.1)
+transform = Transform3D(0.94437474, -0.02855015, 0.6556227, 0.034750693, 1.1494747, -5.8736593e-10, -0.6553233, 0.019811604, 0.9448062, -0.4, 0.17838943, 1.1)
 script = ExtResource("12_clqt3")
 semente = 3.53
 ritmo = 1.09
@@ -333,7 +334,7 @@ face = ExtResource("14_sasjo")
 cor_da_face = Color(0.90837055, 0.8783743, 0.8797685, 1)
 
 [node name="Forma3" type="Node3D" parent="Dancantes" unique_id=2071481370]
-transform = Transform3D(1.1187732, 0.032638498, -0.04100122, -0.03266039, 1.1195236, -2.1479055e-11, 0.04098378, 0.0011956391, 1.1192492, -3, 0, 1.9)
+transform = Transform3D(1.1184169, -0.043156, -0.041001223, 0.04318495, 1.1191671, 9.488675e-11, 0.04097073, -0.0015809248, 1.1192492, -3, 0, 1.9)
 script = ExtResource("12_clqt3")
 semente = 6.23
 ritmo = 0.91
@@ -344,7 +345,7 @@ cor_da_borda = Color(0.5019608, 0, 0.09803922, 1)
 face = ExtResource("13_24jri")
 
 [node name="Forma4" type="Node3D" parent="Dancantes" unique_id=851773682]
-transform = Transform3D(0.9844373, 0.035819456, -0.4665837, -0.0396342, 1.0892792, 1.8607659e-09, 0.46627513, 0.016965752, 0.9850887, 0, 0, 1.9)
+transform = Transform3D(0.9840558, -0.045098655, -0.46658367, 0.049901634, 1.0888572, 1.7078108e-09, 0.46609443, -0.021360815, 0.9850887, 0, 0, 1.9)
 script = ExtResource("12_clqt3")
 semente = 8.930000000000001
 ritmo = 0.7299999999999998
@@ -356,7 +357,7 @@ cor_da_borda = Color(0.5019608, 0, 0.09803922, 1)
 face = ExtResource("14_sasjo")
 
 [node name="Forma5" type="Node3D" parent="Dancantes" unique_id=1961648515]
-transform = Transform3D(0.9934878, -0.056392953, 0.36524203, 0.06007166, 1.0582964, 0, -0.36465505, 0.02069877, 0.99508697, -2.92, 0, 2.7)
+transform = Transform3D(0.9933617, 0.058571268, 0.36524206, -0.062392075, 1.0581621, 1.6889387e-09, -0.36460882, -0.021498315, 0.99508697, -2.92, 0, 2.7)
 script = ExtResource("12_clqt3")
 semente = 11.63
 ritmo = 1.1
@@ -368,7 +369,7 @@ face = ExtResource("13_24jri")
 cor_da_face = Color(0.90837055, 0.8783743, 0.8797685, 1)
 
 [node name="Forma6" type="Node3D" parent="Dancantes" unique_id=2086636133]
-transform = Transform3D(0.9934891, -0.053013116, -0.26658782, 0.05488328, 1.0285367, 9.94898e-10, 0.2662091, -0.014205063, 0.99490243, -0.08, 0, 2.7)
+transform = Transform3D(0.9933373, 0.055785332, -0.26658782, -0.057753287, 1.0283796, 2.582907e-09, 0.26616842, 0.014947884, 0.99490243, -0.08, 0, 2.7)
 script = ExtResource("12_clqt3")
 semente = 14.33
 ritmo = 0.92
