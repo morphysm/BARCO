@@ -207,6 +207,20 @@ time, never money.
 The first encounter with each entity is a guided trace: free, unscored,
 unlimited. Scoring begins only after that.
 
+The guide **drives**; it is not a mode to be discovered. The screen opens
+on the first signature not yet met, with the reference drawn. Closing a
+guided risco records that contact and moves to the next one not yet met.
+When all three have been met the guide switches itself off and tracing
+starts to count. While guided, the label says so, and the guide button is
+disabled — turning it off there would leave a blank field with no way to
+know why.
+
+After first contact the field is bare on purpose: the start marks of a
+signature are exactly the answer the person has to know by heart (§4.1).
+The `guia` button brings the reference back, and a guided risco never
+counts. The empty state carries a line of its own — a black screen with
+no word in it does not read as a screen waiting for a trace.
+
 ---
 
 ## 5. Irmandades and assinaturas

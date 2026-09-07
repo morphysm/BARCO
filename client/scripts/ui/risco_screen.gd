@@ -35,9 +35,15 @@ var _linha_atual: PembaTraco
 var _dedo := -1
 var _fechado := false
 
-## SPEC.md §4.3: o primeiro contato com cada entidade e um traçado guiado,
-## gratuito, sem nota e sem limite. So depois o `ponto` passa a ser
-## avaliado.
+## SPEC.md §4.3: o primeiro contato com cada entidade e um traçado
+## guiado, gratuito, sem nota e sem limite. So depois o `ponto` passa a
+## ser avaliado.
+##
+## O guia CONDUZ, nao e um modo a descobrir: o ecra abre na primeira
+## assinatura com quem ainda nao houve contato, e fechar um risco guiado
+## regista esse contato e passa a seguinte. Quando ja se conhecem as tres,
+## o guia apaga-se sozinho e o risco passa a valer.
+##
 ## Indice da assinatura mostrada no guia; -1 = guia desligado.
 var _guiado := 0
 
@@ -132,6 +138,7 @@ func _montar() -> void:
 	barra.add_child(_botao_fechar)
 	barra.add_child(_botao_refazer)
 
+	_retomar()
 	_atualizar_rotulo_guia()
 
 
@@ -195,12 +202,33 @@ func _terminar_traco() -> void:
 
 # --- avaliacao ---------------------------------------------------------
 
+## Onde o ecra abre: na primeira assinatura por conhecer, ou sem guia
+## nenhum se ja se conhecem todas.
+func _retomar() -> void:
+	var e := Passagem.por_conhecer(irmandade)
+	_guiado = -1
+	if e != null:
+		for i in irmandade.entidades.size():
+			if irmandade.entidades[i] == e:
+				_guiado = i
+				break
+
+
 func _fechar_risco() -> void:
 	if _fechado or _tracos.is_empty():
 		return
 	if _guiado >= 0:
-		# SPEC.md §4.3: primeiro contato nao pontua.
+		# SPEC.md §4.3: primeiro contato nao pontua. Fica registado que
+		# houve, e o guia passa a assinatura seguinte por conhecer — ou
+		# apaga-se, se ja nao houver nenhuma.
+		var e := _assinatura_guiada()
+		if e != null:
+			Passagem.conhecer(e.slug)
 		_limpar()
+		_retomar()
+		_guia.queue_redraw()
+		_marcas.queue_redraw()
+		_atualizar_rotulo_guia()
 		return
 
 	_fechado = true
@@ -288,6 +316,7 @@ func _alternar_guia() -> void:
 	_guia.queue_redraw()
 	_marcas.queue_redraw()
 	_limpar()
+	_atualizar_rotulo_guia()
 
 
 func _assinatura_guiada() -> Entidade:
@@ -306,7 +335,25 @@ func _referencia() -> Vector2:
 func _atualizar_rotulo_guia() -> void:
 	var e := _assinatura_guiada()
 	_titulo.text = e.nome if e != null else ""
-	_rotulo.text = "primeiro contato" if e != null else ""
+	var por_conhecer := Passagem.por_conhecer(irmandade) != null
+	# TODO(CONTENT.pt.md): texto definitivo e autoral. Estes sao
+	# estruturais — dizem o estado, nunca o efeito.
+	#
+	# O estado vazio precisa de linha propria: sem guia o campo fica nu de
+	# proposito — as marcas de uma assinatura sao a resposta — e um ecra
+	# preto sem uma palavra nao se distingue de uma avaria.
+	if e != null:
+		_rotulo.text = "primeiro contato — este risco não conta"
+	elif not _fechado and _tracos.is_empty():
+		_rotulo.text = "risca de memória"
+	else:
+		_rotulo.text = ""
+	if _botao_guia != null:
+		# Enquanto houver primeiro contato por fazer, o guia nao e opcao:
+		# e por onde se vai. Deixar carregar so servia para o desligar e
+		# ficar com um ecra vazio sem se perceber porque.
+		_botao_guia.disabled = por_conhecer
+		_botao_guia.text = "sem guia" if e != null else "guia"
 
 
 # --- desenho -----------------------------------------------------------

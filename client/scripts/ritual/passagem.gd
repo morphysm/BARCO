@@ -22,17 +22,61 @@ const REGISTO := "user://passagem.json"
 const FIRMEZA_MINIMA := 0
 
 
-static func riscados() -> Array:
+## Com quem ja houve primeiro contato (SPEC.md §4.3): o traçado guiado,
+## gratuito e sem nota. Diferente de `riscados`, que e quem ja foi
+## NOMEADO por um risco a valer.
+static func conhecidos() -> Array:
+	return _ler().get("conhecidos", [])
+
+
+## Regista o primeiro contato. Devolve `true` se e a primeira vez.
+static func conhecer(slug: String) -> bool:
+	if slug == "":
+		return false
+	var d := _ler()
+	var lista: Array = d.get("conhecidos", [])
+	if lista.has(slug):
+		return false
+	lista.append(slug)
+	d["conhecidos"] = lista
+	return _guardar(d)
+
+
+## A primeira entidade da `irmandade` com quem ainda nao houve contato,
+## ou `null` se ja se conhecem todas. E o que decide o que o ecra mostra
+## quando abre: nao ha menu, a ordem e a da `irmandade`.
+static func por_conhecer(irm: Irmandade) -> Entidade:
+	if irm == null:
+		return null
+	var lista := conhecidos()
+	for e in irm.entidades:
+		if e != null and not lista.has(e.slug):
+			return e
+	return null
+
+
+static func _ler() -> Dictionary:
 	if not FileAccess.file_exists(REGISTO):
-		return []
+		return {}
 	var f := FileAccess.open(REGISTO, FileAccess.READ)
 	if f == null:
-		return []
+		return {}
 	var d = JSON.parse_string(f.get_as_text())
 	f.close()
-	if typeof(d) != TYPE_DICTIONARY or not d.has("riscados"):
-		return []
-	return d["riscados"]
+	return d if typeof(d) == TYPE_DICTIONARY else {}
+
+
+static func _guardar(d: Dictionary) -> bool:
+	var f := FileAccess.open(REGISTO, FileAccess.WRITE)
+	if f == null:
+		return false
+	f.store_string(JSON.stringify(d))
+	f.close()
+	return true
+
+
+static func riscados() -> Array:
+	return _ler().get("riscados", [])
 
 
 ## Regista que uma entidade foi nomeada. Devolve `true` se e a primeira
@@ -42,16 +86,13 @@ static func riscados() -> Array:
 static func marcar(slug: String, firmeza: int) -> bool:
 	if slug == "" or firmeza < FIRMEZA_MINIMA:
 		return false
-	var lista := riscados()
+	var d := _ler()
+	var lista: Array = d.get("riscados", [])
 	if lista.has(slug):
 		return false
 	lista.append(slug)
-	var f := FileAccess.open(REGISTO, FileAccess.WRITE)
-	if f == null:
-		return false
-	f.store_string(JSON.stringify({"riscados": lista}))
-	f.close()
-	return true
+	d["riscados"] = lista
+	return _guardar(d)
 
 
 ## Faltam quantas assinaturas desta `irmandade`.
