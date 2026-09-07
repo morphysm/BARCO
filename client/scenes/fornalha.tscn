@@ -14,6 +14,8 @@
 [ext_resource type="Script" uid="uid://cm36s50im82v6" path="res://scripts/ui/forma_dancante.gd" id="12_clqt3"]
 [ext_resource type="Texture2D" uid="uid://du80serhv138r" path="res://resources/imagens/face_fornalha_model_1.png" id="13_24jri"]
 [ext_resource type="Texture2D" uid="uid://yo3prg0k18ov" path="res://resources/imagens/face_fornalha_model_2.png" id="14_sasjo"]
+[ext_resource type="PackedScene" uid="uid://cw3735t8oih17" path="res://resources/modelos/crown_of_thorns.glb" id="15_coroa"]
+[ext_resource type="PackedScene" uid="uid://bspv7j4hsfh8g" path="res://resources/modelos/cloth.glb" id="16_pano"]
 [ext_resource type="Texture2D" uid="uid://b7bkam8pna5e0" path="res://resources/imagens/parede_de_tras.png" id="97_partras"]
 [ext_resource type="Texture2D" uid="uid://d4hwbf32mxguu" path="res://resources/imagens/sigilo_chao.png" id="98_sigpng"]
 
@@ -170,6 +172,10 @@ albedo_texture = ExtResource("10_77jdi")
 material = SubResource("StandardMaterial3D_81x5a")
 size = Vector2(0.78, 2.05)
 
+[sub_resource type="StandardMaterial3D" id="MatPanoDeCima"]
+cull_mode = 2
+albedo_color = Color(0.06, 0.052, 0.05, 1)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_00ud5"]
 render_priority = 0
 shader = ExtResource("9_sumuu")
@@ -206,9 +212,7 @@ script = ExtResource("1_0g3bd")
 musica = ExtResource("2_vovy2")
 demora_das_boas_vindas = 4.2
 tamanho_das_boas_vindas = 96
-cursor = null
-pausa_no_escuro = null
-boca = Vector3(-1.5, 1.7549999, 0.212)
+boca = Vector3(-1.5229189, 1.7549999, 0.212)
 
 [node name="Jogador" type="CharacterBody3D" parent="." unique_id=1596318837]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 7.4)
@@ -278,8 +282,11 @@ material_override = SubResource("ShaderMaterial_vk275")
 mesh = SubResource("CylinderMesh_2d1rc")
 
 [node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira1" unique_id=1686813369]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.031727552, 2.375, 0.075202584)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12532043, 2.377658, 0.42794597)
 mesh = SubResource("QuadMesh_bcy3p")
+
+[node name="Remate" parent="Bandeiras/Bandeira1" unique_id=411001501 instance=ExtResource("15_coroa")]
+transform = Transform3D(0.47253355, -0.15134816, 0.06169051, 0.15134816, 0.3339744, -0.33993354, 0.061690547, 0.3399335, 0.36144075, -0.69033027, 3.5, 1.5505066)
 
 [node name="Bandeira2" type="Node3D" parent="Bandeiras" unique_id=345424083]
 transform = Transform3D(0.9135454, 0, -0.40673664, 0, 1, 0, 0.40673664, 0, 0.9135454, 0.6, 0, 0.4)
@@ -295,8 +302,14 @@ material_override = SubResource("ShaderMaterial_fwbd6")
 mesh = SubResource("CylinderMesh_m62y6")
 
 [node name="Pano" type="MeshInstance3D" parent="Bandeiras/Bandeira2" unique_id=232514706]
-transform = Transform3D(0.9961744, 0, 0.08738577, 0, 1, 0, -0.08738577, 0, 0.9961744, 0.031538606, 2.375, 0.09083721)
+transform = Transform3D(-0.98761606, 0, 0.15688714, 0, 1, 0, -0.15688714, 0, -0.98761606, -0.134184, 2.4543123, 0.20855097)
 mesh = SubResource("QuadMesh_h501x")
+
+[node name="Remate" parent="Bandeiras/Bandeira2" unique_id=411001502 instance=ExtResource("16_pano")]
+transform = Transform3D(0.00043768773, 0.0012478644, 0.0012211724, 0.0017454292, -0.00034419372, -0.00027387272, 4.3646447e-05, 0.0012507446, -0.001293727, -0.23432103, 3.2531013, -0.39556593)
+
+[node name="Object_2" parent="Bandeiras/Bandeira2/Remate/Sketchfab_model/Cloth_obj_cleaner_materialmerger_gles" parent_id_path=PackedInt32Array(411001502, 1447100333) index="0" unique_id=256449660]
+material_override = SubResource("MatPanoDeCima")
 
 [node name="Bandeira3" type="Node3D" parent="Bandeiras" unique_id=951546310]
 transform = Transform3D(0.9781476, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.9781476, -3.5, 0, 2.2)
@@ -315,6 +328,12 @@ mesh = SubResource("CylinderMesh_l75x5")
 transform = Transform3D(0.91831887, 0, 0.3958399, 0, 1, 0, -0.3958399, 0, 0.91831887, 0.009394884, 2.375, 0.119119406)
 mesh = SubResource("QuadMesh_wvyfm")
 
+[node name="Remate" parent="Bandeiras/Bandeira3" unique_id=411001503 instance=ExtResource("16_pano")]
+transform = Transform3D(-0.0002520654, -0.0019349317, 4.3496682e-05, 4.6080386e-05, -6.889662e-05, -0.0019966878, 0.00096661237, -0.0005012915, 0.00010652888, 0.6304445, 3.1265097, -1.7036716)
+
+[node name="Object_2" parent="Bandeiras/Bandeira3/Remate/Sketchfab_model/Cloth_obj_cleaner_materialmerger_gles" parent_id_path=PackedInt32Array(411001503, 1447100333) index="0" unique_id=256449660]
+material_override = SubResource("MatPanoDeCima")
+
 [node name="Cruz" type="Node3D" parent="." unique_id=300996810]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.3, 4.3)
 visible = false
@@ -326,7 +345,7 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.30212784, 0)
 
 [node name="Forma1" type="Node3D" parent="Dancantes" unique_id=1111634319]
-transform = Transform3D(0.8760569, -0.011971313, 0.28067964, 0.012570622, 0.9199141, -3.2529535e-14, -0.28065342, 0.0038351277, 0.8761387, -2.6, -0.069931746, 1.1)
+transform = Transform3D(0.875348, -0.03721359, 0.28067964, 0.039076578, 0.9191697, 5.638272e-10, -0.28042632, 0.011921737, 0.8761387, -2.6, -0.069931746, 1.1)
 script = ExtResource("12_clqt3")
 semente = 0.83
 ritmo = 0.72
@@ -338,7 +357,7 @@ face = ExtResource("13_24jri")
 cor_da_face = Color(0.7510489, 0.947455, 0.9999998, 1)
 
 [node name="Forma2" type="Node3D" parent="Dancantes" unique_id=1475041566]
-transform = Transform3D(1.1413516, 0.062211446, 0.12627803, -0.062589936, 1.1482954, -1.0698419e-08, -0.12609085, -0.0068728006, 1.1430459, -0.69584477, -0.09454763, 1.1)
+transform = Transform3D(1.1411268, 0.066208094, 0.12627803, -0.066610895, 1.1480691, -1.0233952e-08, -0.12606601, -0.007314331, 1.1430459, -0.69584477, -0.09454763, 1.1)
 script = ExtResource("12_clqt3")
 semente = 3.53
 ritmo = 1.3
@@ -351,7 +370,7 @@ face = ExtResource("14_sasjo")
 cor_da_face = Color(0.90837055, 0.8783743, 0.8797685, 1)
 
 [node name="Forma3" type="Node3D" parent="Dancantes" unique_id=2071481370]
-transform = Transform3D(1.1192207, -0.0079941405, -0.04100124, 0.007999502, 1.1199714, 4.4414344e-10, 0.041000195, -0.00029284824, 1.1192492, -2.1477382, -0.08897054, 1.9)
+transform = Transform3D(1.1172353, -0.06711398, -0.041001257, 0.067159, 1.1179847, 8.511213e-10, 0.040927477, -0.0024585752, 1.1192492, -2.1477382, -0.08897054, 1.9)
 script = ExtResource("12_clqt3")
 semente = 6.23
 ritmo = 2.7
@@ -362,7 +381,7 @@ cor_da_borda = Color(0.5019608, 0, 0.09803922, 1)
 face = ExtResource("13_24jri")
 
 [node name="Forma4" type="Node3D" parent="Dancantes" unique_id=851773682]
-transform = Transform3D(0.98374057, 0.051519528, -0.46658367, -0.05700632, 1.0885084, -1.3969772e-09, 0.46594512, 0.024402035, 0.9850887, -0.1682682, 0.027587056, 1.8535117)
+transform = Transform3D(0.9848401, -0.022132851, -0.46658367, 0.024489986, 1.0897249, -4.676766e-10, 0.46646586, -0.010483143, 0.9850887, -0.1682682, 0.027587056, 1.8535117)
 script = ExtResource("12_clqt3")
 semente = 8.930000000000001
 ritmo = 1.9
@@ -374,10 +393,10 @@ cor_da_borda = Color(0.5019608, 0, 0.09803922, 1)
 face = ExtResource("14_sasjo")
 
 [node name="Forma5" type="Node3D" parent="Dancantes" unique_id=1961648515]
-transform = Transform3D(0.9939883, -0.04674809, 0.36524206, 0.04979764, 1.0588295, -6.2939756e-09, -0.36483878, 0.017158678, 0.99508697, -2.6394823, 0.34331137, 2.9807403)
+transform = Transform3D(0.99508584, -0.0014847817, 0.36524206, 0.0015816425, 1.0599988, -8.864419e-09, -0.36524168, 0.00054499175, 0.99508697, -2.6394823, 0.34331137, 2.9807403)
 script = ExtResource("12_clqt3")
 semente = 11.67
-ritmo = 1.9100000000000001
+ritmo = 1.91
 tamanho = 1.06
 eco = 0.02599999999999999
 cor = Color(0.84313726, 0.8980392, 0.99607843, 0.9019608)
@@ -386,7 +405,7 @@ face = ExtResource("13_24jri")
 cor_da_face = Color(0.90837055, 0.8783743, 0.8797685, 1)
 
 [node name="Forma6" type="Node3D" parent="Dancantes" unique_id=2086636133]
-transform = Transform3D(0.9943032, -0.034527287, -0.2665877, 0.061450936, 1.0236151, 0.09662191, 0.26169622, -0.10917819, 0.99019957, 0.30603296, 0.3965525, 3.3528032)
+transform = Transform3D(0.99446595, -0.02946956, -0.2665876, 0.05624377, 1.0239145, 0.09662192, 0.26224804, -0.10784574, 0.99019957, 0.30603296, 0.3965525, 3.3528032)
 script = ExtResource("12_clqt3")
 semente = 14.33
 ritmo = 2.0
@@ -396,3 +415,6 @@ eco = 0.03699999999999999
 cor = Color(0.84313726, 0.8980392, 0.99607843, 0.9019608)
 cor_da_borda = Color(0.5019608, 0, 0.09803922, 1)
 face = ExtResource("13_24jri")
+
+[editable path="Bandeiras/Bandeira2/Remate"]
+[editable path="Bandeiras/Bandeira3/Remate"]

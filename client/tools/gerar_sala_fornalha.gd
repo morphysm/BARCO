@@ -26,6 +26,28 @@ const FACES := [
 ## A cor das faces. Todas iguais: A.C. tirou a vermelha.
 const FACE_FRIA := Color(0.90, 0.88, 0.88)
 const FORNALHA := "res://resources/modelos/fornalha.glb"
+## O remate de cada bandeira, no topo do mastro: a coroa na primeira, um
+## pano nas outras duas. Sao pontos de partida — arrumam-se no editor.
+##
+## A coroa que esta em `resources/modelos/` ja vem decimada — a de
+## `textures/` traz 1,13 milhoes de triangulos e 36 MB, que e mais do que
+## a sala inteira. A 60 mil nao se distingue da original a esta escala:
+##
+##   blender --background --python tools/decimar_modelos.py -- \
+##           ENTRADA/ SAIDA/ 60000 512
+const COROA := "res://resources/modelos/crown_of_thorns.glb"
+const PANO_DE_CIMA := "res://resources/modelos/cloth.glb"
+## O `cloth` nao traz textura nenhuma nem cor no material, portanto vem
+## branco — e a luz da sala e quase branca (`luz_da_sala`), entao o pano
+## acendia como um farol por cima da bandeira. Leva a cor das paredes.
+const PANO_COR := Color(0.06, 0.052, 0.05)
+## Os dois modelos vem em escalas suas. A coroa mede 1.87 de ponta a
+## ponta e o pano 486 — o `cloth` esta em centimetros e ainda por cima
+## fora da origem, entao alem de encolher e preciso trazer o centro dele
+## para cima do mastro.
+const COROA_ESCALA := 0.27
+const PANO_ESCALA := 0.0018
+const PANO_CENTRO := Vector3(-21.619, 21.978, 157.632)
 const MUSICA := "res://resources/audio/Entrego Minha Alma.ogg"
 
 ## A sala. A fornalha ocupa a frente; as paredes fecham os lados.
@@ -318,7 +340,36 @@ func _uma_bandeira(n: int) -> Node3D:
 	pano.position = Vector3(0, alt_mastro - 0.10 - alt_pano * 0.5, 0.02)
 	b.add_child(pano)
 
+	b.add_child(_remate(n, alt_mastro))
+
 	return b
+
+
+## O que vai em cima do mastro. A bandeira 1 leva a coroa de espinhos; as
+## outras duas levam um pano.
+func _remate(n: int, alt_mastro: float) -> Node3D:
+	var r: Node3D = load(COROA if n == 1 else PANO_DE_CIMA).instantiate()
+	r.name = "Remate"
+	if n == 1:
+		r.scale = Vector3.ONE * COROA_ESCALA
+		r.position = Vector3(0, alt_mastro, 0)
+	else:
+		r.scale = Vector3.ONE * PANO_ESCALA
+		r.position = Vector3(0, alt_mastro, 0) - PANO_CENTRO * PANO_ESCALA
+		_escurecer(r)
+	return r
+
+
+## Poe a cor das paredes em cada malha do pano. E `material_override`, nao
+## se toca no modelo: no editor tira-se num clique.
+func _escurecer(n: Node) -> void:
+	if n is MeshInstance3D:
+		var m := StandardMaterial3D.new()
+		m.albedo_color = PANO_COR
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		(n as MeshInstance3D).material_override = m
+	for f in n.get_children():
+		_escurecer(f)
 
 
 func _dono(n: Node, d: Node) -> void:
