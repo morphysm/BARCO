@@ -20,8 +20,9 @@
 [ext_resource type="PackedScene" uid="uid://cs1rqya4yh1b1" path="res://resources/modelos/tridente.glb" id="18_lb37t"]
 [ext_resource type="PackedScene" uid="uid://n1lg3pgk7a57" path="res://resources/modelos/pedra_preta.glb" id="19_bb8c7"]
 [ext_resource type="PackedScene" uid="uid://b5nuab7ea272w" path="res://resources/modelos/stick_de_exu.glb" id="20_3no75"]
+[ext_resource type="Texture2D" uid="uid://teo1omts4txa" path="res://resources/imagens/morphysm sigil STONE.png" id="21_1cp6m"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3no75"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_61fvw"]
 albedo_color = Color(0.06, 0.055, 0.05, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l7rw8"]
@@ -29,15 +30,24 @@ size = Vector2(3, 3)
 subdivide_width = 64
 subdivide_depth = 64
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1cp6m"]
+transparency = 1
+cull_mode = 2
+albedo_texture = ExtResource("21_1cp6m")
+
+[sub_resource type="QuadMesh" id="QuadMesh_61fvw"]
+material = SubResource("StandardMaterial3D_1cp6m")
+size = Vector2(0.42, 0.42)
+
 [node name="Assentamento" type="Node3D" unique_id=1329397399]
 script = ExtResource("1_natrv")
 queda_da_luz = 2.211
 alcance_da_luz = 1.136
 forca_da_luz = 0.1
-luz_de_bancada = 0.205
+luz_de_bancada = 0.022
 
 [node name="Camara" type="Camera3D" parent="." unique_id=304538616]
-transform = Transform3D(-0.13592725, -0.24140391, 0.960858, -0.006324605, 0.97005105, 0.24281886, -0.99069864, 0.02692865, -0.13338315, 1.4331161, 0.64691037, -0.16424498)
+transform = Transform3D(0.1302146, -0.28530753, 0.9495493, 0.01312589, 0.95811546, 0.28608134, -0.99139893, -0.024788298, 0.12850553, 0.63577217, 0.59248334, 0.112686396)
 projection = 1
 current = true
 size = 1.15
@@ -45,7 +55,7 @@ near = 0.005
 
 [node name="Chao" type="MeshInstance3D" parent="." unique_id=1482930216]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9192696e-05, 0, -0.0018177032)
-material_override = SubResource("StandardMaterial3D_3no75")
+material_override = SubResource("StandardMaterial3D_61fvw")
 mesh = SubResource("PlaneMesh_l7rw8")
 
 [node name="cauldron" parent="." unique_id=112582217 instance=ExtResource("2_5gom5")]
@@ -90,6 +100,9 @@ transform = Transform3D(0.08190732, -0.019447483, 0.14748716, 0.01155724, 0.1686
 [node name="rusty_chains8" parent="." unique_id=1097210222 instance=ExtResource("5_dkeok")]
 transform = Transform3D(-0.008890361, -0.0239063, 0.16789557, 0.009672436, 0.16778088, 0.024402153, -0.16931288, 0.010840191, -0.007421909, -0.40387255, 0.036622852, 0.19813679)
 
+[node name="rusty_chains15" parent="." unique_id=1038256192 instance=ExtResource("5_dkeok")]
+transform = Transform3D(-0.08550647, 0.012657109, 0.14617763, 0.012150955, 0.1692184, -0.007544484, -0.1462205, 0.006660483, -0.086108275, -0.29942688, 0.029209673, 0.34392422)
+
 [node name="rusty_chains9" parent="." unique_id=1522458708 instance=ExtResource("5_dkeok")]
 transform = Transform3D(-0.08722689, -0.012273103, 0.14519058, -0.0005428318, 0.16924444, 0.013980282, -0.1457074, 0.006716699, -0.08696959, -0.2605005, 0.011140108, 0.42014444)
 
@@ -109,7 +122,7 @@ transform = Transform3D(0.10525257, -0.014833082, 0.13244373, 0.0030514896, 0.16
 transform = Transform3D(0.16965038, 0.0019216146, -0.007383831, -0.0002458261, 0.16563886, 0.037458807, 0.0076258443, -0.037410293, 0.1654744, 0.30745667, 0.04285395, 0.45150295)
 
 [node name="skull_para_caveira" parent="." unique_id=258562617 instance=ExtResource("6_lb37t")]
-transform = Transform3D(-0.008123987, -0.0032279785, 0.074598044, -0.016884308, 0.073174104, 0.0013276044, -0.072733805, -0.016625967, -0.008640402, -0.051282078, 0.494654, 0.013212137)
+transform = Transform3D(-0.00011326368, -0.03612053, 0.065852724, -0.03577038, 0.057931002, 0.031713888, -0.066043556, -0.031314507, -0.017289734, -0.022812702, 0.4674552, 0.0012562722)
 
 [node name="vela_preta" parent="." unique_id=44924634 groups=["vela"] instance=ExtResource("7_bb8c7")]
 transform = Transform3D(0.00043494612, 0, 0, 0, 0.00043494612, 0, 0, 0, 0.00043494612, 0.25987613, 0.077349626, 0.08999999)
@@ -124,7 +137,7 @@ transform = Transform3D(1.001136, 0, 0, 0, 1.001136, 0, 0, 0, 1.001136, 0.220346
 transform = Transform3D(-0.0001988455, 0.07189742, 0.069503374, -0.01676533, 0.06849581, -0.07090309, -0.098584406, -0.011793464, 0.0119176395, 0.08224398, 0.33299428, 0.007254895)
 
 [node name="chili_pepper" parent="." unique_id=1393072689 instance=ExtResource("12_5401n")]
-transform = Transform3D(0.015825648, 0, 0.015825648, 0, 0.022380847, 0, -0.015825648, 0, 0.015825648, 0.23741877, 0.012249127, 0.1419708)
+transform = Transform3D(0.015825648, 0, 0.015825648, 0, 0.022380847, 0, -0.015825648, 0, 0.015825648, 0.23741877, 0.027188852, 0.1419708)
 
 [node name="bottle_to_paloo" parent="." unique_id=741873284 instance=ExtResource("13_t6q11")]
 transform = Transform3D(0.11028902, 0, 0.019446932, 0, 0.111990415, 0, -0.019446932, 0, 0.11028902, 0.36, -0.00052884535, 0.21351665)
@@ -136,7 +149,7 @@ transform = Transform3D(0.006102062, -0.07575371, 0.094449155, -0.0029542735, 0.
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.02037274, 0.20764208, -0.017981768)
 
 [node name="black_rose2" parent="." unique_id=1211782080 instance=ExtResource("11_5b10g")]
-transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.018179975, -0.075699, -0.2522284)
+transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, 0.14212444, -0.006053947, -0.12545365)
 
 [node name="black_rose3" parent="." unique_id=1083118606 instance=ExtResource("11_5b10g")]
 transform = Transform3D(0.43521762, 0, -0.20294534, 0.02908078, 0.47525388, 0.062363926, 0.200851, -0.068810984, 0.43072626, -0.018179975, -0.027958602, 0.20638773)
@@ -151,10 +164,13 @@ transform = Transform3D(0.36553314, 0, -0.31142697, 0.16344243, 0.40876132, 0.19
 transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, 0.005516492, 0.23871341, -0.0063339323)
 
 [node name="black_rose7" parent="." unique_id=978856805 instance=ExtResource("11_5b10g")]
-transform = Transform3D(0.43521762, 0, -0.20294532, 0, 0.48020953, 0, 0.20294532, 0, 0.43521762, -0.021051027, 0.25852785, -0.09284407)
+transform = Transform3D(0.42511764, 0.10285354, -0.19823562, -0.09321695, 0.4690655, 0.04346778, 0.20294535, 1.9645467e-09, 0.43521762, -0.021051027, 0.23948598, -0.10769005)
 
 [node name="sangue" parent="." unique_id=818275365 instance=ExtResource("15_xakwp")]
 transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0.26846415, 0.03421158, 0.009409614)
+
+[node name="sangue3" parent="." unique_id=1051303014 instance=ExtResource("15_xakwp")]
+transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0.08188179, 0.0016741194, 0.04218279)
 
 [node name="sangue2" parent="." unique_id=1083451159 instance=ExtResource("15_xakwp")]
 transform = Transform3D(0.14, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0.07515472, 0.0030006215, 0.04270032)
@@ -190,7 +206,11 @@ transform = Transform3D(0.00033236452, -3.5514454e-06, 3.5112742e-05, 1.6015747e
 transform = Transform3D(0.0003323833, 0, 3.5114725e-05, -5.055938e-06, 0.00033075034, 4.785768e-05, -3.474883e-05, -4.812401e-05, 0.00032891988, 0.06427026, 0.21995232, -0.06744422)
 
 [node name="pedra_preta" parent="." unique_id=2113714227 instance=ExtResource("19_bb8c7")]
-transform = Transform3D(0.02025093, 0.044809163, -0.02850863, -0.029023577, -0.01621453, -0.04610232, -0.04447735, 0.030982764, 0.01710371, 0.0635196, 0.012405783, 0.124457866)
+transform = Transform3D(-0.04662298, 0.030421272, 0.01146945, 0.011250583, -0.0037164157, 0.055590604, 0.030502873, 0.04786897, -0.002973059, 0.10330896, 0.072426215, 0.13984737)
 
 [node name="stick_de_exu" parent="." unique_id=2066493327 instance=ExtResource("20_3no75")]
 transform = Transform3D(-0.00027572535, 0.00587864, -3.7881837e-05, 0.005706409, 0.0002767515, 0.0014128594, 0.0014130601, 2.9461691e-05, -0.0057129897, 0.015718728, 0.5611173, -0.032594576)
+
+[node name="sigilo_morphysm" type="MeshInstance3D" parent="." unique_id=1334239017]
+transform = Transform3D(-3.667322e-08, 0.4689607, 0.883219, 2.3785717e-08, 0.883219, -0.4689607, -1, 3.8096983e-09, -4.3545054e-08, -0.022727132, 0.65096664, 0)
+mesh = SubResource("QuadMesh_61fvw")

@@ -134,9 +134,15 @@ godot --headless --path client --export-release "Assentamento (Linux)"
 escreve video, so grava PNG em `capturas/filme/`. Quem junta e o ffmpeg,
 e o executavel e outra exportacao — por isso e que o script existe.
 
-Nao esta travado, e nao acompanha o fundamento sozinho — se a nganga
-mudar, esta copia refaz-se a mao. Acrescentar-lhe uma peca faz-se no
-editor, ou por `por_peca.gd`, que agora escolhe a cena:
+O arranjo mora na cena oficial e desce para a copia, nunca ao contrario:
+
+```sh
+godot --headless --path client --script res://tools/gerar_cenario.gd
+```
+
+A copia nao guarda nada de seu — o que se acrescentar so a ela perde-se
+na proxima passagem. Acrescentar uma peca faz-se no editor, ou por
+`por_peca.gd`, que escolhe a cena:
 
 ```sh
 # uma peca nova so no cenario — nao pede --destravar, nao e fundamento

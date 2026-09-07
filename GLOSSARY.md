@@ -29,6 +29,7 @@ A translated term is a lost term. If you find yourself writing `shrine` or
 | fechamento | `fechamento` | Closing a `trabalho`. Always free. | closing, completion |
 | permanencia | `permanencia` | The mandatory real-time wait inside a `trabalho`. Minimum 3 minutes. Runs while the app is closed. | dwell, wait, cooldown |
 | pedido | `pedido` | A written petition, placed in the cauldron, burning over seven real hours-days (168 h) like the seven-day candle. The words live only on the writer's device and are never stored elsewhere — the `caderno` records that a `pedido` was made, never what it said. | request, wish, prayer |
+| fornalha | `fornalha` | The furnace. Third phase: the person names symbols of their own past and burns them. Renewal, not petition — the opposite direction to a `pedido`. Unbuilt. | furnace, forge, oven, burner |
 | marafo | `marafo` | Cachaça. The standard `oferenda` drink for Exu. | liquor, spirits, cachaça |
 
 ## Cosmology

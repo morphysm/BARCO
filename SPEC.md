@@ -18,6 +18,32 @@ time, irreversibility.
 
 The product sells the act. It never sells the outcome.
 
+### 1.1 The three phases
+
+The app opens in three phases, in this order. A.C. set them. Each is a
+gate: the next does not exist for a person who has not passed the one
+before it.
+
+**1. The three `pontos`.** The person traces the three `assinaturas` of
+the `irmandade` — `Exu Caveira`, `Rosa Negra`, `Exu Aranha`. This is the
+only content at first launch, and passing it is what opens the
+`assentamento`. The threshold `firmeza` per `ponto`, and whether all
+three must be traced in one sitting, are **not decided**.
+
+**2. The `assentamento`.** The room is now reachable. The person makes
+`oferendas` and `pedidos` in it. This is where a `trabalho` runs (§7),
+and where everything accumulates and never leaves (§8.1).
+
+**3. The `fornalha`.** An exercise in renewal: the person names symbols
+of their own past and sets them on fire. Distinct from the `pedido`,
+which asks forward and burns over seven days — the `fornalha` is about
+what is behind, and it is the person's own material, not a petition to
+anyone. Nothing of it is built. What burns, how it is named, how long it
+takes, and what the `caderno` records of it are all **not decided**.
+
+The `sacrificio` (§8.2) is not one of the three. Where it sits relative
+to them is **not decided**.
+
 ---
 
 ## 2. Stack
