@@ -16,6 +16,12 @@ say so instead of implementing it.
 - The `caderno` is append-only. Do **not** create a DELETE endpoint for it.
 - Records are erasable only by full account deletion (GDPR erasure path).
 - Do not add "edit entry", "hide entry", or soft-delete flags.
+- **One carve-out, and only one:** `Dados.apagar_tudo()` wipes the local
+  files, and it is guarded by `OS.is_debug_build()`. It returns -1 and
+  does nothing in a release build, and the button that calls it is never
+  constructed there. This is the workbench, not a mechanic. Do not widen
+  it, do not add a way to force it, and do not let anything in the ritual
+  flow call it.
 
 ### Money
 - Closing a `trabalho` in `PENDENTE` state is **always free**. No exceptions.

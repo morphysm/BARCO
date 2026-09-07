@@ -379,6 +379,14 @@ func _montar_menu() -> void:
 	fechar.pressed.connect(_alternar_menu)
 	botoes.add_child(fechar)
 
+	# Bancada. Num build de release este botao NAO EXISTE — nao esta
+	# escondido nem desligado, nao chega a ser criado. O app a serio nao
+	# tem volta (AGENTS.md — Irreversibilidade).
+	if Dados.em_debug():
+		var limpar := Pagina.botao("recomeçar (debug)", 22)
+		limpar.pressed.connect(_recomecar_debug)
+		botoes.add_child(limpar)
+
 	_lista = Pagina.texto("", 19)
 	_lista.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	_lista.offset_top = 408
@@ -399,6 +407,16 @@ func _montar_menu() -> void:
 	_folhas.alignment = BoxContainer.ALIGNMENT_CENTER
 	_folhas.add_theme_constant_override("separation", 14)
 	_menu.add_child(_folhas)
+
+
+## Apaga tudo o que foi guardado e volta ao risco. So em debug — ver
+## `Dados`.
+func _recomecar_debug() -> void:
+	if Dados.apagar_tudo() < 0:
+		return
+	_pedidos.clear()
+	_depositos.clear()
+	get_tree().change_scene_to_file("res://scenes/risco.tscn")
 
 
 func _alternar_menu() -> void:
