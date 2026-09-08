@@ -21,7 +21,21 @@ server/prova/correr.sh
 # 3. o webhook a serio, contra um Supabase local inteiro
 npx supabase start
 server/prova/webhook.sh
+
+# 4. a cadeia inteira: cesto -> codigo -> pagamento -> credito -> gasto
+server/prova/cadeia.sh
 ```
+
+A quarta e a unica que junta as duas metades. Ate ela, provava-se cada
+uma de seu lado: o cliente pedia codigos, o servidor creditava
+pagamentos, e ninguem tinha visto um codigo emitido pelo app ser pago e
+voltar como credito gastavel.
+
+Nao se faz contra producao porque o **Ko-fi nao deixa pagar a si
+proprio** — passa pelo PayPal, que o bloqueia. La o pagamento e simulado:
+um POST ao webhook local com o codigo verdadeiro que o app emitiu. O que
+isso NAO prova e o transporte do Ko-fi, e esse ja esta provado a serio —
+duas entregas verdadeiras chegaram e foram parar a fila certa.
 
 O terceiro e o que prova o que os outros nao alcancam: a Edge Function a
 correr, o corpo em `form-urlencoded` a ser desembrulhado, o token a ser
