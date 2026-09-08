@@ -37,6 +37,8 @@ export interface Pagamento {
 /// respostas existem.
 export interface Casamento {
     readonly user_id: string | null;
+    /// O acto, quando se soube por SKU. Com codigo fica nulo: quem
+    /// resolve o que o codigo compra e o cesto, no servidor.
     readonly ato_slug: string | null;
     /// Por onde se soube. `null` quando nao se soube de nada.
     readonly por: "codigo" | "sku" | "email" | "sku+email" | null;
@@ -52,9 +54,12 @@ export interface Registo {
     /// Que acto e que este SKU da loja paga.
     atoPorSku(sku: string): Promise<string | null>;
     /// Um codigo por gastar. Devolve `null` se nao existe ou ja foi usado.
-    codigoPorGastar(codigo: string): Promise<
-        { user_id: string; ato_slug: string } | null
-    >;
+    ///
+    /// So devolve DE QUEM e. O que o codigo compra esta no cesto
+    /// (`codigo_itens`) e quem o le e a transacao, no servidor: um cesto
+    /// lido aqui e conferido la seria a mesma conta feita duas vezes, e
+    /// duas contas iguais acabam sempre por deixar de ser iguais.
+    codigoPorGastar(codigo: string): Promise<{ user_id: string } | null>;
     /// Que pessoa tem este email.
     pessoaPorEmail(email: string): Promise<string | null>;
 }

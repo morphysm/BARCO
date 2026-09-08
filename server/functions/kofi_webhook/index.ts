@@ -81,7 +81,7 @@ Deno.serve(async (pedido: Request): Promise<Response> => {
         },
         async codigoPorGastar(codigo) {
             const { data } = await admin.from("codigos")
-                .select("user_id, ato_slug")
+                .select("user_id")
                 .eq("codigo", codigo).is("usado_em", null).maybeSingle();
             return data ?? null;
         },
@@ -112,7 +112,9 @@ Deno.serve(async (pedido: Request): Promise<Response> => {
             p_user_id: c.user_id,
             p_ato_slug: c.ato_slug,
             p_por: c.por === "sku+email" ? "sku" : c.por,
-            p_codigo: podeCreditar(c) ? c.codigo : null,
+            // O codigo vai sempre que exista: e la dentro que o cesto se
+            // le, a conta se confere e o codigo se marca como gasto.
+            p_codigo: c.codigo,
         });
         if (error) throw error;
 

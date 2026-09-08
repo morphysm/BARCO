@@ -327,8 +327,30 @@ resolver (§10.4) does not exist yet, and the obvious way to write it —
 *credit this queued payment* — doubles on a second click. The defence cannot
 be the care of whoever writes that view.
 
-If a payment ever has to pay for more than one act, that constraint is what
-gets rethought. It is not to be worked around with a second credit row.
+**That day came, and the constraint was rethought rather than worked
+around.** A code now names a **basket** — three pimentas and a marafo —
+so one Ko-fi payment buys several acts and nobody pastes a code four
+times in a session. One credit per payment stopped being possible, so the
+UNIQUE on `source_payment_id` is gone and the guarantee moved onto the
+payment itself: `pagamentos.creditado_em`, set with the same atomic
+check-and-set as `codigos.usado_em`. A payment is credited once, whatever
+number of credits that is.
+
+This is **not** a soft currency, which AGENTS.md forbids by name. The
+difference is the order: the basket is chosen *before* paying and paid
+for exactly, so there is no change left over — and a leftover balance is
+what a currency is. The credits that come out are named acts, not a
+number that spends on anything.
+
+And because a code that names a basket is a bill, the settling function
+now **checks the amount**: if what arrived does not cover what the basket
+costs, nothing is credited and it goes to the manual queue with the code
+untouched. Only USD is checked, the currency Ko-fi charges in (§10.1);
+another currency is not converted on a guess.
+
+The `assentamento` strip stays what it was — press one and drag it, one
+gesture, one decision (GDD §2, pillar 3). Buying happens on another
+screen. The counter is not the altar.
 
 ---
 

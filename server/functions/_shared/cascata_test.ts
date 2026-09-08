@@ -30,11 +30,7 @@ const REGISTO: Registo = {
     atoPorSku: (sku) =>
         Promise.resolve(sku === "SKU-SACRIFICIO" ? "sacrificio" : null),
     codigoPorGastar: (c) =>
-        Promise.resolve(
-            c === "BAR-7X2K"
-                ? { user_id: PESSOA, ato_slug: "vela_20min" }
-                : null,
-        ),
+        Promise.resolve(c === "BAR-7X2K" ? { user_id: PESSOA } : null),
     pessoaPorEmail: (e) =>
         Promise.resolve(e === "quem@paga.pt" ? PESSOA : null),
 };
@@ -48,12 +44,16 @@ Deno.test("o codigo aparece no meio do que a pessoa escreveu", () => {
     assertEquals(codigoNaMensagem("BAR-7X2"), null);
 });
 
-Deno.test("codigo: responde as duas perguntas e credita", async () => {
+Deno.test("codigo: diz de quem e, e o cesto diz o resto", async () => {
     const c = await casar(pagamento({ mensagem: "BAR-7X2K" }), REGISTO);
     assertEquals(c.por, "codigo");
     assertEquals(c.user_id, PESSOA);
-    assertEquals(c.ato_slug, "vela_20min");
-    assertEquals(podeCreditar(c), true);
+    // Nulo de proposito: o que o codigo compra esta no cesto, e o cesto
+    // le-se dentro da transacao que credita. Fazer a conta tambem aqui
+    // eram duas contas iguais, que mais tarde ou mais cedo divergem.
+    assertEquals(c.ato_slug, null);
+    assertEquals(c.codigo, "BAR-7X2K");
+    assertEquals(podeCreditar(c), true, "com codigo basta o codigo");
 });
 
 Deno.test("SKU mais email: as duas metades, credita", async () => {

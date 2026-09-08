@@ -46,9 +46,12 @@ export async function casar(p: Pagamento, r: Registo): Promise<Casamento> {
     if (codigo) {
         const emitido = await r.codigoPorGastar(codigo);
         if (emitido) {
+            // O acto fica nulo de proposito: um codigo nomeia um CESTO, e
+            // o cesto le-se dentro da transacao que credita. Aqui so se
+            // responde a primeira pergunta — de quem e.
             return {
                 user_id: emitido.user_id,
-                ato_slug: emitido.ato_slug,
+                ato_slug: null,
                 por: "codigo",
                 codigo,
             };
@@ -76,6 +79,11 @@ export async function casar(p: Pagamento, r: Registo): Promise<Casamento> {
 }
 
 /// Credita-se ou vai para a fila?
+///
+/// Com codigo basta o codigo: ele diz de quem e, e o cesto diz o que
+/// compra. Sem codigo continuam a ser precisas as duas respostas — um SKU
+/// sozinho nao diz de quem e, um email sozinho nao diz o que paga.
 export function podeCreditar(c: Casamento): boolean {
+    if (c.codigo !== null) return c.user_id !== null;
     return c.user_id !== null && c.ato_slug !== null;
 }
