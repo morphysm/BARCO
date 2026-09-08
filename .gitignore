@@ -21,6 +21,12 @@ __pycache__/
 # anteriores. Fora do git, e a duvida acaba.
 supabase/.temp/
 supabase/.branches/
+# O token do Ko-fi vive aqui quando se prova localmente. Como o
+# `supabase/functions` e um symlink para `server/functions`, o CLI escreve
+# o `.env` DENTRO do repositorio — por isso e que este padrao apanha os
+# dois caminhos.
+supabase/functions/.env
+server/functions/.env
 
 # Builds
 build/

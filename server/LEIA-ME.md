@@ -6,15 +6,42 @@ Nada disto esta ligado a uma conta ainda. Ver **O que falta** ao fundo.
 
 ## Provar sem conta nenhuma
 
-```sh
-# a SQL: aplica as migracoes a um Postgres descartavel e exercita
-# o `assentar_pagamento` (precisa de docker)
-server/prova/correr.sh
+Tres degraus, do mais barato ao mais completo. Nenhum toca no projecto
+alojado.
 
-# o TypeScript: cascata, traducao do payload, leitura das chaves
+```sh
+# 1. o TypeScript: cascata, traducao dos payloads, leitura das chaves
 docker run --rm -v "$PWD":/w -w /w denoland/deno:latest \
     deno test --allow-read --allow-net --allow-env server/functions/
+
+# 2. a SQL: aplica as migracoes a um Postgres descartavel e exercita
+#    o `assentar_pagamento` (precisa de docker)
+server/prova/correr.sh
+
+# 3. o webhook a serio, contra um Supabase local inteiro
+npx supabase start
+server/prova/webhook.sh
 ```
+
+O terceiro e o que prova o que os outros nao alcancam: a Edge Function a
+correr, o corpo em `form-urlencoded` a ser desembrulhado, o token a ser
+verificado, e a transacao a escrever numa base com RLS ligado. Atira os
+payloads oficiais e mostra o que ficou nas tabelas.
+
+### O `supabase/` e o `server/`
+
+O SPEC.md §2 poe o servidor em `server/`. O CLI do Supabase so olha para
+`supabase/migrations` e `supabase/functions`. Os dois sao symlinks para
+`server/`, e e o `server/` que manda.
+
+### A sonda
+
+`functions/sonda/` responde com os NOMES das variaveis `SUPABASE_*` e o
+feitio do que trazem, nunca os valores. Serviu para confirmar, em vez de
+supor, que o runtime injecta mesmo o `SUPABASE_SECRET_KEYS` e que a
+entrada e `default`. Vale a pena voltar a corre-la depois do primeiro
+`functions deploy`. **Nao a deixar acessivel sem autenticacao num
+projecto a serio.**
 
 ## O que ha
 
