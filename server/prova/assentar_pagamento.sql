@@ -92,6 +92,41 @@ exception
 end $$;
 
 \echo ''
+\echo '8. as funcoes NAO se chamam com a chave publica'
+\echo '   (o revoke de anon/authenticated nao chegava: o EXECUTE vinha de PUBLIC)'
+select
+    p.proname as funcao,
+    has_function_privilege('anon', p.oid, 'execute')           as anon_pode,
+    has_function_privilege('authenticated', p.oid, 'execute')  as autenticado_pode,
+    has_function_privilege('service_role', p.oid, 'execute')   as admin_pode
+  from pg_proc p
+  join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname = 'public'
+   and p.proname in ('assentar_pagamento', 'pessoa_por_email')
+ order by p.proname;
+
+do $$
+declare
+    r record;
+begin
+    for r in
+        select p.proname, p.oid from pg_proc p
+          join pg_namespace n on n.oid = p.pronamespace
+         where n.nspname = 'public'
+           and p.proname in ('assentar_pagamento', 'pessoa_por_email')
+    loop
+        if has_function_privilege('anon', r.oid, 'execute')
+        or has_function_privilege('authenticated', r.oid, 'execute') then
+            raise exception 'FALHOU: % ainda se chama com a chave publica', r.proname;
+        end if;
+        if not has_function_privilege('service_role', r.oid, 'execute') then
+            raise exception 'FALHOU: o admin nao pode chamar %', r.proname;
+        end if;
+    end loop;
+    raise notice 'ok: fechadas a chave publica, abertas ao admin';
+end $$;
+
+\echo ''
 \echo 'CONTAS FINAIS'
 select
   (select count(*) from public.pagamentos)     as pagamentos,
