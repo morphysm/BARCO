@@ -131,6 +131,15 @@ the scene, not a change to `cloth.glb` — one click undoes it.
 Crossed once, and marked at the throw, not at the end: whoever closes the
 app mid-fire has already burnt what they came to burn.
 
+Once, and there is no door back. Nothing in the app clears `queimou`, and
+both scenes that can open the furnace — `risco` and the eclipse — are
+guarded by it. The room can still be revisited from outside, by
+`tools/ver_fornalha.gd`, which points `Passagem.REGISTO` at a file of its
+own before opening the scene: the rite runs whole, the throw marks that
+side file, and the person's `passagem.json` is not touched. That is a
+script in `tools/`, of the same standing as `Passagem.esquecer()` — it
+exists, and no screen reaches it.
+
 The furnace is one bay of the Exu Caveira furnace bank from *Iovana Is
 DEAD*, copied without alteration by `tools/tirar_fornalha.py` — the
 source project is read-only and never touched. Four of the five bays are

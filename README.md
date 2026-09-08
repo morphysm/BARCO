@@ -50,6 +50,9 @@ godot --path client --script res://tools/teste_risco.gd --headless   # testes
 
 # a tela da Porta: a pausa antes da ultima linha, o menu, a franja de cor
 godot --path client --script res://tools/prova_porta_tela.gd
+
+# voltar a entrar na fornalha, do principio — so por aqui, nunca pelo app
+godot --path client --script res://tools/ver_fornalha.gd
 ```
 
 A janela abre nos 1600x1000 do proprio viewport, sem escala. Era 1280x800
