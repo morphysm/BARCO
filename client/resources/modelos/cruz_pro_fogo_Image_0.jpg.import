@@ -2,25 +2,23 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxmxriddm0ovg"
-path.s3tc="res://.godot/imported/crown_of_thorns_Image_0.jpg-9f23697e07a874a23f3ba915160b8791.s3tc.ctex"
-path.etc2="res://.godot/imported/crown_of_thorns_Image_0.jpg-9f23697e07a874a23f3ba915160b8791.etc2.ctex"
+uid="uid://dlnqo12cuoxop"
+path="res://.godot/imported/cruz_pro_fogo_Image_0.jpg-1d9018c2a459fa92080b2311ed0185e5.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc", "etc2_astc"],
-"vram_texture": true
+"vram_texture": false
 }
 generator_parameters={
-"md5": "7691cf9c804bb98e1d466a595f67a744"
+"md5": "de00403417a88cede5a3116ba79403f6"
 }
 
 [deps]
 
-source_file="res://resources/modelos/crown_of_thorns_Image_0.jpg"
-dest_files=["res://.godot/imported/crown_of_thorns_Image_0.jpg-9f23697e07a874a23f3ba915160b8791.s3tc.ctex", "res://.godot/imported/crown_of_thorns_Image_0.jpg-9f23697e07a874a23f3ba915160b8791.etc2.ctex"]
+source_file="res://resources/modelos/cruz_pro_fogo_Image_0.jpg"
+dest_files=["res://.godot/imported/cruz_pro_fogo_Image_0.jpg-1d9018c2a459fa92080b2311ed0185e5.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -42,4 +40,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

@@ -54,6 +54,10 @@ ALVOS = {
 	# 1.000.000 -> 15 mil comia o bordao todo. Um objeto digitalizado com
 	# reentrancias nao aguenta 98,5% de corte.
 	"stick_de_exu": 120000,
+	# Ja foi decimada uma vez a 60 mil e conferida lado a lado com a
+	# original: os espinhos todos la, a silhueta igual. A 6 mil ficava um
+	# arame. Mantem-se o alvo que ja se provou.
+	"crown_of_thorns": 60000,
 }
 
 ## Modelos que precisam de mais textura que os 256 px do costume.

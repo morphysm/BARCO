@@ -565,15 +565,24 @@ func _actualizar_lista() -> void:
 		_folhas_vivas.append({"papel": papel, "material": m, "quanto": quanto})
 
 
+## As oferendas que ha, lidas da pasta.
+##
+## `ResourceLoader.list_directory` e nao `DirAccess`. O `DirAccess` le o
+## sistema de ficheiros, e num build exportado os recursos vivem dentro do
+## `.pck` e nao ha ficheiros nenhuns para listar: devolvia uma lista
+## vazia, o menu nascia sem um botao, e nao havia erro nenhum a dizer
+## porque. No editor funcionava, que e o que torna isto traicoeiro — so
+## se ve depois de exportar.
+##
+## O `ResourceLoader` le o sistema de RECURSOS, que sabe do `.pck`.
 func _oferendas_disponiveis() -> Array[String]:
 	var saida: Array[String] = []
-	var d := DirAccess.open("res://resources/oferendas")
-	if d == null:
-		return saida
-	for f in d.get_files():
+	for f in ResourceLoader.list_directory("res://resources/oferendas/"):
 		if f.ends_with(".tres"):
 			saida.append("res://resources/oferendas/%s" % f)
 	saida.sort()
+	if saida.is_empty():
+		push_error("nenhuma oferenda em res://resources/oferendas/")
 	return saida
 
 
