@@ -16,21 +16,14 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Barco"
 config/description="Aplicativo ritual. Vende-se o ato, nunca o resultado."
-run/main_scene="res://scenes/risco.tscn"
+run/main_scene="res://scenes/porta.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 run/main_scene.cenario="res://scenes/assentamento_cenario.tscn"
 
 [display]
 
-; Paisagem, para PC. Estava 1080x1920 — forma de telemovel, de quando
-; isto ia para telefone. A janela saía 741x1319 num ecra de secretaria, o
-; que nao serve para nada.
-; Mais alto do que 16:9 de proposito: a faixa de baixo e da UI, e a cena
-; fica so com o que sobra. A UI deixa de estar POR CIMA do assentamento.
 window/size/viewport_width=1600
 window/size/viewport_height=1000
-window/size/window_width_override=1280
-window/size/window_height_override=800
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/size/viewport_width.cenario=720

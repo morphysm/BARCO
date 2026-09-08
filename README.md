@@ -45,9 +45,22 @@ distintos (SPEC.md §5.3).
 ## Rodar
 
 ```sh
-godot --path client                     # abre a tela de RISCO
+godot --path client                     # abre a PORTA, e dai o RISCO
 godot --path client --script res://tools/teste_risco.gd --headless   # testes
+
+# a tela da Porta: a pausa antes da ultima linha, o menu, a franja de cor
+godot --path client --script res://tools/prova_porta_tela.gd
 ```
+
+A janela abre nos 1600x1000 do proprio viewport, sem escala. Era 1280x800
+por `window_*_override`, ou seja 0.8, e a 0.8 a letra da Porta — que e de
+matriz de pontos — perde os cantos e ganha orla. Passar-lhe `--resolution`
+volta a escalar: para conferir a tela como ela e, nao se passa.
+
+A **Porta** e a primeira coisa que o app mostra depois de instalado
+(SPEC.md §1.1). Atravessa-se uma vez: fica gravada em
+`user://passagem.json`, e quem entrou nao volta a ser perguntado. Para a
+ver outra vez, `Passagem.esquecer()` — que apaga o progresso todo.
 
 `guia` liga o traçado guiado de primeiro contato (SPEC.md §4.3): gratuito,
 sem nota, sem limite. Desligado, o `ponto` passa a ser avaliado.
@@ -178,6 +191,21 @@ depoe, ficam onde foram postos, e nao se tiram (GDD §2).
 O passo 1 mede. O passo 2 reduz. Nenhum dos dois decide **a ordem dos
 tracos** nem **onde o `ponto` se ramifica entre as `faces`** — isso e
 doutrina, e esta escrito a mao em `tools/gerar_ponto_aranha.gd`.
+
+## Creditos
+
+O tipo de letra da **Porta** e `PxPlus IBM VGA8`, do *Ultimate Oldschool
+PC Font Pack* de VileR (int10h.org), sob CC BY-SA 4.0. A licenca esta em
+`client/resources/fonts/PxPlus_IBM_VGA8-LICENCA.txt` e a atribuicao esta
+**dentro do app**, ao fundo da propria tela da Porta:
+
+> IBM PC font courtesy of int10h.org / VileR, CC BY-SA 4.0
+
+Nao e um agradecimento, e uma condicao da licenca: sai do ecra so quando
+a letra sair com ela.
+
+Corpo do texto do `assentamento`: `DejaVu Sans Mono`, licenca em
+`client/resources/fonts/DejaVu-LICENCA.txt`.
 
 ---
 CC BY-NC-SA — A.C., Norrland XXVI / Morphysm

@@ -18,9 +18,34 @@ time, irreversibility.
 
 The product sells the act. It never sells the outcome.
 
-### 1.1 The three phases
+### 1.1 The Porta, and then the three phases
 
-The app opens in three phases, in this order. A.C. set them. Each is a
+**0. The `Porta`.** The first thing a fresh install shows, before
+anything else loads. A monochrome 90s terminal — bone-white on black,
+`PxPlus IBM VGA8`, a CRT glass over the whole screen (`shaders/crt.gdshader`:
+scanlines, barrel curvature, phosphor halo, and a colour fringe that
+exists **only** past 74% of the radius, so the ritual text — which ends
+at 71% — is never touched by it). Three diagnostic lines flash and clear,
+then the text types itself, with a deliberate stop before the last line:
+*mesmo sendo só um app* is the tonal turn, and a line that undoes
+everything before it needs the silence of someone about to say something
+else.
+
+The text is A.C.'s and is in `CONTENT_pt.md`. Two answers, DOS-menu
+style, arrow keys or pointer: **Deixo tudo na Porta e entro** writes
+`atravessou_a_porta` in `Passagem` and opens the first `ponto`; **Desisto
+e apago o app** quits. The app does not delete itself — deleting is the
+person's act, which is why the line says *apago* and not *apague-me*.
+
+Crossed once. Whoever entered is never asked again; whoever gave up
+closed the app without entering, so the Porta is still shut and is there
+again next time.
+
+This `Porta` is not the door of the paragraphs below. That one is the
+coverage threshold that lets a person pass from one `ponto` to the next
+and has no screen of its own.
+
+**Then the three phases**, in this order. A.C. set them. Each is a
 gate: the next does not exist for a person who has not passed the one
 before it.
 

@@ -22,6 +22,7 @@ A translated term is a lost term. If you find yourself writing `shrine` or
 | pemba | `pemba` | The chalk. Also the visual treatment of the trace: white or red, granular. | chalk |
 | trabalho | `trabalho` | One complete ritual cycle, from CHAMADO to REGISTRADO. The unit of work and the unit of payment. | working, ritual, session, job |
 | oferenda | `oferenda` | A single offering act: pour, light, smoke, deposit. | offering, gift, item |
+| Porta | `Porta` | The entry screen: the question a fresh install asks before anything else loads, with two real answers. Crossed once, recorded in `Passagem`. Not the lowercase "door" of SPEC §1.1, which is the coverage threshold between `pontos` and has no screen. | gate, threshold, entry, splash |
 | caderno | `caderno` | Append-only record of every `trabalho`. Immutable. Exportable. | journal, log, history |
 | gira | `gira` | A working session in the physical world, outside the app. Referenced in copy, not modelled in code. | ceremony |
 | assinatura | `assinatura` | An entity's whole `ponto_riscado`, as drawn. Signatures never share geometry and are never composed from one another. The app recognises the signature; it never offers a list. | signature, glyph |

@@ -71,6 +71,19 @@ static func completa(irm: Irmandade) -> bool:
 	return proximo(irm) == null
 
 
+## Ja se atravessou a Porta? E a pergunta da entrada, antes de tudo o
+## resto (SPEC.md §1.1). Quem entrou nao volta a ser perguntado; quem
+## desistiu fechou o app sem entrar, e a Porta continua fechada.
+static func atravessou() -> bool:
+	return _ler().get("atravessou_a_porta", false)
+
+
+static func atravessar() -> void:
+	var d := _ler()
+	d["atravessou_a_porta"] = true
+	_guardar(d)
+
+
 ## Ja se queimou o passado na `fornalha`? Atravessa-se uma vez.
 static func queimou() -> bool:
 	return _ler().get("queimou", false)
