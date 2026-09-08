@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://dnw5cqkj7iulh"
+path="res://.godot/imported/INTRO_Solo de Atabaque.ogg-1e742f601eeab35d861e6684c8055afa.oggvorbisstr"
+
+[deps]
+
+source_file="res://resources/audio/INTRO_Solo de Atabaque.ogg"
+dest_files=["res://.godot/imported/INTRO_Solo de Atabaque.ogg-1e742f601eeab35d861e6684c8055afa.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

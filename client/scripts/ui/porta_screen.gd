@@ -38,6 +38,17 @@ const ARRANQUE := [
 ## nao e um agradecimento: sai daqui so quando a letra sair com ela.
 const CREDITO := "IBM PC font courtesy of int10h.org / VileR, CC BY-SA 4.0"
 
+## O atabaque por baixo da Porta. Toca UMA vez, do princípio, e acaba —
+## sao 50 segundos com um fim a serio, nao um ciclo. Quem ficar mais
+## tempo a decidir fica em silencio com a pergunta, e isso e justo.
+##
+## Nao toca para quem ja atravessou: essa pessoa nao ve esta tela.
+@export var atabaque: AudioStream = preload(
+	"res://resources/audio/INTRO_Solo de Atabaque.ogg")
+## Por BAIXO, nao por cima. A gravacao vem a nivel normal (media de
+## -20 dB), portanto sem isto ficava a frente do que a tela esta a dizer.
+@export_range(-40.0, 6.0) var volume_do_atabaque := -6.0
+
 const LETRA := "res://resources/fonts/PxPlus_IBM_VGA8.ttf"
 ## A letra e de 8x16 pixeis. Em multiplos de 16 cada pixel dela cai
 ## inteiro num quadrado de pixeis do ecra; fora disso esborrata.
@@ -166,6 +177,7 @@ func _montar() -> void:
 	add_child(credito)
 
 	_por_o_vidro()
+	_bater()
 
 	var t := Timer.new()
 	t.wait_time = PISCA
@@ -217,6 +229,18 @@ func _por_o_vidro() -> void:
 	m.shader = load("res://shaders/crt.gdshader")
 	vidro.material = m
 	camada.add_child(vidro)
+
+
+## O atabaque comeca com a tela, nao com o texto: e a primeira coisa que
+## acontece, antes de as linhas de arranque piscarem.
+func _bater() -> void:
+	if atabaque == null:
+		return
+	var tocador := AudioStreamPlayer.new()
+	tocador.stream = atabaque
+	tocador.volume_db = volume_do_atabaque
+	add_child(tocador)
+	tocador.play()
 
 
 func _correr() -> void:
