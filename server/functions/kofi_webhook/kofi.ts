@@ -41,6 +41,9 @@ export const CAMPOS = {
     /// Compras de loja. Uma lista, cada item com o seu SKU.
     artigos: "shop_items",
     artigo_sku: "direct_link_code",
+    /// Quantos exemplares DO MESMO artigo. Um artigo da loja e um acto,
+    /// portanto `quantity: 5` sao cinco actos — e nao um.
+    artigo_quantidade: "quantity",
 } as const;
 
 /// O Ko-fi POSTa `application/x-www-form-urlencoded` com UM campo, `data`,
@@ -137,13 +140,33 @@ function texto(v: unknown): string | null {
     return typeof v === "string" && v !== "" ? v : null;
 }
 
-/// O SKU do primeiro artigo, quando a compra foi da loja.
+/// O SKU, quando a compra foi de UM artigo e de UM so exemplar.
 ///
-/// So se le UM: um acto por pagamento. Uma compra com varios artigos nao
-/// se reparte por adivinhacao — vai inteira para a fila manual.
+/// Duas condicoes, e as duas por causa da mesma regra: um pagamento da no
+/// maximo um credito (`creditos_um_por_pagamento`). Um artigo da loja e
+/// um acto, entao:
+///
+///   - dois artigos na mesma compra sao dois actos;
+///   - `quantity: 5` de um artigo sao cinco actos.
+///
+/// Nos dois casos o SKU sozinho ja nao diz o que se comprou, e creditar
+/// um so seria dar menos do que a pessoa pagou — em silencio, que e o
+/// pior. Vai inteira para a fila, onde alguem decide.
+///
+/// O `quantity` so apareceu quando os payloads oficiais foram vistos. A
+/// primeira versao disto lia o SKU de uma compra de cinco exemplares e
+/// creditava um.
 function sku(v: unknown): string | null {
     if (!Array.isArray(v) || v.length !== 1) return null;
     const item = v[0];
     if (typeof item !== "object" || item === null) return null;
-    return texto((item as Record<string, unknown>)[CAMPOS.artigo_sku]);
+    const artigo = item as Record<string, unknown>;
+
+    // Ausente conta como um: o campo pode nao vir sempre, e uma compra de
+    // um exemplar e o caso normal.
+    const quantos = artigo[CAMPOS.artigo_quantidade];
+    if (quantos !== undefined && quantos !== null && Number(quantos) !== 1) {
+        return null;
+    }
+    return texto(artigo[CAMPOS.artigo_sku]);
 }

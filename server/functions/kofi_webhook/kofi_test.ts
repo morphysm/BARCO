@@ -1,10 +1,12 @@
-// Prova da traducao do payload do Ko-fi.
+// Prova da traducao, contra os payloads de exemplo DA DOCUMENTACAO do
+// Ko-fi — os quatro que a pagina publica como referencia das formas
+// reais, nao o disparo do botao de teste (que ha registo de mandar
+// payloads errados nalguns casos).
 //
-// LE O `payload_exemplo.json` DE PROPOSITO. Esse ficheiro e o que se
-// substitui pelo payload a serio da pagina de webhooks — e quando isso
-// acontecer, sao estas provas que dizem se os nomes em `CAMPOS` ainda
-// batem certo. Um teste com o payload escrito a mao dentro dele nao
-// provava nada: provava que eu concordo comigo proprio.
+// Estao em `payloads/`, com o token ja redigido na origem. Sao ficheiros
+// e nao literais dentro do teste de proposito: quando um payload a serio
+// aparecer, substitui-se o ficheiro e sao estas provas que dizem se os
+// nomes ainda batem certo.
 //
 //   docker run --rm -v "$PWD":/w -w /w denoland/deno:latest \
 //       deno test --allow-read server/functions/
@@ -12,138 +14,136 @@
 import { assert, assertEquals, assertThrows } from "jsr:@std/assert@1";
 import { CAMPOS, PayloadMau, token, traduzir } from "./kofi.ts";
 
-const AQUI = new URL(".", import.meta.url).pathname;
-const EXEMPLO = JSON.parse(
-    await Deno.readTextFile(AQUI + "payload_exemplo.json"),
-) as Record<string, unknown>;
+const AQUI = new URL("./payloads/", import.meta.url).pathname;
 
-Deno.test("o exemplo nao traz um token a serio", () => {
-    // Se isto falhar, alguem colou o payload com o token verdadeiro e o
-    // segredo esta no repositorio.
-    assertEquals(
-        EXEMPLO[CAMPOS.token],
-        "XXX",
-        "o token do exemplo tem de estar trocado por XXX",
-    );
+async function payload(nome: string): Promise<Record<string, unknown>> {
+    return JSON.parse(await Deno.readTextFile(AQUI + nome + ".json"));
+}
+
+const TIP = await payload("tip");
+const SUB_PRIMEIRA = await payload("subscricao_primeira");
+const SUB_TIER = await payload("subscricao_tier");
+const COMPRA = await payload("compra");
+const TODOS = { TIP, SUB_PRIMEIRA, SUB_TIER, COMPRA };
+
+Deno.test("nenhum exemplo traz um token a serio", () => {
+    for (const [nome, p] of Object.entries(TODOS)) {
+        const t = p[CAMPOS.token];
+        assert(
+            typeof t === "string" && /^x+$/i.test(t),
+            `${nome}: o token tem de estar redigido`,
+        );
+    }
 });
 
-Deno.test("le-se o token antes de tudo o resto", () => {
-    assertEquals(token(EXEMPLO), "XXX");
+Deno.test("os quatro traduzem-se, e o id existe em todos", () => {
+    for (const [nome, p] of Object.entries(TODOS)) {
+        const t = traduzir(p);
+        assert(t.id_externo.length > 0, `${nome}: sem id nao ha idempotencia`);
+        assertEquals(t.origem, "kofi");
+        assertEquals(t.cru, p, `${nome}: o payload inteiro fica guardado`);
+    }
+});
+
+Deno.test("o token le-se antes de tudo o resto", async () => {
+    assertEquals(token(TIP), TIP[CAMPOS.token]);
     assertEquals(token({}), null);
 });
 
-Deno.test("traduz o exemplo para um Pagamento", () => {
-    const p = traduzir(EXEMPLO);
-    assertEquals(p.origem, "kofi");
-    assert(p.id_externo.length > 0, "sem id nao ha idempotencia");
+Deno.test("tip: valor em texto, email, e o codigo viria na mensagem", () => {
+    const p = traduzir(TIP);
+    assertEquals(p.valor, 3, '"3.00" e texto e le-se como 3');
     assertEquals(p.moeda, "USD");
-    assertEquals(p.valor, 14);
-    assertEquals(p.email, "quem@paga.pt");
-    assert(p.mensagem?.includes("BAR-7X2K"));
-    assertEquals(p.cru, EXEMPLO);
+    assertEquals(p.email, "jo.example@example.com");
+    assertEquals(p.mensagem, "Good luck with the integration!");
+    assertEquals(p.sku, null, "uma gorjeta nao traz artigos");
 });
 
-Deno.test("sem id nao passa — parte a idempotencia", () => {
-    const sem = { ...EXEMPLO };
+Deno.test("subscricao: entra como qualquer outro pagamento", () => {
+    const primeira = traduzir(SUB_PRIMEIRA);
+    assert(primeira.mensagem !== null, "a primeira traz mensagem");
+    assertEquals(primeira.sku, null);
+
+    // A renovacao de tier vem SEM mensagem: nao ha codigo, nao ha acto,
+    // vai para a fila. O app nao vende subscricoes (AGENTS.md), mas nada
+    // impede alguem de subscrever a pagina do Ko-fi.
+    const tier = traduzir(SUB_TIER);
+    assertEquals(tier.mensagem, null);
+    assertEquals(tier.sku, null);
+    assertEquals(tier.valor, 5);
+});
+
+Deno.test("COMPRA: a mensagem vem NULA — o canal do codigo nao existe", () => {
+    // E o achado que manda no desenho da cascata. Numa compra de loja nao
+    // ha onde escrever o BAR-XXXX, portanto o unico caminho e SKU + email.
+    const p = traduzir(COMPRA);
+    assertEquals(p.mensagem, null);
+    assertEquals(p.email, "jo.example@example.com");
+});
+
+Deno.test("COMPRA: dois artigos nao se repartem — fila manual", () => {
+    const p = traduzir(COMPRA);
+    assertEquals(p.sku, null, "27.95 por dois artigos nao da um acto so");
+});
+
+Deno.test("um artigo, um exemplar: e o caso que credita", () => {
+    const p = traduzir({
+        ...COMPRA,
+        [CAMPOS.artigos]: [{
+            [CAMPOS.artigo_sku]: "1a2b3c4d5e",
+            variation_name: "Blue",
+            [CAMPOS.artigo_quantidade]: 1,
+        }],
+    });
+    assertEquals(p.sku, "1a2b3c4d5e");
+});
+
+Deno.test("um artigo, CINCO exemplares: nao credita um — vai para a fila", () => {
+    // Sao cinco actos comprados. Creditar um era dar menos do que a
+    // pessoa pagou, e em silencio. A restricao `creditos_um_por_pagamento`
+    // so deixa um credito por pagamento, entao quem decide e uma pessoa.
+    const p = traduzir({
+        ...COMPRA,
+        [CAMPOS.artigos]: [{
+            [CAMPOS.artigo_sku]: "a1b2c3d4e5",
+            variation_name: "Large",
+            [CAMPOS.artigo_quantidade]: 5,
+        }],
+    });
+    assertEquals(p.sku, null);
+});
+
+Deno.test("sem quantidade conta como um", () => {
+    const p = traduzir({
+        ...COMPRA,
+        [CAMPOS.artigos]: [{ [CAMPOS.artigo_sku]: "1a2b3c4d5e" }],
+    });
+    assertEquals(p.sku, "1a2b3c4d5e");
+});
+
+Deno.test("sem message_id nao passa — parte a idempotencia", () => {
+    const sem = { ...TIP };
     delete sem[CAMPOS.id];
     assertThrows(() => traduzir(sem), PayloadMau, CAMPOS.id);
 });
 
-Deno.test("o valor vem como TEXTO e le-se com tolerancia", () => {
-    assertEquals(traduzir({ ...EXEMPLO, [CAMPOS.valor]: "3.00" }).valor, 3);
-    // Virgula decimal e simbolo de moeda: nao se confirmou que o Ko-fi os
-    // mande, mas se mandar nao pode ser isso a bloquear um pagamento.
-    assertEquals(traduzir({ ...EXEMPLO, [CAMPOS.valor]: "3,50" }).valor, 3.5);
-    assertEquals(traduzir({ ...EXEMPLO, [CAMPOS.valor]: "$14.00" }).valor, 14);
-});
-
-Deno.test("um valor que nao se percebe NAO bloqueia o pagamento", () => {
-    // Isto rebentava. Estava errado: o valor nao decide nada, e um 500
-    // aqui punha o Ko-fi a reenviar para sempre um pagamento que dava
-    // para creditar bem — o codigo nem olha para o valor.
-    const p = traduzir({ ...EXEMPLO, [CAMPOS.valor]: "catorze" });
-    assertEquals(p.valor, null, "desconhecido le-se null, NUNCA zero");
-    // Um pagamento registado com 0.00 e uma mentira que ninguem detecta
-    // depois. Estes tres davam zero antes de se confirmar o feitio.
-    for (const mau of ["", ".", "-", "1.2.3"]) {
-        assertEquals(traduzir({ ...EXEMPLO, [CAMPOS.valor]: mau }).valor, null, mau);
+Deno.test("o valor le-se com tolerancia, e o que nao se percebe fica nulo", () => {
+    assertEquals(traduzir({ ...TIP, [CAMPOS.valor]: "27.95" }).valor, 27.95);
+    assertEquals(traduzir({ ...TIP, [CAMPOS.valor]: "3,50" }).valor, 3.5);
+    assertEquals(traduzir({ ...TIP, [CAMPOS.valor]: "$14.00" }).valor, 14);
+    // Desconhecido le-se null, NUNCA zero: 0.00 e uma mentira que ninguem
+    // detecta depois.
+    for (const mau of ["catorze", "", ".", "-", "1.2.3"]) {
+        assertEquals(traduzir({ ...TIP, [CAMPOS.valor]: mau }).valor, null, mau);
     }
-    assert(p.id_externo.length > 0, "o resto do pagamento sobrevive");
-    assert(p.mensagem?.includes("BAR-7X2K"), "e o codigo continua la");
 });
 
-Deno.test("sem moeda tambem nao bloqueia", () => {
-    const sem = { ...EXEMPLO };
+Deno.test("um campo que nao manda em nada nao bloqueia o pagamento", () => {
+    const sem = { ...TIP };
     delete sem[CAMPOS.moeda];
-    assertEquals(traduzir(sem).moeda, null);
-});
-
-Deno.test("os nulos que a documentacao preve", () => {
-    // `shop_items` e `tier_name` sao "array ou null" e "string ou null";
-    // uma doacao sem texto traz `message` a null.
-    const p = traduzir({
-        ...EXEMPLO,
-        [CAMPOS.artigos]: null,
-        [CAMPOS.mensagem]: null,
-        tier_name: null,
-    });
-    assertEquals(p.sku, null);
-    assertEquals(p.mensagem, null);
-});
-
-Deno.test("pagamento de subscricao: entra, e sem codigo vai para a fila", () => {
-    // O app nao tem subscricoes (AGENTS.md), mas nada impede alguem de
-    // subscrever a PAGINA do Ko-fi. Cada renovacao dispara o webhook.
-    const p = traduzir({
-        ...EXEMPLO,
-        type: "Subscription",
-        is_subscription_payment: true,
-        is_first_subscription_payment: false,
-        tier_name: "Bronze",
-        [CAMPOS.mensagem]: null,
-    });
-    assertEquals(p.mensagem, null, "sem mensagem nao ha codigo");
-    assertEquals(p.sku, null, "e sem SKU nao ha acto");
-    // Sem acto nao credita: cai na fila. Provado em `cascata_test.ts`.
-});
-
-Deno.test("renovacao que repete a mensagem original nao credita outra vez", () => {
-    // Se o Ko-fi repetir o texto da primeira subscricao nas renovacoes, o
-    // BAR-XXXX vem outra vez. Nao credita: o codigo e de uso unico, e a
-    // segunda vinda encontra-o gasto (prova 3 do `assentar_pagamento.sql`).
-    const p = traduzir({ ...EXEMPLO, [CAMPOS.id]: "msg-renovacao" });
-    assertEquals(p.id_externo, "msg-renovacao", "id novo: nao e duplicado");
-    assert(p.mensagem?.includes("BAR-7X2K"), "e traz o mesmo codigo");
-});
-
-Deno.test("compra de loja a serio: varios artigos", () => {
-    // A documentacao mostra `shop_items` como lista e nao garante um so.
-    const p = traduzir({
-        ...EXEMPLO,
-        type: "Shop Order",
-        [CAMPOS.artigos]: [
-            { [CAMPOS.artigo_sku]: "1a2b3c4d5e" },
-            { [CAMPOS.artigo_sku]: "5e4d3c2b1a" },
-        ],
-    });
-    assertEquals(p.sku, null, "dois artigos nao se repartem: fila manual");
-});
-
-Deno.test("compra de loja: le o SKU de um artigo so", () => {
-    const p = traduzir({
-        ...EXEMPLO,
-        [CAMPOS.artigos]: [{ [CAMPOS.artigo_sku]: "SKU-SACRIFICIO" }],
-    });
-    assertEquals(p.sku, "SKU-SACRIFICIO");
-});
-
-Deno.test("varios artigos nao se repartem: vai para a fila", () => {
-    const p = traduzir({
-        ...EXEMPLO,
-        [CAMPOS.artigos]: [
-            { [CAMPOS.artigo_sku]: "SKU-A" },
-            { [CAMPOS.artigo_sku]: "SKU-B" },
-        ],
-    });
-    assertEquals(p.sku, null, "dois artigos num pagamento nao se adivinham");
+    delete sem[CAMPOS.valor];
+    const p = traduzir(sem);
+    assertEquals(p.moeda, null);
+    assertEquals(p.valor, null);
+    assert(p.mensagem !== null, "e o resto do pagamento sobrevive");
 });

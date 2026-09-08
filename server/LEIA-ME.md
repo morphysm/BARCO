@@ -46,28 +46,17 @@ nenhuma.
 
 ## O que falta, e nada disto e detalhe
 
-1. **Confirmar os nomes dos campos do payload — CONTINUA POR FAZER.**
-   `kofi_webhook/kofi.ts` tem-nos todos numa constante so, marcada.
+1. **Um payload de um pagamento a serio.** Os quatro exemplos que a
+   documentacao do Ko-fi publica estao em
+   `kofi_webhook/payloads/` e as provas correm contra eles: os nomes, os
+   tipos e a forma do `shop_items` batem todos certo. O que falta e ver
+   um payload da conta a serio — exemplos de documentacao nao sao
+   producao, e ha registo de que o proprio botao de teste do Ko-fi manda
+   payloads errados nalguns casos.
 
-   O que se conseguiu: a documentacao oficial do Ko-fi
-   (`help.ko-fi.com/hc/en-us/articles/360004162298`) responde **403**
-   daqui, por curl e por buscador. Cruzou-se com documentacao de
-   terceiros, que confirma os nomes usados e a forma de `shop_items`
-   (`[{ "direct_link_code": "..." }]`), e que `amount` vem como TEXTO e
-   nao como numero.
-
-   O que isso NAO e: o payload a serio que o §10.3 exige. Documentacao de
-   terceiros nao e a fonte, e ha um aviso registado de que **os proprios
-   disparos de teste do Ko-fi mandam payloads errados** nalguns casos —
-   portanto nem o botao de teste fecha esta questao sozinho. O
-   `payload_exemplo.json` que esta no repositorio foi escrito a mao; nao
-   veio de lado nenhum.
-
-   Fecha-se assim: apanhar um payload de um pagamento **a serio**,
-   guardar em `payload_exemplo.json` **com o token trocado por XXX**,
-   corrigir `CAMPOS` se for preciso, correr as provas.
-
-   Ate la o webhook nao deve estar ligado a uma conta a serio.
+   Quando aparecer: substituir o ficheiro em `payloads/`, **com o token
+   trocado por xxx**, e correr as provas. Sao elas que dizem se os nomes
+   ainda batem certo.
 
 2. **Criar os artigos na loja do Ko-fi** e escrever o `kofi_sku` de cada
    um na tabela `atos`. Sem isso o degrau do SKU nao existe e tudo

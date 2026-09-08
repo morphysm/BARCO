@@ -652,6 +652,32 @@ The payload carries a verification token and a unique message identifier.
 **Confirm the exact field names against a live test payload from the Ko-fi
 webhooks page before writing the parser. Do not assume the schema.**
 
+**Checked, 2026-09-08, against the four example payloads Ko-fi publishes**
+(tip, first monthly, membership tier, shop order), held in
+`server/functions/kofi_webhook/payloads/` and read by the proof suite.
+Every field name and type the parser assumes holds. `amount` is a string,
+not a number. Three findings, and the third was a bug:
+
+- **A shop order carries `message: null`.** There is nowhere to paste a
+  code in a shop purchase, so for the SKU rail the only route is SKU for
+  the act plus payer email for the person. That is the cascade above, and
+  it is why an email alone still had to be worth gathering.
+- **`shipping` is a full postal address**, and there are `discord_username`
+  and `discord_userid` besides. All of it lands in `pagamentos.raw`. That
+  is why `pagamentos` has no RLS policy at all: not tidiness, GDPR (§2,
+  operator in Sweden). Never expose that row to a client, not even to the
+  person who paid.
+- **`shop_items` entries carry `quantity`**, which was not known and was
+  not read. `quantity: 5` of one item is five acts; the parser was
+  returning the SKU and would have credited **one** — silently giving less
+  than was paid for. It now requires a single item of a single unit;
+  anything else goes to the manual queue, since one payment may produce at
+  most one credit (§3.3).
+
+Still open: these are documentation examples, not a payload observed from
+a real payment on the live account. The published examples and the test
+button can both differ from production.
+
 Requirements:
 
 - Verify the token before any processing. Reject silently otherwise.

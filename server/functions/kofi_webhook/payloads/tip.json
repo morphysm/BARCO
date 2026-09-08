@@ -1,0 +1,21 @@
+{
+  "verification_token": "xxxxxxxxxxxxxxxxxxxx",
+  "message_id": "325da3df-7b9c-48e2-b43d-a693968b8811",
+  "timestamp": "2026-09-08T01:01:06Z",
+  "type": "Donation",
+  "is_public": true,
+  "from_name": "Jo Example",
+  "message": "Good luck with the integration!",
+  "amount": "3.00",
+  "url": "https://ko-fi.com/Home/CoffeeShop?txid=00000000-1111-2222-3333-444444444444",
+  "email": "jo.example@example.com",
+  "currency": "USD",
+  "is_subscription_payment": false,
+  "is_first_subscription_payment": false,
+  "kofi_transaction_id": "00000000-1111-2222-3333-444444444444",
+  "shop_items": null,
+  "tier_name": null,
+  "shipping": null,
+  "discord_username": "Jo#4105",
+  "discord_userid": "012345678901234567"
+}
