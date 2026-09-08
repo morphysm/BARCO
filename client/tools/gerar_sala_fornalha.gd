@@ -194,10 +194,10 @@ func _chao() -> void:
 	# transparentes ordenam-se pela distancia do centro a camara: o centro
 	# do chao esta mais perto, entao vinha por cima e tapava o sigilo por
 	# inteiro. Nao era z-fighting nem falta de luz — era ordem.
-	var mat := _material_de_imagem(SIGILO_CHAO, false)
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.render_priority = 1
-	q.material = mat
+	var mat_sig := _material_de_imagem(SIGILO_CHAO, false)
+	mat_sig.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat_sig.render_priority = 1
+	q.material = mat_sig
 	sig.mesh = q
 	sig.rotation_degrees = Vector3(-90, 0, 0)
 	# 4 cm acima do chao, nao 6 mm: a 6 mm o plano do chao ganhava o
