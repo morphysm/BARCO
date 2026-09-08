@@ -117,7 +117,8 @@ select cmd, count(*) from pg_policies
 
 \echo ''
 \echo '8. as funcoes NAO se chamam com a chave publica'
-\echo '   (o revoke de anon/authenticated nao chegava: o EXECUTE vinha de PUBLIC)'
+\echo '   (as duas do webhook fechadas a toda a gente; as duas do jogador'
+\echo '    abertas SO a quem tem sessao — anon executar era a falha)'
 select
     p.proname as funcao,
     has_function_privilege('anon', p.oid, 'execute')           as anon_pode,
@@ -126,28 +127,49 @@ select
   from pg_proc p
   join pg_namespace n on n.oid = p.pronamespace
  where n.nspname = 'public'
-   and p.proname in ('assentar_pagamento', 'pessoa_por_email')
+   and p.proname in ('assentar_pagamento', 'pessoa_por_email',
+                     'pedir_codigo', 'gastar_credito')
  order by p.proname;
 
+-- Uma tabela de expectativas, funcao a funcao. Um `not anon and not
+-- authenticated` para todas estaria errado: as duas do jogador tem de
+-- responder a quem tem sessao, senao o cesto nao se pede.
 do $$
 declare
     r record;
+    esperado record;
 begin
-    for r in
-        select p.proname, p.oid from pg_proc p
-          join pg_namespace n on n.oid = p.pronamespace
-         where n.nspname = 'public'
-           and p.proname in ('assentar_pagamento', 'pessoa_por_email')
+    for esperado in
+        select * from (values
+            ('assentar_pagamento', false, false, true),
+            ('pessoa_por_email',   false, false, true),
+            ('pedir_codigo',       false, true,  true),
+            ('gastar_credito',     false, true,  true)
+        ) as t(nome, anon, autenticado, admin)
     loop
-        if has_function_privilege('anon', r.oid, 'execute')
-        or has_function_privilege('authenticated', r.oid, 'execute') then
-            raise exception 'FALHOU: % ainda se chama com a chave publica', r.proname;
+        select p.oid into r from pg_proc p
+          join pg_namespace n on n.oid = p.pronamespace
+         where n.nspname = 'public' and p.proname = esperado.nome;
+        if not found then
+            raise exception 'FALHOU: nao ha funcao %', esperado.nome;
         end if;
-        if not has_function_privilege('service_role', r.oid, 'execute') then
-            raise exception 'FALHOU: o admin nao pode chamar %', r.proname;
+        if has_function_privilege('anon', r.oid, 'execute') <> esperado.anon then
+            raise exception 'FALHOU: %, anon devia poder=% e pode=%',
+                esperado.nome, esperado.anon,
+                has_function_privilege('anon', r.oid, 'execute');
+        end if;
+        if has_function_privilege('authenticated', r.oid, 'execute')
+                <> esperado.autenticado then
+            raise exception 'FALHOU: %, authenticated devia poder=% e pode=%',
+                esperado.nome, esperado.autenticado,
+                has_function_privilege('authenticated', r.oid, 'execute');
+        end if;
+        if has_function_privilege('service_role', r.oid, 'execute') <> esperado.admin then
+            raise exception 'FALHOU: %, service_role devia poder=%',
+                esperado.nome, esperado.admin;
         end if;
     end loop;
-    raise notice 'ok: fechadas a chave publica, abertas ao admin';
+    raise notice 'ok: as quatro funcoes com o privilegio que lhes cabe';
 end $$;
 
 \echo ''

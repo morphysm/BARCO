@@ -9,3 +9,10 @@ create table auth.users (id uuid primary key, email text);
 create function auth.uid() returns uuid language sql stable as $$
   select nullif(current_setting('request.jwt.claims', true)::jsonb->>'sub', '')::uuid
 $$;
+
+-- O que faltava aqui e o que deixou passar a falha do `pedir_codigo` e
+-- do `gastar_credito`: o Supabase da EXECUTE aos papeis publicos em
+-- cada funcao nova de `public`, nominalmente. Sem isto, o arnes criava
+-- as funcoes fechadas por si e a prova dizia que estava tudo bem.
+alter default privileges in schema public
+    grant execute on functions to anon, authenticated, service_role;
