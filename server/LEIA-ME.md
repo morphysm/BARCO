@@ -73,17 +73,20 @@ nenhuma.
 
 ## O que falta, e nada disto e detalhe
 
-1. **Um payload de um pagamento a serio.** Os quatro exemplos que a
-   documentacao do Ko-fi publica estao em
-   `kofi_webhook/payloads/` e as provas correm contra eles: os nomes, os
-   tipos e a forma do `shop_items` batem todos certo. O que falta e ver
-   um payload da conta a serio — exemplos de documentacao nao sao
-   producao, e ha registo de que o proprio botao de teste do Ko-fi manda
-   payloads errados nalguns casos.
+1. ~~Um payload de um pagamento a serio.~~ **FEITO, 08-09-2026.** Duas
+   entregas do Ko-fi chegaram ao endereco a serio, uma doacao e uma
+   compra, e foram lidas campo a campo do `pagamentos.raw`. Todos os
+   nomes e tipos que o parser assume batem certo, incluindo o `quantity`
+   dentro do `shop_items`, que veio a 5 numa das linhas da compra.
 
-   Quando aparecer: substituir o ficheiro em `payloads/`, **com o token
-   trocado por xxx**, e correr as provas. Sao elas que dizem se os nomes
-   ainda batem certo.
+   As duas foram para a fila manual, como devia ser: nao ha conta com
+   aquele email, nao foi emitido codigo nenhum e ainda nao ha `kofi_sku`
+   mapeado.
+
+   Os ficheiros em `payloads/` continuam a ser os exemplos da
+   documentacao e nao as entregas observadas — essas trazem um email a
+   serio, identificadores de Discord e uma morada postal, e o feitio dos
+   campos e igual, que era o que faltava confirmar.
 
 2. **Criar os artigos na loja do Ko-fi** e escrever o `kofi_sku` de cada
    um na tabela `atos`. Sem isso o degrau do SKU nao existe e tudo

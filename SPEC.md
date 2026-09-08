@@ -674,9 +674,25 @@ not a number. Three findings, and the third was a bug:
   anything else goes to the manual queue, since one payment may produce at
   most one credit (§3.3).
 
-Still open: these are documentation examples, not a payload observed from
-a real payment on the live account. The published examples and the test
-button can both differ from production.
+**Closed, 2026-09-08.** Two deliveries arrived from Ko-fi at the live
+endpoint — a Donation and a Shop Order — and were read field by field out
+of `pagamentos.raw`. Every name and type the parser assumes is there and
+matches: `amount` a string (`"3.00"`), `message` a string on the tip and
+`null` on the shop order, `shop_items` `null` or a list, and each item
+carrying exactly `direct_link_code`, `quantity` and `variation_name`.
+
+The real shop order came with `quantity: 5` on one of its items. That is
+the field found late and read wrong before, and it is the one that would
+have credited a single act for a purchase of five.
+
+Both went to the manual queue, correctly: no account matches the payer
+email, no code was issued, and no `kofi_sku` is mapped yet. Nothing was
+credited on a guess.
+
+The fixtures in `payloads/` stay as the documentation examples rather than
+the observed deliveries: those carry a real email, Discord ids and a
+postal address, and the field shapes are identical anyway — which is what
+this check established.
 
 Requirements:
 
