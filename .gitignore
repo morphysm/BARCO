@@ -14,5 +14,13 @@ capturas/
 __pycache__/
 *.pyc
 
+# Supabase — o CLI escreve aqui o estado da ligacao ao projecto.
+# Hoje nao ha segredo nenhum la dentro, mas e uma pasta de trabalho do
+# CLI e e ele que decide o que la poe: `supabase db pull` e
+# `supabase link --password` ja escreveram credenciais em versoes
+# anteriores. Fora do git, e a duvida acaba.
+supabase/.temp/
+supabase/.branches/
+
 # Builds
 build/

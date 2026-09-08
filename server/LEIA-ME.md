@@ -1,0 +1,86 @@
+# server
+
+Supabase. Postgres com RLS, Edge Functions em Deno.
+
+Nada disto esta ligado a uma conta ainda. Ver **O que falta** ao fundo.
+
+## Provar sem conta nenhuma
+
+```sh
+# a SQL: aplica as migracoes a um Postgres descartavel e exercita
+# o `assentar_pagamento` (precisa de docker)
+server/prova/correr.sh
+
+# o TypeScript: cascata, traducao do payload, leitura das chaves
+docker run --rm -v "$PWD":/w -w /w denoland/deno:latest \
+    deno test --allow-read --allow-net --allow-env server/functions/
+```
+
+## O que ha
+
+```
+migrations/
+  ..._pagamentos.sql          atos, codigos, pagamentos, creditos, reconciliacao
+  ..._rls.sql                 quem ve o que. As tabelas de dinheiro nao se leem
+  ..._assentar_pagamento.sql  a escrita, tudo ou nada, numa transacao
+  ..._pessoa_por_email.sql    email do pagador -> pessoa, porta estreita
+functions/
+  _shared/pagamento.ts        o tipo `Pagamento`. Nao sabe o que e o Ko-fi (§10.5)
+  _shared/cascata.ts          de quem e, e o que paga. Nunca adivinha
+  _shared/ambiente.ts         as chaves, lidas com verificacao
+  kofi_webhook/kofi.ts        a traducao do payload. NOMES POR CONFIRMAR
+  kofi_webhook/index.ts       o handler
+```
+
+## As chaves
+
+| Variavel | Quem a poe |
+|---|---|
+| `SUPABASE_URL` | o Supabase, sozinho |
+| `SUPABASE_SECRET_KEYS` | o Supabase, sozinho. Dicionario JSON; usa-se a entrada `default`, que passa por cima do RLS |
+| `KOFI_VERIFICATION_TOKEN` | **tu**, a mao, nas definicoes da funcao |
+
+O token do Ko-fi esta em `ko-fi.com/manage/webhooks`. Nao entra no
+repositorio, nao entra em ficheiro nenhum, nao se cola em conversa
+nenhuma.
+
+## O que falta, e nada disto e detalhe
+
+1. **Confirmar os nomes dos campos do payload — CONTINUA POR FAZER.**
+   `kofi_webhook/kofi.ts` tem-nos todos numa constante so, marcada.
+
+   O que se conseguiu: a documentacao oficial do Ko-fi
+   (`help.ko-fi.com/hc/en-us/articles/360004162298`) responde **403**
+   daqui, por curl e por buscador. Cruzou-se com documentacao de
+   terceiros, que confirma os nomes usados e a forma de `shop_items`
+   (`[{ "direct_link_code": "..." }]`), e que `amount` vem como TEXTO e
+   nao como numero.
+
+   O que isso NAO e: o payload a serio que o §10.3 exige. Documentacao de
+   terceiros nao e a fonte, e ha um aviso registado de que **os proprios
+   disparos de teste do Ko-fi mandam payloads errados** nalguns casos —
+   portanto nem o botao de teste fecha esta questao sozinho. O
+   `payload_exemplo.json` que esta no repositorio foi escrito a mao; nao
+   veio de lado nenhum.
+
+   Fecha-se assim: apanhar um payload de um pagamento **a serio**,
+   guardar em `payload_exemplo.json` **com o token trocado por XXX**,
+   corrigir `CAMPOS` se for preciso, correr as provas.
+
+   Ate la o webhook nao deve estar ligado a uma conta a serio.
+
+2. **Criar os artigos na loja do Ko-fi** e escrever o `kofi_sku` de cada
+   um na tabela `atos`. Sem isso o degrau do SKU nao existe e tudo
+   depende do codigo colado na mensagem.
+
+3. **A vista de administracao da fila** (§10.4: "a first-class feature
+   with a small admin view, not a TODO"). A tabela `reconciliacao` existe
+   e enche-se sozinha; falta por onde a resolver.
+
+   Quando a escreveres: creditar e um `insert` em `creditos` com o
+   `source_payment_id` do pagamento da fila, e a restricao
+   `creditos_um_por_pagamento` trata de impedir o segundo clique. Nao lhe
+   ponhas uma verificacao a mao por cima nem a contornes.
+
+4. **O lado do cliente**: pedir um codigo, mostra-lo, abrir o link do
+   Ko-fi, e esperar pelo credito.

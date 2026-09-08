@@ -217,8 +217,9 @@ file is enough.
   Two designed mechanics need a phone and cannot ship on desktop: pouring
   by tilting the device (§8.1) and the `asmodeu` seal that reads how the
   device is held (GDD §3.1). Both wait for the phone build.
-- **Server:** Supabase or Pocketbase. Hosted in the EU (operator is in Sweden;
-  GDPR applies).
+- **Server:** Supabase — decided, not open any more. Postgres with RLS,
+  Edge Functions in Deno. Hosted in the EU (operator is in Sweden; GDPR
+  applies). `server/LEIA-ME.md` says how to prove it without an account.
 - **Payments:** Ko-fi, out of band, reconciled by webhook.
 
 ### Repo layout
@@ -315,6 +316,19 @@ reconciliacao   id, kofi_message_id, raw jsonb, resolved_by, resolved_at
 
 `pagamentos.kofi_message_id` carries a UNIQUE constraint. That constraint is
 the idempotency guarantee — do not rely on application-level checks alone.
+
+For the same reason, `creditos.source_payment_id` is UNIQUE: **one payment,
+at most one credit.** The code channel was already single-use — `codigos.usado_em`,
+set inside the settling transaction with `and usado_em is null` in the UPDATE
+itself, so the check and the mark are one atomic step — and a Ko-fi retry
+already stopped at the message id. What was missing was the constraint on
+the other side. No path writes a second credit today, but the manual queue
+resolver (§10.4) does not exist yet, and the obvious way to write it —
+*credit this queued payment* — doubles on a second click. The defence cannot
+be the care of whoever writes that view.
+
+If a payment ever has to pay for more than one act, that constraint is what
+gets rethought. It is not to be worked around with a second credit row.
 
 ---
 
@@ -659,6 +673,23 @@ code in message  ->  payer email match  ->  manual queue
 
 Never auto-credit on a guess. The manual queue is a first-class feature with a
 small admin view, not a TODO.
+
+**Correction, found while building it.** That queue is not a queue,
+because its steps do not answer the same question. Crediting needs two:
+*whose payment is this*, and *what act does it pay for*.
+
+- The code answers both. The app issued it and knows who for and what for.
+- A **shop SKU answers only the what.** An item does not know who bought it.
+- A **payer email answers only the who.** The amount cannot pick the act:
+  two acts cost 1 coffee, two cost 3, two cost 7 (§10.1).
+
+So the implementation gathers what each step knows and credits only when
+both answers exist. An email alone yields a person and no act, and that is
+not a credit — it is a queue entry with the person already identified,
+which is most of the work done for whoever resolves it. Inferring the act
+from the amount would have been exactly the guess §10.4 forbids.
+
+`server/functions/_shared/cascata.ts`, proved in `cascata_test.ts`.
 
 More robust alternative, prefer where possible: **one Ko-fi Shop item per act**,
 fixed SKU, no dependence on typed text.
