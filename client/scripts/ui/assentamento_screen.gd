@@ -717,6 +717,12 @@ func _registar(oferenda: Oferenda, onde: Vector2) -> void:
 		var no := get_node_or_null(NodePath("%s_%d" % [oferenda.slug, _depositos.size()]))
 		if no != null:
 			no.add_to_group("vela", true)
+			# E a chama, quando o modelo nao a traz. Sem isto uma vela
+			# vermelha deposta ficava apagada ao lado da vermelha da cena,
+			# que esta marcada a mao no `.tscn` — a mesma vela, uma acesa
+			# e a outra nao.
+			if oferenda.sem_chama:
+				no.add_to_group("sem_chama", true)
 	_depositos.append({"oferenda": oferenda.slug, "x": onde.x, "y": onde.y})
 
 
