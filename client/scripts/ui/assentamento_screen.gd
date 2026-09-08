@@ -125,7 +125,7 @@ var _papeis: Array[Papel] = []
 var _menu: CanvasLayer
 var _escrita: TextEdit
 var _lista: Label
-var _folhas: HBoxContainer
+var _folhas: HFlowContainer
 ## As folhas desenhadas no menu, para se irem queimando enquanto o menu
 ## esta aberto em vez de ficarem paradas no instante em que abriu.
 var _folhas_vivas: Array[Dictionary] = []
@@ -139,7 +139,11 @@ var _folhas_vivas: Array[Dictionary] = []
 ##
 ## O tridente e LIDO, nunca movido: e fundamento travado. Se ele mudar de
 ## sitio, os papeis acompanham-no sozinhos.
-const LANCA := "tridente"
+## As duas lancas. Os `pedidos` repartem-se pelas duas, alternando — um
+## tridente cheio e outro vazio ao lado nao e o que a nganga mostra.
+const LANCAS := ["tridente", "tridente2"]
+## O passo entre papeis quando ha espaco de sobra, em metros.
+const PASSO_NA_LANCA := 0.055
 
 ## O gesto de depor (GDD §5.2, SPEC.md §8.1): pega-se numa `oferenda` na
 ## tira de baixo e arrasta-se ate ao sitio. O que se arrasta ja e o proprio
@@ -281,32 +285,96 @@ func _por_papel(p: Pedido) -> void:
 	# Limpar os que ja arderam antes de contar: senao o proximo papel
 	# entrava sempre mais abaixo, mesmo com a lanca vazia.
 	_papeis = _papeis.filter(func(x): return x != null and is_instance_valid(x))
-	papel.position = _na_lanca(_papeis.size())
+	# O desvio e deste papel para sempre. Sorteado a cada arrumacao, os
+	# papeis antigos saltavam de sitio de cada vez que um novo chegava.
+	papel.desvio = Vector3(
+		randf_range(-0.016, 0.016), 0.0, randf_range(-0.014, 0.014))
 	papel.rotation_degrees = Vector3(0, randf_range(-38.0, 38.0), randf_range(-7.0, 7.0))
 	_papeis.append(papel)
+	_arrumar_papeis()
 
 
-## Onde espetar o enesimo papel: junto as pontas do tridente, cada um um
-## pouco mais abaixo, como quem vai enfiando papeis na mesma lanca.
-func _na_lanca(indice: int) -> Vector3:
-	var lanca := get_node_or_null(NodePath(LANCA))
-	if lanca == null or not lanca is Node3D:
-		return Vector3(0.0, 0.40, 0.05)
-	var caixa := _caixa_mundo(lanca)
-	if caixa.size == Vector3.ZERO:
-		return Vector3(0.0, 0.40, 0.05)
-	var centro := caixa.get_center()
-	# Abaixo das pontas, a descer com cada papel novo. Um papel tem 7,7 cm
-	# de alto: descer so 3,5 cm punha-os todos no mesmo sitio, a brigarem
-	# pela mesma profundidade. Descem mais, e cada um entra ligeiramente ao
-	# lado, como papeis enfiados a pressa no mesmo ferro.
-	var altura: float = caixa.end.y - 0.05 - float(indice) * 0.062
-	var lado := Vector3(
-		randf_range(-0.016, 0.016), 0.0, randf_range(-0.014, 0.014))
-	return Vector3(centro.x, maxf(altura, caixa.position.y + 0.02), centro.z) + lado
+## Reparte os papeis pelas lancas e espeta-os.
+##
+## Arruma TODOS de cada vez, e nao so o que acabou de chegar.
+##
+## Antes cada papel entrava 6,2 cm abaixo do anterior e travava no fundo
+## da lanca. Com 27 cm de ferro cabiam QUATRO: do quinto em diante ficavam
+## todos no mesmo ponto, um monte onde nao se lia nada e onde nem se
+## percebia quantos eram. Com dez pedidos era o que se via.
+##
+## Agora repartem-se pelas duas lancas, alternando, e cada lanca espalha
+## os seus pela altura que tem. Enquanto ha folga guardam o passo de 5,5
+## cm; a partir dai apertam-se, que e o que papel enfiado num ferro faz.
+## Nunca se acumulam num ponto so.
+func _arrumar_papeis() -> void:
+	# A boca do caldeirao e o chao das lancas. Sem isto os papeis descem
+	# pelo ferro abaixo e vao pairar a frente da barriga da panela: o
+	# `tridente2` esta quase todo DENTRO do caldeirao — de 27 cm de ferro
+	# so 7 lhe saem acima da boca — e era ai que os de baixo iam parar.
+	var boca := 0.0
+	var caldeirao := get_node_or_null(NodePath("cauldron"))
+	if caldeirao is Node3D:
+		boca = _caixa_mundo(caldeirao).end.y
+
+	var altos: Array[float] = []
+	var baixos: Array[float] = []
+	var centros: Array[Vector3] = []
+	for nome in LANCAS:
+		var lanca := get_node_or_null(NodePath(nome))
+		if not lanca is Node3D:
+			continue
+		var c := _caixa_mundo(lanca)
+		if c.size == Vector3.ZERO:
+			continue
+		var cima := c.end.y - 0.03
+		var baixo := maxf(c.position.y + 0.03, boca + 0.012)
+		if cima - baixo < 0.005:
+			continue                      # esta lanca nao sai do caldeirao
+		altos.append(cima)
+		baixos.append(baixo)
+		centros.append(c.get_center())
+
+	if altos.is_empty():
+		for papel in _papeis:
+			papel.position = Vector3(0.0, 0.40, 0.05) + papel.desvio
+		return
+
+	# Reparte-se por ALTURA UTIL e nao a meias: as duas lancas nao mostram
+	# o mesmo tanto de ferro, e dar metade a cada uma enchia a curta ao
+	# dobro da outra.
+	var util := 0.0
+	for i in altos.size():
+		util += altos[i] - baixos[i]
+	var quota: Array[int] = []
+	var postos := 0
+	for i in altos.size():
+		var q := int(round(float(_papeis.size()) * (altos[i] - baixos[i]) / util))
+		quota.append(q)
+		postos += q
+	# O arredondamento nunca fica a dever nem a sobrar: acerta-se na maior.
+	if postos != _papeis.size() and not quota.is_empty():
+		var maior := 0
+		for i in altos.size():
+			if altos[i] - baixos[i] > altos[maior] - baixos[maior]:
+				maior = i
+		quota[maior] += _papeis.size() - postos
+
+	var n := 0
+	for i in altos.size():
+		var quantos: int = quota[i]
+		var passo := PASSO_NA_LANCA
+		if quantos > 1:
+			passo = minf(PASSO_NA_LANCA, (altos[i] - baixos[i]) / float(quantos - 1))
+		for vez in quantos:
+			if n >= _papeis.size():
+				break
+			_papeis[n].position = Vector3(
+				centros[i].x, altos[i] - float(vez) * passo, centros[i].z
+			) + _papeis[n].desvio
+			n += 1
 
 
-## Poe um pedido a arder. Sete dias, e nao ha como o tirar de la.
 func acender_pedido(texto: String) -> void:
 	var limpo := texto.strip_edges()
 	if limpo.is_empty():
@@ -423,11 +491,20 @@ func _montar_menu() -> void:
 	_menu.add_child(fundo)
 
 	# Uma coluna estreita ao centro, e nao a largura toda.
+	# Uma faixa estreita ao centro, do topo ao fundo. Presa em baixo
+	# tambem, e nao so em cima: assim o rolo das folhas cresce com o ecra
+	# em vez de ficar com uma altura escolhida a mao que sobra num monitor
+	# e falta noutro.
 	var coluna := VBoxContainer.new()
-	coluna.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	coluna.set_anchors_preset(Control.PRESET_VCENTER_WIDE)
+	coluna.anchor_left = 0.5
+	coluna.anchor_right = 0.5
+	coluna.anchor_top = 0.0
+	coluna.anchor_bottom = 1.0
 	coluna.offset_left = -LARGURA_DO_MENU * 0.5
 	coluna.offset_right = LARGURA_DO_MENU * 0.5
 	coluna.offset_top = 44
+	coluna.offset_bottom = -44
 	coluna.add_theme_constant_override("separation", 14)
 	_menu.add_child(coluna)
 
@@ -481,11 +558,30 @@ func _montar_menu() -> void:
 
 	# As folhas, como estao agora. E para isto que o menu serve: ver o
 	# papel a decompor-se, nao ler uma percentagem.
-	_folhas = HBoxContainer.new()
-	_folhas.custom_minimum_size = Vector2(0, 300)
-	_folhas.alignment = BoxContainer.ALIGNMENT_CENTER
-	_folhas.add_theme_constant_override("separation", 18)
-	coluna.add_child(_folhas)
+	#
+	# `HFlowContainer` dentro de um rolo, e nao uma fila. Era uma
+	# `HBoxContainer`, e uma fila cresce para o lado sem fim: dez folhas
+	# de 288 px davam 3042 px de largura minima, a coluna esticava-se para
+	# as conter — porque um contentor nunca fica mais pequeno do que o que
+	# tem dentro — e a pagina inteira saía pela direita do ecra. Com dez
+	# pedidos escritos, o titulo e os botoes iam parar fora da vista.
+	#
+	# Assim as folhas mudam de linha, o rolo tem altura fixa, e a coluna
+	# fica com a largura que se lhe deu, tenha um pedido ou cinquenta.
+	var rolo := ScrollContainer.new()
+	rolo.custom_minimum_size = Vector2(0, 200)
+	rolo.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	rolo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Come o que sobrar da altura, seja ela qual for.
+	rolo.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	coluna.add_child(rolo)
+
+	_folhas = HFlowContainer.new()
+	_folhas.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_folhas.alignment = FlowContainer.ALIGNMENT_CENTER
+	_folhas.add_theme_constant_override("h_separation", 16)
+	_folhas.add_theme_constant_override("v_separation", 14)
+	rolo.add_child(_folhas)
 
 	# Bancada. LONGE do `voltar`: estavam lado a lado, e o que apaga tudo
 	# nao pode ficar ao pe do que fecha a janela.
@@ -549,7 +645,9 @@ func _actualizar_lista() -> void:
 		caixa.add_theme_constant_override("separation", 6)
 		var folha := TextureRect.new()
 		folha.texture = papel.escrito()
-		folha.custom_minimum_size = Vector2(288, 192)
+		# 168 de largo: quatro por linha nos 760 da coluna, com folga para
+		# a separacao. A 288 cabiam duas e meia, e a meia empurrava.
+		folha.custom_minimum_size = Vector2(168, 112)
 		folha.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		folha.stretch_mode = TextureRect.STRETCH_SCALE
 		var m := ShaderMaterial.new()
