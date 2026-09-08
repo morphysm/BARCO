@@ -22,7 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://b5nuab7ea272w" path="res://resources/modelos/stick_de_exu.glb" id="20_3no75"]
 [ext_resource type="Texture2D" uid="uid://teo1omts4txa" path="res://resources/imagens/morphysm sigil STONE.png" id="21_1cp6m"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_61fvw"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5j7es"]
 albedo_color = Color(0.06, 0.055, 0.05, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l7rw8"]
@@ -48,15 +48,15 @@ luz_de_bancada = 0.022
 
 [node name="Camara" type="Camera3D" parent="." unique_id=304538616]
 transform = Transform3D(0.1302146, -0.28530753, 0.9495493, 0.01312589, 0.95811546, 0.28608134, -0.99139893, -0.024788298, 0.12850553, 0.63577217, 0.59248334, 0.112686396)
+v_offset = -0.12
 projection = 1
 current = true
 size = 1.14
-v_offset = -0.12
 near = 0.005
 
 [node name="Chao" type="MeshInstance3D" parent="." unique_id=1482930216]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9192696e-05, 0, -0.0018177032)
-material_override = SubResource("StandardMaterial3D_61fvw")
+material_override = SubResource("StandardMaterial3D_5j7es")
 mesh = SubResource("PlaneMesh_l7rw8")
 
 [node name="cauldron" parent="." unique_id=112582217 instance=ExtResource("2_5gom5")]
@@ -78,10 +78,10 @@ transform = Transform3D(0.041126154, 0.01819514, 0.17251506, -0.17319596, 0.0143
 transform = Transform3D(0.0653307, 0, -0.054818965, -0.051465493, -0.029370755, -0.06133419, -0.018879155, 0.08006609, -0.0224993, 0.0056555755, 0.35405514, 0.0019304119)
 
 [node name="rusty_chains" parent="." unique_id=2020464425 instance=ExtResource("5_dkeok")]
-transform = Transform3D(0.023266522, 3.1172728e-10, 0.16822048, 0.0058060214, 0.16972066, -0.00080302916, -0.16812027, 0.0058612917, 0.023252662, 0.54588664, 0.021091193, -0.0023003407)
+transform = Transform3D(0.023266522, 3.1172728e-10, 0.16822048, 0.0058060214, 0.16972066, -0.00080302916, -0.16812027, 0.0058612917, 0.023252662, 0.54588664, 0.021091193, -0.011464875)
 
 [node name="rusty_chains2" parent="." unique_id=2020604383 instance=ExtResource("5_dkeok")]
-transform = Transform3D(0.076256685, 0.013704011, -0.15111776, 0.0041717575, 0.16887453, 0.017419424, 0.15168048, -0.01153429, 0.07549467, 0.39256528, 0.019232847, -0.28242567)
+transform = Transform3D(0.10866069, 0.010732023, -0.13006589, 0.004171757, 0.16887453, 0.017419422, 0.1304412, -0.0143409725, 0.107790925, 0.39256528, 0.019232847, -0.2875089)
 
 [node name="rusty_chains5" parent="." unique_id=164536658 instance=ExtResource("5_dkeok")]
 transform = Transform3D(0.1604357, 0.016830187, -0.05307158, -0.018036583, 0.16885847, -0.00097587117, 0.052673813, 0.0065586055, 0.16131312, 0.12241489, 0.05986795, -0.39389646)

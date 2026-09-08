@@ -3,9 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbtch4vj3c42r"
-path="res://.godot/imported/cigarro_Image_0.png-fb235bed5c575e051fc72516e50ea0c8.ctex"
+path.s3tc="res://.godot/imported/cigarro_Image_0.png-fb235bed5c575e051fc72516e50ea0c8.s3tc.ctex"
+path.etc2="res://.godot/imported/cigarro_Image_0.png-fb235bed5c575e051fc72516e50ea0c8.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "77aa26ac52f5968bf9985a6c8a24120f"
@@ -14,11 +16,11 @@ generator_parameters={
 [deps]
 
 source_file="res://resources/modelos/cigarro_Image_0.png"
-dest_files=["res://.godot/imported/cigarro_Image_0.png-fb235bed5c575e051fc72516e50ea0c8.ctex"]
+dest_files=["res://.godot/imported/cigarro_Image_0.png-fb235bed5c575e051fc72516e50ea0c8.s3tc.ctex", "res://.godot/imported/cigarro_Image_0.png-fb235bed5c575e051fc72516e50ea0c8.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +42,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
