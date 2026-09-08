@@ -113,3 +113,48 @@ func pedir_codigo(cesto: Dictionary) -> String:
 		return ""
 	var d = JSON.parse_string((r[3] as PackedByteArray).get_string_from_utf8())
 	return str(d) if typeof(d) == TYPE_STRING else ""
+
+
+## Gasta um credito de `slug`. Devolve se conseguiu.
+##
+## Quem marca e o SERVIDOR: o cliente nao tem politica de escrita sobre
+## `creditos`, e nao pode ter. Se pudesse marcar um credito como gasto,
+## podia marca-lo como por gastar.
+##
+## Falha quando nao ha credito, quando nao ha sessao, e quando nao ha
+## rede. Nos tres casos nao se depoe nada — dar a oferenda sem gastar o
+## credito era da-la de graca, e recusar depois de ela estar pousada era
+## pior.
+func gastar(slug: String) -> bool:
+	if _servidor == null or slug == "":
+		return false
+	if not Conta.ha():
+		await Conta.entrar()
+		if not Conta.ha():
+			return false
+
+	var pedido := HTTPRequest.new()
+	add_child(pedido)
+	var erro := pedido.request(
+		_servidor.url + "/rest/v1/rpc/gastar_credito",
+		Conta.cabecalhos(), HTTPClient.METHOD_POST,
+		JSON.stringify({"p_ato_slug": slug}))
+	if erro != OK:
+		pedido.queue_free()
+		return false
+	var r: Array = await pedido.request_completed
+	pedido.queue_free()
+	if int(r[1]) < 200 or int(r[1]) >= 300:
+		return false
+	var d = JSON.parse_string((r[3] as PackedByteArray).get_string_from_utf8())
+	if d != true:
+		return false
+	# A conta local acompanha, para a tira nao continuar a mostrar um
+	# credito que ja foi gasto ate a proxima leitura do servidor.
+	var n: int = int(_por_gastar.get(slug, 0)) - 1
+	if n > 0:
+		_por_gastar[slug] = n
+	else:
+		_por_gastar.erase(slug)
+	mudaram.emit()
+	return true

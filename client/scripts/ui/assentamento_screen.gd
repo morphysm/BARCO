@@ -176,6 +176,9 @@ func _ready() -> void:
 		# isso e adiado, e refeito sempre que a janela muda de largura.
 		call_deferred("_ajustar_faixa")
 		get_viewport().size_changed.connect(_ajustar_faixa)
+		# O que ja esta comprado e por gastar. Silencioso: sem rede o
+		# ritual segue, so nao se depoe o que se paga.
+		Creditos.actualizar()
 	_vestir()
 	if not Engine.is_editor_hint() and Passagem.iris_a_abrir:
 		Passagem.iris_a_abrir = false
@@ -457,6 +460,10 @@ func _montar_tira() -> void:
 	# O ESC continua a servir, mas ninguem adivinha uma tecla que nao
 	# esta escrita em lado nenhum.
 	# TODO(CONTENT.pt.md): rotulo autoral.
+	var comprar := Pagina.botao("comprar", 20)
+	comprar.pressed.connect(abrir_balcao)
+	linha_livre.add_child(comprar)
+
 	var escrever := Pagina.botao("escrever um pedido · grátis", 20)
 	escrever.pressed.connect(_alternar_menu)
 	linha_livre.add_child(escrever)
@@ -711,6 +718,36 @@ func _ajustar_faixa() -> void:
 	_coluna_da_tira.offset_top = -alto + 10.0
 
 
+## O balcao. E outra sala: aqui compra-se, no `assentamento` depoe-se.
+##
+## Criado a pedido e nao ao arrancar: quem nunca comprar nada nunca o vai
+## ver, e uma tela que ninguem abre nao precisa de existir antes de ser
+## aberta.
+var _balcao: Comprar
+
+
+func abrir_balcao() -> void:
+	if _balcao != null and is_instance_valid(_balcao):
+		_balcao.visible = true
+		return
+	var lista: Array[Oferenda] = []
+	for caminho in _oferendas_disponiveis():
+		var o: Oferenda = load(caminho)
+		if o != null:
+			lista.append(o)
+	lista.sort_custom(func(a, b): return a.nome < b.nome)
+	_balcao = Comprar.new(lista)
+	_balcao.fechou.connect(_fechar_balcao)
+	add_child(_balcao)
+
+
+func _fechar_balcao() -> void:
+	if _balcao != null and is_instance_valid(_balcao):
+		_balcao.visible = false
+	# Ao sair do balcao, ve-se o que entretanto chegou.
+	Creditos.actualizar()
+
+
 func _oferendas_disponiveis() -> Array[String]:
 	var saida: Array[String] = []
 	for f in ResourceLoader.list_directory("res://resources/oferendas/"):
@@ -722,8 +759,23 @@ func _oferendas_disponiveis() -> Array[String]:
 	return saida
 
 
+## Pegar numa oferenda para a depor.
+##
+## SEM CREDITO, O ARRASTO NAO COMECA. Abre-se o balcao e mais nada.
+##
+## E nao "comeca e e recusado ao largar" de proposito: deixar alguem fazer
+## o gesto inteiro para depois lhe dizer que nao valia era pior do que
+## nao o deixar comecar. Um gesto que nao conta nao se faz.
+##
+## A conta que se olha aqui e a local, que o `Creditos` traz do servidor.
+## Pode estar velha — alguem pode ter gasto o credito noutro sitio — e por
+## isso quem decide a serio e o servidor, ao largar. Aqui so se evita
+## comecar um gesto obviamente vao.
 func _comecar_a_depor(oferenda: Oferenda) -> void:
 	if _na_mao != null:
+		return
+	if oferenda.cafes > 0 and Creditos.quantos(oferenda.slug) <= 0:
+		abrir_balcao()
 		return
 	_na_mao = _pegar(oferenda)
 	if _na_mao == null:
@@ -754,15 +806,31 @@ func _input(evento: InputEvent) -> void:
 ## para sempre. Se nao chegou, nunca chegou a ser deposto: isto nao e um
 ## desfazer, e um gesto que nao se completou.
 func _largar(onde: Variant) -> void:
-	if onde == null:
-		_na_mao.queue_free()
-	else:
-		_assentar(_na_mao, onde)
-		_registar(_oferenda_na_mao, onde)
-		guardar_depositos()
-		_vestir()
+	var oferenda := _oferenda_na_mao
+	var na_mao := _na_mao
 	_na_mao = null
 	_oferenda_na_mao = null
+
+	if onde == null:
+		na_mao.queue_free()
+		return
+
+	# GASTA-SE ANTES DE POUSAR. Quem marca o credito e o servidor, e se
+	# ele nao marcar — sem rede, sem sessao, ou porque o credito ja foi
+	# gasto noutro sitio — a oferenda nao fica. Pousar primeiro e cobrar
+	# depois era arriscar da-la de graca; e uma oferenda que aparece e
+	# desaparece e pior do que uma que nao chega a aparecer.
+	if oferenda != null and oferenda.cafes > 0:
+		var deu: bool = await Creditos.gastar(oferenda.slug)
+		if not deu:
+			na_mao.queue_free()
+			abrir_balcao()
+			return
+
+	_assentar(na_mao, onde)
+	_registar(oferenda, onde)
+	guardar_depositos()
+	_vestir()
 
 
 ## Onde o dedo cai no chao do `assentamento`, ou null se caiu fora.
