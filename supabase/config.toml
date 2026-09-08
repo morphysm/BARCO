@@ -413,3 +413,14 @@ enabled = true
 # formatted with uppercase keywords, indent 2, max width 180, trailing commas,
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
+
+# O Ko-fi faz POST sem um JWT do Supabase — nao e um cliente autenticado,
+# e uma maquina de fora. Com a verificacao ligada, o gateway responde 401
+# ANTES de o codigo da funcao correr, e o webhook nunca funcionava: o
+# Ko-fi reenviava para sempre contra uma porta fechada.
+#
+# Desligar isto NAO deixa a funcao aberta. O portao e o
+# `verification_token` do Ko-fi, comparado em tempo constante logo a
+# entrada, e quem nao o traz leva 401 na mesma — so que dado por nos.
+[functions.kofi_webhook]
+verify_jwt = false
