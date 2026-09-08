@@ -20,6 +20,12 @@ run/main_scene="res://scenes/porta.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 run/main_scene.cenario="res://scenes/assentamento_cenario.tscn"
 
+[autoload]
+
+; A identidade de quem esta a usar o app. Anonima, criada sozinha na
+; primeira abertura, e nunca trava o ritual — ver `conta.gd`.
+Conta="*res://scripts/ritual/conta.gd"
+
 [display]
 
 window/size/viewport_width=1600
