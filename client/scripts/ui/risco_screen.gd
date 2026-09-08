@@ -68,11 +68,17 @@ func _ready() -> void:
 	# Atravessa-se uma vez. Quem ja riscou os tres nao volta aqui: vai
 	# para onde ficou — a `fornalha`, se ainda nao queimou o passado; o
 	# `assentamento`, se ja queimou.
+	# A `irmandade` PRIMEIRO. Estava ao contrario, e a troca nao era
+	# inofensiva: sem `irmandade` nao ha lista de `pontos`, o
+	# `Passagem.completa()` respondia "sim, esta tudo feito" por nao haver
+	# nada por fazer, e o app saltava as fases 1 e 2 inteiras e largava a
+	# pessoa no `assentamento` — sem ter riscado nada e sem ter queimado
+	# nada.
+	if irmandade == null:
+		irmandade = load("res://resources/irmandades/calunga_pequena.tres")
 	if not Engine.is_editor_hint() and Passagem.completa(irmandade):
 		call_deferred("_seguir_em_frente")
 		return
-	if irmandade == null:
-		irmandade = load("res://resources/irmandades/calunga_pequena.tres")
 	_montar()
 	get_viewport().size_changed.connect(_ajustar_campo)
 	_ajustar_campo()

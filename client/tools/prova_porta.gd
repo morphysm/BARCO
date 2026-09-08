@@ -7,7 +7,10 @@ extends SceneTree
 
 func _initialize() -> void:
 	var irm: Irmandade = load("res://resources/irmandades/calunga_pequena.tres")
-	Passagem.esquecer()
+	# O registo aponta para OUTRO ficheiro antes de se lhe tocar. Isto
+	# chama `esquecer()`, e chamar `esquecer()` no registo a serio apaga o
+	# progresso de quem esta a usar o app. Ja aconteceu duas vezes.
+	Passagem.REGISTO = "user://prova_porta.json"
 	print("porta: cobertura >= %.2f" % Passagem.COBERTURA_PARA_PASSAR)
 	print("")
 

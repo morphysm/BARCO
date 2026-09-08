@@ -67,7 +67,15 @@ static func passar(slug: String) -> void:
 
 
 ## Riscaram-se os tres?
+##
+## Sem `irmandade` a resposta e NAO, e nao "sim". Nao saber quais sao os
+## `pontos` nao e o mesmo que te-los riscado todos — e o `proximo()`
+## devolve nulo nos dois casos, portanto a diferenca tem de ser feita
+## aqui. Foi por faltar isto que uma `irmandade` por carregar mandava
+## alguem direito ao `assentamento`.
 static func completa(irm: Irmandade) -> bool:
+	if irm == null:
+		return false
 	return proximo(irm) == null
 
 
