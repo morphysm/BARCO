@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Oferenda" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/oferenda.gd" id="1_1ok1b"]
+
+[resource]
+script = ExtResource("1_1ok1b")
+slug = "charuto"
+nome = "Charuto"
+tipo = "fumo"
+modelo = "res://resources/modelos/charuto.glb"
+tamanho = 0.14
+cafes = 1

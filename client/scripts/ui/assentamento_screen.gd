@@ -126,6 +126,8 @@ var _menu: CanvasLayer
 var _escrita: TextEdit
 var _lista: Label
 var _folhas: HFlowContainer
+var _faixa: ColorRect
+var _coluna_da_tira: VBoxContainer
 ## As folhas desenhadas no menu, para se irem queimando enquanto o menu
 ## esta aberto em vez de ficarem paradas no instante em que abriu.
 var _folhas_vivas: Array[Dictionary] = []
@@ -168,6 +170,11 @@ func _ready() -> void:
 		_montar_menu()
 		_por_a_andar()
 		_carregar_pedidos()
+		# A altura da faixa depende de quantas linhas as oferendas ocupam,
+		# e isso so se sabe depois de o contentor as ter arrumado — por
+		# isso e adiado, e refeito sempre que a janela muda de largura.
+		call_deferred("_ajustar_faixa")
+		get_viewport().size_changed.connect(_ajustar_faixa)
 	_vestir()
 	if not Engine.is_editor_hint() and Passagem.iris_a_abrir:
 		Passagem.iris_a_abrir = false
@@ -397,6 +404,8 @@ func acender_pedido(texto: String) -> void:
 ## se mostra e dinheiro a serio, porque AGENTS.md proibe moeda de faz de
 ## conta. Trocar de moeda e trocar estas duas linhas e mais nada.
 ## A altura da faixa preta de baixo, em pixeis da viewport.
+## A altura MINIMA da faixa preta de baixo, em pixeis da viewport. Cresce
+## se as oferendas nao couberem numa linha so.
 const ALTURA_DA_FAIXA := 150
 
 const POR_CAFE := 2
@@ -416,13 +425,13 @@ func _montar_tira() -> void:
 
 	# A faixa de baixo e SO da UI. Preta e opaca: antes os botoes ficavam
 	# por cima do assentamento e liam-se os dois ao mesmo tempo, mal.
-	var faixa := ColorRect.new()
-	faixa.name = "Faixa"
-	faixa.color = Color.BLACK
-	faixa.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	faixa.offset_top = -ALTURA_DA_FAIXA
-	faixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	folha.add_child(faixa)
+	_faixa = ColorRect.new()
+	_faixa.name = "Faixa"
+	_faixa.color = Color.BLACK
+	_faixa.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	_faixa.offset_top = -ALTURA_DA_FAIXA
+	_faixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	folha.add_child(_faixa)
 
 	var coluna := VBoxContainer.new()
 	coluna.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
@@ -432,6 +441,7 @@ func _montar_tira() -> void:
 	coluna.offset_right = -12
 	coluna.add_theme_constant_override("separation", 8)
 	folha.add_child(coluna)
+	_coluna_da_tira = coluna
 
 	# Ninguem adivinha que se arrasta. TODO(CONTENT.pt.md): texto autoral.
 	var como := Pagina.texto("arrasta uma oferenda para o assentamento", 19)
@@ -455,9 +465,14 @@ func _montar_tira() -> void:
 	# A letra e a folga sao contidas de proposito: com `aspect=expand` a
 	# viewport passa a ser a janela de verdade, entao a tira tem de caber
 	# na mais estreita que alguem venha a usar — nao nos 1600 do projeto.
-	var tira := HBoxContainer.new()
-	tira.alignment = BoxContainer.ALIGNMENT_CENTER
-	tira.add_theme_constant_override("separation", 6)
+	# `HFlowContainer` e nao uma fila. Oito oferendas ja enchiam quase os
+	# 1600 do viewport; a nona saía pela borda e nao havia como lhe tocar.
+	# Assim, quando nao cabem numa linha, passam a duas — e acrescentar
+	# uma oferenda deixa de ser uma decisao sobre a largura do ecra.
+	var tira := HFlowContainer.new()
+	tira.alignment = FlowContainer.ALIGNMENT_CENTER
+	tira.add_theme_constant_override("h_separation", 6)
+	tira.add_theme_constant_override("v_separation", 6)
 	coluna.add_child(tira)
 
 	for caminho in _oferendas_disponiveis():
@@ -673,6 +688,28 @@ func _actualizar_lista() -> void:
 ## se ve depois de exportar.
 ##
 ## O `ResourceLoader` le o sistema de RECURSOS, que sabe do `.pck`.
+## A faixa cresce com o que tem dentro.
+##
+## Era fixa em 150 px, escolhidos quando as oferendas eram oito e cabiam
+## numa linha. A nona ja nao cabia, passava para uma segunda linha, e essa
+## ficava cortada por baixo da faixa: um botao que se via meio e em que
+## nao se conseguia carregar.
+##
+## Agora a faixa mede o que a coluna precisa e nunca encolhe abaixo dos
+## 150 — com poucas oferendas o enquadramento fica o mesmo de sempre.
+## Recalcula-se quando a janela muda de tamanho, porque e a largura que
+## decide se as oferendas cabem numa linha ou em duas.
+func _ajustar_faixa() -> void:
+	if _faixa == null or _coluna_da_tira == null:
+		return
+	if not is_instance_valid(_faixa) or not is_instance_valid(_coluna_da_tira):
+		return
+	var alto := maxf(
+		float(ALTURA_DA_FAIXA), _coluna_da_tira.get_combined_minimum_size().y + 22.0)
+	_faixa.offset_top = -alto
+	_coluna_da_tira.offset_top = -alto + 10.0
+
+
 func _oferendas_disponiveis() -> Array[String]:
 	var saida: Array[String] = []
 	for f in ResourceLoader.list_directory("res://resources/oferendas/"):
