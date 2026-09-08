@@ -44,3 +44,13 @@ echo ""
 docker cp "$AQUI/assentar_pagamento.sql" "$CAIXA:/tmp/" >/dev/null
 docker exec "$CAIXA" psql -U postgres -d barco -v ON_ERROR_STOP=1 \
     -f /tmp/assentar_pagamento.sql
+
+echo ""
+echo "== o RLS, com papel e sessao a serio =="
+# Os privilegios do Supabase, DEPOIS das migracoes: sem eles a recusa
+# vinha do GRANT em falta e nao da politica.
+docker cp "$AQUI/99_permissoes.sql" "$CAIXA:/tmp/" >/dev/null
+docker exec "$CAIXA" psql -U postgres -d barco -q -v ON_ERROR_STOP=1 \
+    -f /tmp/99_permissoes.sql
+docker cp "$AQUI/rls.sql" "$CAIXA:/tmp/" >/dev/null
+docker exec "$CAIXA" psql -U postgres -d barco -v ON_ERROR_STOP=1 -f /tmp/rls.sql

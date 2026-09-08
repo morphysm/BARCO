@@ -14,8 +14,9 @@ alojado.
 docker run --rm -v "$PWD":/w -w /w denoland/deno:latest \
     deno test --allow-read --allow-net --allow-env server/functions/
 
-# 2. a SQL: aplica as migracoes a um Postgres descartavel e exercita
-#    o `assentar_pagamento` (precisa de docker)
+# 2. a SQL: aplica as migracoes a um Postgres descartavel, exercita o
+#    `assentar_pagamento`, e prova o RLS com papel e sessao (precisa de
+#    docker)
 server/prova/correr.sh
 
 # 3. o webhook a serio, contra um Supabase local inteiro
@@ -41,6 +42,23 @@ O terceiro e o que prova o que os outros nao alcancam: a Edge Function a
 correr, o corpo em `form-urlencoded` a ser desembrulhado, o token a ser
 verificado, e a transacao a escrever numa base com RLS ligado. Atira os
 payloads oficiais e mostra o que ficou nas tabelas.
+
+### O RLS
+
+`server/prova/rls.sql` assume o papel `authenticated` e finge o `sub` de
+uma pessoa, como o Supabase faz. E o unico sitio onde as politicas sao
+mesmo lidas: o resto da prova corre como superutilizador, e esse passa
+por cima do RLS por completo.
+
+Duas coisas que so se aprendem escrevendo isto, e que ficam escritas no
+ficheiro para nao se repetirem:
+
+  - sem os GRANTs que o Supabase da de fabrica (`99_permissoes.sql`,
+    aplicado DEPOIS das migracoes), a recusa vinha do privilegio em falta
+    e nao da politica — a prova dizia que estava tudo bem sem a politica
+    ter sido consultada;
+  - com RLS, uma escrita que nao encontra linha visivel NAO rebenta:
+    afecta zero linhas em silencio. Conta-se o efeito, nao a excepcao.
 
 ### O `supabase/` e o `server/`
 
