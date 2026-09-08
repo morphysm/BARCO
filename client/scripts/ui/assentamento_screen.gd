@@ -23,6 +23,7 @@
 ##
 ## Cada peca do grupo "vela" e uma luz. Acrescentar uma vela e instanciar
 ## o modelo e po-lo no grupo; o script encontra-a sozinho.
+class_name AssentamentoScreen
 extends Node3D
 
 const COR_TINTA := Color(0.937, 0.925, 0.882)

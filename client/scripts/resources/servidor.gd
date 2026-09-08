@@ -13,3 +13,9 @@ extends Resource
 ## A chave de admin NUNCA entra aqui. Essa vive so nas Edge Functions, e
 ## e o servidor do Supabase que a injecta.
 @export var chave_publica: String = ""
+
+## A pagina do Ko-fi que se abre para pagar.
+##
+## Vazia enquanto nao for preenchida, e o botao de pagar diz isso em vez
+## de abrir o browser numa pagina que nao existe.
+@export var kofi_url: String = ""

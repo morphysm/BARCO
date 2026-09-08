@@ -25,6 +25,9 @@ run/main_scene.cenario="res://scenes/assentamento_cenario.tscn"
 ; A identidade de quem esta a usar o app. Anonima, criada sozinha na
 ; primeira abertura, e nunca trava o ritual — ver `conta.gd`.
 Conta="*res://scripts/ritual/conta.gd"
+; O que foi comprado e ainda nao foi gasto. So le; quem escreve e o
+; webhook, com a chave de admin.
+Creditos="*res://scripts/ritual/creditos.gd"
 
 [display]
 
