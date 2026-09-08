@@ -31,6 +31,11 @@ const COR_TINTA := Color(0.937, 0.925, 0.882)
 ## de tres metros de lado devolve toda a luz das velas — foi assim que a
 ## nganga ficou a flutuar num lencol aceso.
 @export var cor_do_chao := Color(0.06, 0.055, 0.05)
+## O balde de sangue a cair no chao. Toca uma vez, ao depor — nunca ao
+## recarregar. Trocar o ficheiro chega; o valor esta aqui e nao na cena,
+## que a cena e o fundamento travado e nao se mexe por um som.
+@export var som_do_sangue: AudioStream = preload(
+	"res://resources/audio/banho_de_sangue.ogg")
 
 ## Quanto o chao responde a luz, comparado com os objetos. Menos que eles:
 ## e uma extensao grande e de frente para as chamas, e com a mesma
@@ -653,7 +658,11 @@ func depor(oferenda: Oferenda, onde: Vector2) -> Node3D:
 ## Poe a `oferenda` na mao: instancia o modelo e da-lhe o tamanho certo.
 ## Ainda nao esta deposta — enquanto esta na mao pode nao chegar a ficar.
 func _pegar(oferenda: Oferenda) -> Node3D:
-	if oferenda == null or oferenda.modelo == "":
+	if oferenda == null:
+		return null
+	if oferenda.tipo == "sangue":
+		return _pegar_sangue(oferenda)
+	if oferenda.modelo == "":
 		return null
 	var cena: PackedScene = load(oferenda.modelo)
 	if cena == null:
@@ -669,6 +678,22 @@ func _pegar(oferenda: Oferenda) -> Node3D:
 	if maior > 0.0:
 		no.scale = Vector3.ONE * (oferenda.tamanho / maior)
 	return no
+
+
+## O `sangue` nao tem modelo: tem uma poca. Fica com o `tamanho` da
+## propria oferenda como lado, para o tamanho do banho continuar a ser
+## dado pelo `.tres` e nao por um numero escondido aqui.
+func _pegar_sangue(oferenda: Oferenda) -> Node3D:
+	var poca := PocaDeSangue.new(oferenda.tamanho)
+	poca.name = "%s_%d" % [oferenda.slug, _depositos.size()]
+	poca.som = som_do_sangue
+	add_child(poca)
+	# A repor, ja esta no chao ha muito. A depor, e agora que o balde vai.
+	if _a_repor:
+		poca.assentada()
+	else:
+		poca.atirar()
+	return poca
 
 
 ## Assenta no chao: a base toca o chao, o centro fica onde se pede.
@@ -695,6 +720,12 @@ func _registar(oferenda: Oferenda, onde: Vector2) -> void:
 static var REGISTO := "user://depositos.json"
 
 
+## Verdadeiro enquanto se repoe o que ja estava deposto. Um deposito e um
+## registo, nao um gesto: ao recarregar, o sangue aparece no chao sem o
+## balde ser atirado outra vez.
+var _a_repor := false
+
+
 func _carregar_depositos() -> void:
 	if not FileAccess.file_exists(REGISTO):
 		return
@@ -703,10 +734,12 @@ func _carregar_depositos() -> void:
 	f.close()
 	if not dados is Array:
 		return
+	_a_repor = true
 	for d in dados:
 		var o: Oferenda = load("res://resources/oferendas/%s.tres" % d["oferenda"])
 		if o != null:
 			depor(o, Vector2(float(d["x"]), float(d["y"])))
+	_a_repor = false
 
 
 func guardar_depositos() -> void:
@@ -895,9 +928,15 @@ func _aplicar_luz(energias: PackedFloat32Array) -> void:
 		m.set_shader_parameter("contorno", 0.0 if e_chao else contorno)
 
 
+## As malhas que o `_vestir` pode vestir.
+##
+## Fora dela ficam as `_chamas` e as pocas de sangue: as pocas trazem o
+## seu proprio liquido, e o `_vestir` poe `material_override` em tudo o
+## que apanha — sem esta excepcao a poca era pintada de chao a cada
+## deposito.
 func _malhas(raiz: Node) -> Array[MeshInstance3D]:
 	var saida: Array[MeshInstance3D] = []
-	if raiz is MeshInstance3D and not _chamas.has(raiz):
+	if raiz is MeshInstance3D and not _chamas.has(raiz) and not raiz is PocaDeSangue:
 		saida.append(raiz)
 	for filho in raiz.get_children():
 		saida.append_array(_malhas(filho))

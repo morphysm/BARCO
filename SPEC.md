@@ -163,6 +163,22 @@ the three `pontos`, the eclipse, the `fornalha`.
 **`pedidos` are free.** Writing one and spearing it on the trident costs
 nothing, ever. What is bought is the `oferenda` placed beside it.
 
+**`sangue` is not placed, it is thrown.** Every other `oferenda` is a
+model set down on the floor; the blood is a bucket emptied over it. It
+costs 7 coffees against everyone else's 1 — the `sacrificio` tier of
+§10.1 — and it is the only offering with a shader of its own
+(`shaders/sangue.gdshader`, on a `PocaDeSangue`). What makes it read as
+liquid is not the colour but the light: the surface carries a slow skin
+whose gradient becomes the normal, so the candle highlights crawl across
+it on their own. The pool has a direction, a tongue that runs further
+that way, and droplets that land only once the wave has reached them.
+Its size is the `tamanho` on `sangue.tres`, like every other offering.
+
+Throwing is a gesture; a deposit is a record. On reload the pool comes
+back already spread — `_a_repor` — because what was deposited is not
+performed again. And `_malhas()` skips it, or `_vestir()` would paint the
+floor's material over the blood at the next deposit.
+
 **An `oferenda` reinforces a `pedido`** (A.C.). That is a mechanic of the
 rite, and it is the reason the two live in the same room. It is **not** a
 promise: the app may show that an offering was made and that a `pedido`

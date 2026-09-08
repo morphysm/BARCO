@@ -8,5 +8,5 @@ slug = "sangue"
 nome = "Sangue"
 tipo = "sangue"
 modelo = "res://resources/modelos/sangue.glb"
-tamanho = 0.22
+tamanho = 0.85
 cafes = 7
