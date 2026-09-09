@@ -101,12 +101,16 @@ migrations/
   ..._rls.sql                 quem ve o que. As tabelas de dinheiro nao se leem
   ..._assentar_pagamento.sql  a escrita, tudo ou nada, numa transacao
   ..._pessoa_por_email.sql    email do pagador -> pessoa, porta estreita
+  ..._reconciliacao_admin.sql administradores e resolucao exacta, atomica
 functions/
   _shared/pagamento.ts        o tipo `Pagamento`. Nao sabe o que e o Ko-fi (§10.5)
   _shared/cascata.ts          de quem e, e o que paga. Nunca adivinha
   _shared/ambiente.ts         as chaves, lidas com verificacao
   kofi_webhook/kofi.ts        a traducao do payload do Ko-fi
   kofi_webhook/index.ts       o handler
+  reconciliacao_admin/        API autenticada da fila manual
+admin/
+  servir.cjs                  pagina do operador, so em 127.0.0.1
 ```
 
 ## As chaves
@@ -121,36 +125,27 @@ O token do Ko-fi esta em `ko-fi.com/manage/webhooks`. Nao entra no
 repositorio, nao entra em ficheiro nenhum, nao se cola em conversa
 nenhuma.
 
-## O que falta, e nada disto e detalhe
+## O que falta, e nao e detalhe
 
-1. **Um pagamento real de ponta a ponta.** Outra pessoa tem de pagar o valor
-   exacto com um codigo desta versao na mensagem. Confirmar HTTP 200,
-   creditos nomeados, estado recebido, deposito, recarregamento do browser e
-   repeticao segura da entrega e da operacao de deposito.
+**Um pagamento real de ponta a ponta.** Outra pessoa tem de pagar o valor
+exacto com um codigo desta versao na mensagem. Confirmar a cobranca do meio de
+pagamento, HTTP 200, creditos nomeados, estado recebido, deposito,
+recarregamento do browser e repeticao segura da entrega e da operacao de
+deposito.
 
-   Uma inspeccao alojada encontrou duas linhas por resolver. A origem nao foi
-   estabelecida e os payloads nao foram lidos; nao contam como prova de um
-   pagamento real. Examina-las antes da publicacao sem adivinhar, creditar ou
-   marcar como resolvidas.
+A cadeia alojada ja passou com um payload controlado de valor exacto: codigo,
+credito, deposito, recarregamento e as duas repeticoes idempotentes. Isso prova
+o caminho da aplicacao, mas nao substitui uma transaccao entregue pelo Ko-fi.
 
-2. **A vista de administracao da fila** (§10.4: "a first-class feature
-   with a small admin view, not a TODO"). A tabela `reconciliacao` existe
-   e enche-se sozinha; falta por onde a resolver.
+A vista de reconciliacao esta implementada e alojada. Arranca-se localmente
+com `node server/admin/servir.cjs`; so aceita uma sessao cujo utilizador esteja
+em `administradores`, e a resolucao exige pessoa, actos nomeados e total USD
+exactos. As duas linhas historicas por resolver continuam intactas. Nao as
+resolver, restaurar ou creditar por suposicao.
 
-   Quando a escreveres: creditar e um `insert` em `creditos` com o
-   `source_payment_id` do pagamento da fila, e a restricao
-   `creditos_um_por_pagamento` trata de impedir o segundo clique. Nao lhe
-   ponhas uma verificacao a mao por cima nem a contornes.
-
-3. **Confirmar a recuperacao de creditos comprados.** O login por codigo de
-   email e a ligacao da identidade ja existem e foram provados em dois
-   browsers. Ainda falta confirmar, com o pagamento de ponta a ponta, que a
-   mesma pessoa recupera os creditos comprados depois de limpar a sessao.
-
-4. **Conferir a versao candidata no iframe.** A copia do codigo ja foi
-   confirmada pela operadora. A versao mais recente ainda precisa de prova de
-   disposicao, scroll e gesto no desktop e num viewport estreito da pagina
-   restrita do itch.io.
+A versao candidata foi conferida no iframe restrito em desktop e mobile,
+incluindo disposicao, scroll, gesto vertical e copia. A recuperacao do deposito
+comprado tambem foi confirmada depois de recarregar o browser.
 
 O caminho actual usa apoio unico com valor exacto e codigo na mensagem. Os
 artigos da loja e o degrau por `kofi_sku` nao fazem parte desta publicacao.

@@ -860,9 +860,10 @@ func _input(evento: InputEvent) -> void:
 			if delta.length() >= 12.0:
 				_suprimir_clique_oferenda = true
 				var rolo := _botao_a_pegar.get_parent().get_parent() as ScrollContainer
-				var barra := rolo.get_v_scroll_bar()
-				var desloca_lista := barra.max_value > barra.page \
-					and absf(delta.y) > absf(delta.x) \
+				# Um movimento vertical pertence sempre a coluna. Mesmo quando
+				# os cinco botoes cabem, nao o transformar num gesto de depor:
+				# no navegador isso acabava por abrir o balcao sem intencao.
+				var desloca_lista := absf(delta.y) > absf(delta.x) \
 					and rolo.get_global_rect().has_point(evento.position)
 				var oferenda := _oferenda_a_pegar
 				_oferenda_a_pegar = null

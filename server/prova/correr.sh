@@ -71,3 +71,6 @@ docker exec "$CAIXA" psql -U postgres -d barco -v ON_ERROR_STOP=1 -f /tmp/valida
 
 docker cp "$AQUI/compras_recuperaveis.sql" "$CAIXA:/tmp/" >/dev/null
 docker exec "$CAIXA" psql -U postgres -d barco -v ON_ERROR_STOP=1 -f /tmp/compras_recuperaveis.sql
+
+docker cp "$AQUI/reconciliacao.sql" "$CAIXA:/tmp/" >/dev/null
+docker exec "$CAIXA" psql -U postgres -d barco -v ON_ERROR_STOP=1 -f /tmp/reconciliacao.sql

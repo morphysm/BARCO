@@ -42,7 +42,7 @@ alojado e os passos exactos para publicar estao em
 - [x] checkout Ko-fi, creditos nomeados e recuperacao da conta por email
 - [x] migracoes e webhook alojados no Supabase
 - [ ] prova de um pagamento Ko-fi real, de ponta a ponta
-- [ ] vista de administracao da fila de reconciliacao
+- [x] vista de administracao da fila de reconciliacao
 - [ ] vela e `permanencia`
 - [ ] `caderno`
 

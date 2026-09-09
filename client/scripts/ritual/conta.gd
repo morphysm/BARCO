@@ -144,6 +144,10 @@ func _http(caminho: String, corpo: Dictionary,
 		erro = "servidor indisponível"
 		return {}
 	var pedido := HTTPRequest.new()
+	# Godot 4.7 Web falha a descomprimir algumas respostas gzip do
+	# Supabase e entrega um corpo vazio ao JSON. Pedir a resposta sem
+	# compressao conserva exactamente os mesmos dados.
+	pedido.accept_gzip = false
 	pedido.timeout = 20.0
 	add_child(pedido)
 	var headers := PackedStringArray([

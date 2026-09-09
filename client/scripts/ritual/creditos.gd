@@ -19,6 +19,15 @@ var _a_ler := false
 var _dono := ""
 
 
+func _novo_pedido(timeout := 20.0) -> HTTPRequest:
+	# Godot 4.7 Web pode receber 200 e perder o corpo ao descomprimir gzip.
+	# Sem compressao, o JSON do Supabase chega inteiro também no iframe.
+	var pedido := HTTPRequest.new()
+	pedido.accept_gzip = false
+	pedido.timeout = timeout
+	return pedido
+
+
 func _ready() -> void:
 	_servidor = load("res://resources/servidor/supabase.tres")
 	Conta.entrou.connect(_sessao)
@@ -73,8 +82,7 @@ func actualizar() -> void:
 		return
 	var dono := Conta.id()
 	_a_ler = true
-	var pedido := HTTPRequest.new()
-	pedido.timeout = 20.0
+	var pedido := _novo_pedido()
 	add_child(pedido)
 	var erro := pedido.request(
 		_servidor.url + "/rest/v1/creditos?select=ato_slug&spent_at=is.null",
@@ -124,8 +132,7 @@ func pedir_codigo(cesto: Dictionary) -> String:
 	if itens.is_empty():
 		return ""
 
-	var pedido := HTTPRequest.new()
-	pedido.timeout = 20.0
+	var pedido := _novo_pedido()
 	add_child(pedido)
 	var erro := pedido.request(
 		_servidor.url + "/rest/v1/rpc/" + ("pedir_codigo_recuperavel" if OS.has_feature("web") else "pedir_codigo"),
@@ -149,8 +156,7 @@ func estado_codigo(codigo: String) -> Dictionary:
 	await Conta.entrar()
 	if not Conta.ha():
 		return {}
-	var pedido := HTTPRequest.new()
-	pedido.timeout = 15.0
+	var pedido := _novo_pedido(15.0)
 	add_child(pedido)
 	var erro := pedido.request(
 		_servidor.url + "/rest/v1/rpc/estado_codigo",
@@ -209,8 +215,7 @@ func consultar(caminho: String, corpo: Dictionary = {}, metodo := HTTPClient.MET
 	if _servidor == null or not Conta.ha():
 		return {}
 	var dono := Conta.id()
-	var pedido := HTTPRequest.new()
-	pedido.timeout = 20.0
+	var pedido := _novo_pedido()
 	add_child(pedido)
 	var e := pedido.request(_servidor.url + caminho, Conta.cabecalhos(), metodo,
 		"" if metodo == HTTPClient.METHOD_GET else JSON.stringify(corpo))
@@ -244,7 +249,7 @@ func gastar(slug: String) -> bool:
 		if not Conta.ha():
 			return false
 
-	var pedido := HTTPRequest.new()
+	var pedido := _novo_pedido()
 	add_child(pedido)
 	var erro := pedido.request(
 		_servidor.url + "/rest/v1/rpc/gastar_credito",

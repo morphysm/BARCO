@@ -2,57 +2,70 @@
 
 ## Current candidate
 
-- Latest itch.io HTML5 archive: `build/barco-itch-layout.zip`
-- SHA-256: `915e99d88fb73fe16c64c2adbe2a51920d5fd9d7c98957619868b3c3d9329605`
-- It contains `index.html` at the archive root and passed ZIP integrity.
-- The latest layout build has not yet been uploaded to itch.io.
-- The preceding checkout candidate was tested by the operator on the restricted itch.io page, and clipboard copying worked.
+- Restricted itch.io page: `https://kadaver-kadaver.itch.io/barco`
+- Playable archive: `build/barco-itch-layout.zip`
+- SHA-256: `62e0fc9bf09f5a5d279b9b751bbac4f1c2b04de58e17b59d8c858606ca06a37c`
+- The archive contains `index.html` at its root and passed ZIP integrity.
+- The page remains restricted. The current archive is its only playable upload.
 
-## Repository checkpoint
+## Completed without a real supporter
 
-- `89df3e6` — `o rabisco deixa de passar pelo ponto`: adds the inverse ink-fidelity check and its measured regression test.
-- `e76701b` — `fecha o candidato web recuperavel`: records recoverable checkout, hosted migrations/tests, clipboard and oferendas layout corrections, release notes, and repository document organization.
-- The tracked worktree was clean after these commits. Ignored local builds, screenshots, Godot cache, Supabase CLI state and function `.env` remain outside git.
-- The authored content file now follows the invariant path `CONTENT.pt.md` without content changes.
-- The design rationale now lives at `docs/GDD_barco.md`, matching `SPEC.md`.
-
-## Work that can be completed without a real supporter
-
-1. Upload `build/barco-itch-layout.zip` to the unpublished/restricted itch.io page.
-2. Check desktop, narrow/mobile and iframe behavior:
+1. Uploaded the current archive to the restricted itch.io page.
+2. Checked the hosted build at desktop, narrow/mobile and short/wide sizes:
    - ten oferendas appear as five items in each side column;
-   - spacing is readable;
-   - each short-screen side list scrolls normally;
-   - vertical touch scrolling does not drag an oferenda or open checkout;
-   - checkout has only the combined “copiar código e abrir o Ko-fi” button;
-   - clipboard fallback still works.
-3. Confirm the webhook URL on Ko-fi's Webhooks page points to the hosted `kofi_webhook`.
-4. Make the hosted `KOFI_VERIFICATION_TOKEN` match Ko-fi's verification token. Supabase exposes the secret name but not its value; reset the hosted secret from the Ko-fi value to guarantee the match. Never record the token in repository files or this memory.
-5. Use Ko-fi's Webhooks-page test-payment feature:
-   - sign in to Barco with a dedicated test email;
-   - prepare a basket and generate a recoverable purchase code;
-   - send a one-time test payment with the exact USD total and paste that code in the Ko-fi message field;
-   - verify webhook HTTP 200, received status, named credits, deposito creation and persistence after browser reload.
-   This verifies most hosted plumbing but does not replace a real payment-provider transaction.
-6. Exercise idempotence:
-   - replay the same webhook delivery with the same Ko-fi `message_id` and confirm it does not credit twice;
-   - replay the same deposito operation UUID and confirm it does not spend twice.
-7. Inspect the two existing unresolved historical payment records in the reconciliation queue. Do not resolve, restore or credit them by guessing.
-8. Implement the missing manual reconciliation admin interface. The backend queue exists; the convenient admin review screen does not.
+   - spacing and labels remain readable;
+   - short-screen side lists scroll;
+   - vertical touch movement is reserved for scrolling and does not open checkout;
+   - checkout has only `copiar código e abrir o Ko-fi`;
+   - the restricted iframe and mobile full-viewport launch have no horizontal overflow.
+3. Removed the forbidden itch.io tag and the unsupported Android claim. The page describes Barco as a browser application and keeps fixed USD pricing.
+4. Confirmed Ko-fi's Webhooks URL points exactly to the hosted `kofi_webhook`. Reset the hosted `KOFI_VERIFICATION_TOKEN` directly from Ko-fi without writing or displaying it.
+5. Established that Ko-fi's built-in Webhooks tests cannot set the payer email, exact amount, or message text. They therefore cannot carry a Barco code or prove an exact basket.
+6. Ran a controlled exact-value round trip against the hosted webhook with a dedicated authenticated test identity and a one-item USD basket:
+   - first delivery returned HTTP 200;
+   - the identical `message_id` replay returned HTTP 200;
+   - exactly one payment and one named credit were created;
+   - the purchase code was consumed and matched by code;
+   - no reconciliation row was created;
+   - Barco showed `pagamento recebido`.
+7. Deposited that purchased oferenda in the hosted app, then replayed the identical operation UUID:
+   - both requests returned HTTP 200;
+   - exactly one credit was spent;
+   - exactly one append-only deposito was created;
+   - browser reload restored the deposito without another spend.
+8. Fixed a hosted-only response problem discovered by that proof. Godot's HTTP client could not decode the compressed Supabase response, so payment and deposito requests now disable gzip. The current hosted build reloads without JSON parse errors or false pending-operation warnings.
+9. Inspected the two historical unresolved payment rows only in aggregate. Both remain unresolved and untouched; nothing was credited or inferred.
+10. Implemented and deployed the manual reconciliation admin path:
+    - authenticated access is limited to `administradores`;
+    - the local operator page binds only to `127.0.0.1`;
+    - resolution accepts an explicit person and named acts whose exact USD total matches the payment;
+    - resolution, credits and queue state change occur in one idempotent transaction;
+    - the browser does not receive the service key or raw payment payload.
 
-## Already completed
+## Hosted state
 
-- Hosted database is at migrations 07000 then 08000; no reset was performed.
-- Email auth, manual identity linking, Gmail SMTP, and numeric-token templates are configured.
-- Operator received an OTP and confirmed fresh-browser login.
-- Hosted `kofi_webhook` version 3 is ACTIVE with `verify_jwt=false`; the function verifies Ko-fi's token.
-- All 30 webhook TypeScript tests passed.
-- SQL regression suite passed against disposable Postgres 16.
-- Latest layout tests passed at 1440x900, 1000x560 and 720x1000.
-- Godot Web export, fundamento integrity (55 pieces), diff checks and archive checks passed.
+- Database migrations are synchronized through `20260909009000_reconciliacao_admin.sql`; no reset was performed.
+- `kofi_webhook` version 4 is ACTIVE with `verify_jwt=false`; it validates Ko-fi's token itself.
+- `reconciliacao_admin` version 3 is ACTIVE with `verify_jwt=false`; it validates the Supabase bearer token and administrator membership itself.
+- Aggregate controlled-test state: three payments, one credited payment, one credit spent, one deposito, two unresolved historical reconciliation rows, and one administrator.
+- The two historical reconciliation rows are still the same unresolved Donation and Shop Order examples.
 
-## Still required before calling the build release-ready
+## Verification
 
-A different person must eventually complete one real exact-amount Ko-fi payment. Verify payment-provider charge, Ko-fi webhook delivery, correct named credits, received status, deposito, browser reload, and duplicate-delivery/deposito protection. The tester may be anywhere; they do not need to be local to Sweden.
+- 30 Deno webhook tests passed.
+- The complete migration, RLS, payment, deposito and reconciliation suite passed against disposable Postgres 16.
+- The reconciliation admin browser test and clipboard browser test passed.
+- Layout regression passed at 1440x900, 1000x560 and 720x1000.
+- Hosted desktop/mobile/iframe inspection and a hosted vertical-touch replay passed.
+- Fundamento integrity passed with 55 pieces.
+- JavaScript syntax, archive integrity and diff checks passed.
 
-Keep the itch.io page restricted until the hosted iframe checks and real-payment round trip are complete.
+## Only remaining release check
+
+A different person must complete one real exact-amount Ko-fi payment with a code from the current build in the message. Verify the provider charge, webhook HTTP 200, received status, correct named credits, deposito, browser reload, and duplicate delivery/deposito protection. The controlled hosted payload proves the application path but does not replace a real transaction through Ko-fi.
+
+Keep the itch.io page restricted until that real-payment round trip passes.
+
+## Worktree handoff
+
+The reconciliation implementation, hosted-response fix, touch correction, tests and documentation are uncommitted. Review the diff before committing and pushing.

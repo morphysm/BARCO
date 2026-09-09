@@ -191,8 +191,10 @@ recoverable code is issued, the exact USD total is shown, and `depor` consumes
 one named credit in the same server transaction that creates the append-only
 deposito. Repeating either the payment delivery or the deposito operation does
 not repeat the credit or the spend. The free `pedido` path remains separate.
-The hosted round trip with a real Ko-fi payment and the manual reconciliation
-view still have to be proved before this ships (§10.2–10.4).
+The hosted round trip has been proved with a controlled exact-value payload,
+including duplicate delivery, deposito retry and browser reload. The manual
+reconciliation view is implemented and hosted. A real Ko-fi payment by another
+person still has to be proved before this ships (§10.2–10.4).
 
 The `sacrificio` (§8.2) is not one of the three. Where it sits relative
 to them is **not decided**. So is what the `caderno` records of the
@@ -740,6 +742,13 @@ code in message  ->  payer email match  ->  manual queue
 
 Never auto-credit on a guess. The manual queue is a first-class feature with a
 small admin view, not a TODO.
+
+**Implemented, 2026-09-09.** `reconciliacao_admin` exposes the unresolved queue
+only to an authenticated row in `administradores`; the browser receives neither
+the service key nor the full raw payload. Resolution is one server transaction:
+it verifies an exact USD total against named acts, credits those acts, and marks
+the queue row resolved. Repeating the same resolution is idempotent. The local
+operator page is served only on `127.0.0.1` by `server/admin/servir.cjs`.
 
 **Correction, found while building it.** That queue is not a queue,
 because its steps do not answer the same question. Crediting needs two:

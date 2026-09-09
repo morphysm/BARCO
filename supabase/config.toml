@@ -424,3 +424,8 @@ enabled = true
 # entrada, e quem nao o traz leva 401 na mesma — so que dado por nos.
 [functions.kofi_webhook]
 verify_jwt = false
+
+# A vista corre em localhost. A funcao valida o JWT e a lista
+# `administradores`, antes de ler a fila ou escrever uma reconciliacao.
+[functions.reconciliacao_admin]
+verify_jwt = false

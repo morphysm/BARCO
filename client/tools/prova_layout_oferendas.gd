@@ -61,6 +61,26 @@ func _ready() -> void:
 	ecra._clicar_oferenda(oferenda)
 	checar("deslizar lista nao abre balcao", ecra._balcao == null)
 	checar("deslizar lista nao pega oferenda", ecra._na_mao == null)
+	# A mesma proteccao vale quando a coluna inteira cabe no ecra. O
+	# navegador continua a produzir um gesto vertical, e esse gesto nao
+	# pode tornar-se uma tentativa de depor nem abrir o balcao.
+	get_window().size = Vector2i(1440, 900)
+	for i in 8:
+		await get_tree().process_frame
+	ecra._ajustar_faixa()
+	await get_tree().process_frame
+	rolo = ecra._laterais[0]
+	botao = rolo.get_child(0).get_child(0)
+	checar("coluna da prova vertical cabe sem scroll",
+		rolo.get_v_scroll_bar().max_value <= rolo.get_v_scroll_bar().page)
+	ecra._preparar_arrasto(oferenda, botao)
+	ecra._inicio_arrasto = botao.get_global_rect().get_center()
+	deslizar = InputEventScreenDrag.new()
+	deslizar.position = ecra._inicio_arrasto + Vector2(0, 24)
+	ecra._input(deslizar)
+	ecra._clicar_oferenda(oferenda)
+	checar("deslizar coluna sem scroll nao abre balcao", ecra._balcao == null)
+	checar("deslizar coluna sem scroll nao pega oferenda", ecra._na_mao == null)
 	# A roda nao e largar o botao esquerdo: nao pode completar um gesto.
 	ecra._na_mao = Node3D.new()
 	var roda := InputEventMouseButton.new()
