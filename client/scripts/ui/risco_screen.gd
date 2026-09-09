@@ -3,7 +3,7 @@
 ## Tela preta. O dedo deposita `pemba`. O caminho do `ponto` nao e
 ## mostrado — so as marcas de inicio de segmento (SPEC.md §4.1).
 ##
-## Fatia vertical: sem pagamento, sem servidor, sem `permanencia` ainda.
+## A `permanencia` ainda nao pertence a esta tela.
 ## Ver SPEC.md §12.
 extends Node2D
 
@@ -236,16 +236,36 @@ func _terminar_traco() -> void:
 ##
 ## Riscado o suficiente, o guia poe o seguinte. Riscado o terceiro, o
 ## eclipse. Abaixo do limiar, a resposta e nao, em vermelho.
+##
+## A porta tem DUAS folhas, e sao perguntas inversas:
+##
+##   `cobertura`   quanto do desenho recebeu tinta   — nao riscar de menos
+##   `fidelidade`  quanto da tinta caiu no desenho   — nao riscar de mais
+##
+## So a primeira deixava passar um rabisco: raiando a caixa do `ponto` em
+## linhas paralelas juntas, todos os segmentos ficam com tinta por cima e
+## a cobertura da 1.00 sem que o desenho tenha sido seguido. Ver
+## `tools/prova_rabisco.gd`.
 func _fechar_risco() -> void:
 	if _fechado or _tracos.is_empty() or _ponto == null:
 		return
 
 	var m := RiscoScoring.medir(_tracos, _ponto.ponto_riscado)
 	var cobertura: float = m.get("cobertura", 0.0)
+	var fidelidade: float = m.get("fidelidade", 0.0)
 
 	if cobertura < Passagem.COBERTURA_PARA_PASSAR:
 		# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
 		_rotulo.text = "Ainda não, risca mais!"
+		_rotulo.add_theme_color_override("font_color", COR_RECUSA)
+		return
+
+	# Riscado por cima do desenho todo, mas com tinta de sobra pelo meio.
+	# Diz-se o que falta — riscar o `ponto`, e nao a folha — sem explicar
+	# a medida nem acusar ninguem de nada.
+	if fidelidade < RiscoScoring.FIDELIDADE_MINIMA:
+		# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
+		_rotulo.text = "Isso não é o ponto. Segue o risco."
 		_rotulo.add_theme_color_override("font_color", COR_RECUSA)
 		return
 
@@ -284,7 +304,7 @@ func _atravessar() -> void:
 	get_tree().change_scene_to_file("res://scenes/eclipse.tscn")
 
 
-## Diz o que foi feito, nunca o que vai acontecer (CONTENT_pt.md §2).
+## Diz o que foi feito, nunca o que vai acontecer (CONTENT.pt.md §2).
 ## Quando o risco nao nomeia ninguem, o app nao explica por que — e nao
 ## anuncia a `hora_asmodeica` de forma alguma (SPEC.md §5.3, §6.2).
 func _ler(r: RiscoResultado) -> String:

@@ -34,6 +34,31 @@ const RAZAO_INDEFINIDA := 0.7
 ## discordar da nota — quem abandona nao entra.
 const COBERTURA_MINIMA := 0.70
 
+## Fracao da TINTA que precisa de ter caido sobre o desenho.
+##
+## A porta tem duas folhas, e esta e a que faltava: sem ela, raiar a caixa
+## do `ponto` em linhas paralelas juntas abria-a com cobertura 1.00. Ver
+## `_fidelidade` e `tools/prova_rabisco.gd`.
+##
+## O numero saiu de medir, nao de arbitrar (`tools/prova_rabisco.gd` e o
+## que ficou da medicao). Sobre os tres `pontos`, variando o gesto entre
+## um traco por segmento e vinte segmentos por traco, e o tremor entre 0 e
+## 45 unidades — mais do que a propria `tolerancia_px`:
+##
+##   riscar fiel, qualquer gesto, qualquer tremor    0.91 .. 1.00
+##   raiar a caixa em linhas paralelas               0.66 .. 0.76
+##
+## 0.82 assenta na folga entre os dois, encostado ao lado do rabisco: um
+## jogador barrado a porta fica sem jogo, e um batoteiro a passar uma fase
+## gratuita nao custa nada. Entre errar para um lado e errar para o outro,
+## erra-se a favor de quem esta a riscar.
+##
+## O que NAO serve para isto, e foi medido: a `accuracy`. Ela da 0.00 a um
+## risco perfeito feito com a mao pousada, em tracos longos — o gesto de
+## A.C., o mesmo que ja tinha partido a `cobertura` antiga. Poe-la a porta
+## era voltar a partir o que o `_cobertura` consertou.
+const FIDELIDADE_MINIMA := 0.82
+
 ## Tracos mais curtos que isto (no espaco de referencia) sao toques
 ## acidentais, nao tracos.
 ##
@@ -208,7 +233,7 @@ static func medir(tracos: Array, ponto: PontoData) -> Dictionary:
 		grossas.append(Polilinha.reamostrar(f, AMOSTRAS_TRIAGEM))
 		caixas.append(Polilinha.caixa(f))
 	if finas.is_empty() or ponto == null:
-		return {"cobertura": 0.0}
+		return {"cobertura": 0.0, "fidelidade": 0.0}
 	return _contra_assinatura(finas, grossas, caixas, ponto)
 
 
@@ -320,7 +345,9 @@ static func _contra_assinatura(
 	var order := float(_maior_subsequencia_crescente(ordem_primeiro)) / float(n)
 
 	return {
-		"cobertura": _cobertura(finas, caixas, r_finas, r_caixas, tol),
+		"cobertura": _cobertura(finas, caixas, r_finas, r_caixas,
+			tol * RAIO_DA_COBERTURA),
+		"fidelidade": _fidelidade(finas, caixas, r_finas, r_caixas, tol),
 		"accuracy": soma_acc / float(n),
 		"order": order,
 		"continuity": clampf(1.0 - float(breaks) / float(n), 0.0, 1.0),
@@ -379,6 +406,84 @@ static func _cobertura(
 ## Quanto de um segmento precisa de ter tinta por cima para ele contar.
 ## Nao e 1.0: as pontas de um traco a mao ficam sempre curtas.
 const FRACAO_DO_SEGMENTO := 0.6
+
+## O raio da `cobertura`, em fraccao da `tolerancia_px`.
+##
+## Mais apertado que a tolerancia, e de proposito. As duas perguntas nao
+## sao a mesma:
+##
+##   "riscaste ISTO?"        — a cobertura. Tem de ser tinta em cima.
+##   "riscaste-o bem?"       — a accuracy. Ai 40 unidades e a folga justa.
+##
+## A folga inteira respondia a primeira por engano. Num `ponto` cujos
+## segmentos vivem a menos de 40 unidades uns dos outros, riscar metade
+## punha tinta a 40 da outra metade e contava-a como riscada: metade da
+## `rosa_negra` dava 0.78 de cobertura e passava a porta dos 0.70. Ou
+## seja, abandonar o `ponto` a meio valia tanto como acaba-lo, contra o
+## SPEC.md §5.3 — e o `teste_risco` dizia-o, e falhava.
+##
+## A 0.75 da tolerancia, medido nos tres `pontos`:
+##
+##   metade dos tracos          0.54 .. 0.68   (abandonado, nao passa)
+##   desenho inteiro, mao       0.98 .. 1.00   (passa)
+##
+## A porta dos 0.70 assenta na folga entre os dois.
+const RAIO_DA_COBERTURA := 0.75
+
+
+## Quanto da tinta que se pos caiu SOBRE o desenho.
+##
+## A `cobertura` sozinha nao chega, e o buraco nao era teorico: raiando a
+## caixa do `ponto` em linhas paralelas juntas — o gesto de quem raia uma
+## folha — todos os segmentos ficam com tinta por cima e a cobertura da
+## 1.00, sem que o desenho tenha sido seguido em lado nenhum. Foi feito
+## assim contra a pagina publicada, com o rato, nos tres `pontos`.
+##
+## As duas medidas sao inversas uma da outra e sao precisas as duas:
+##
+##   - `cobertura`  quanto do DESENHO recebeu tinta   (nao riscar de menos)
+##   - `fidelidade` quanto da TINTA caiu no desenho   (nao riscar de mais)
+##
+## Pesada por comprimento, e nao por numero de pontos: o `condicionar`
+## entrega 48 pontos por traco, seja ele de 20 unidades ou de 2000, e sem
+## o peso um risco atravessado de ponta a ponta contava tanto como um
+## retoque. Retocar por cima do que ja esta riscado nao custa nada — a
+## tinta repetida continua a cair no desenho — e isso e de proposito:
+## quem hesita e volta atras esta a riscar, nao a rabiscar.
+static func _fidelidade(
+	finas: Array[PackedVector2Array],
+	caixas: Array[Rect2],
+	r_finas: Array[PackedVector2Array],
+	r_caixas: Array[Rect2],
+	tol: float
+) -> float:
+	if finas.is_empty() or r_finas.is_empty():
+		return 0.0
+	var em_cima := 0.0
+	var total := 0.0
+	for t in finas.size():
+		var comprimento := Polilinha.comprimento(finas[t])
+		if comprimento <= 0.0:
+			continue
+		# So os segmentos que passam perto deste traco.
+		var perto: Array[int] = []
+		for i in r_finas.size():
+			if Polilinha.distancia_entre_caixas(caixas[t], r_caixas[i]) <= tol:
+				perto.append(i)
+		total += comprimento
+		if perto.is_empty():
+			continue
+		var pontos: PackedVector2Array = finas[t]
+		var tocados := 0
+		for p in pontos:
+			for i in perto:
+				if _perto_da_linha(p, r_finas[i], tol):
+					tocados += 1
+					break
+		em_cima += comprimento * (float(tocados) / float(pontos.size()))
+	if total <= 0.0:
+		return 0.0
+	return em_cima / total
 
 
 static func _perto_da_linha(p: Vector2, linha: PackedVector2Array, tol: float) -> bool:
