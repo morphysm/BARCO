@@ -8,6 +8,14 @@
 - The latest layout build has not yet been uploaded to itch.io.
 - The preceding checkout candidate was tested by the operator on the restricted itch.io page, and clipboard copying worked.
 
+## Repository checkpoint
+
+- `89df3e6` — `o rabisco deixa de passar pelo ponto`: adds the inverse ink-fidelity check and its measured regression test.
+- `e76701b` — `fecha o candidato web recuperavel`: records recoverable checkout, hosted migrations/tests, clipboard and oferendas layout corrections, release notes, and repository document organization.
+- The tracked worktree was clean after these commits. Ignored local builds, screenshots, Godot cache, Supabase CLI state and function `.env` remain outside git.
+- The authored content file now follows the invariant path `CONTENT.pt.md` without content changes.
+- The design rationale now lives at `docs/GDD_barco.md`, matching `SPEC.md`.
+
 ## Work that can be completed without a real supporter
 
 1. Upload `build/barco-itch-layout.zip` to the unpublished/restricted itch.io page.
