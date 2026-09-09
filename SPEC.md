@@ -31,7 +31,7 @@ then the text types itself, with a deliberate stop before the last line:
 everything before it needs the silence of someone about to say something
 else.
 
-The text is A.C.'s and is in `CONTENT_pt.md`. Two answers, DOS-menu
+The text is A.C.'s and is in `CONTENT.pt.md`. Two answers, DOS-menu
 style, arrow keys or pointer: **Deixo tudo na Porta e entro** writes
 `atravessou_a_porta` in `Passagem` and opens the first `ponto`; **Desisto
 e apago o app** quits. The app does not delete itself — deleting is the
@@ -186,10 +186,13 @@ burns, and must never say what either will do in the world. §10 and
 AGENTS.md hold — copy describes the act performed, never its effect.
 **How the reinforcement is measured is not decided.**
 
-**Not built yet, and now visible:** prices are on the buttons but there
-is no payment gate — `depor` currently costs nothing in the build. The
-Ko-fi flow (§10.2–10.4) has to exist before this ships, or the prices
-have to come off the screen.
+**Implemented in the current candidate:** the basket is sealed before a
+recoverable code is issued, the exact USD total is shown, and `depor` consumes
+one named credit in the same server transaction that creates the append-only
+deposito. Repeating either the payment delivery or the deposito operation does
+not repeat the credit or the spend. The free `pedido` path remains separate.
+The hosted round trip with a real Ko-fi payment and the manual reconciliation
+view still have to be proved before this ships (§10.2–10.4).
 
 The `sacrificio` (§8.2) is not one of the three. Where it sits relative
 to them is **not decided**. So is what the `caderno` records of the

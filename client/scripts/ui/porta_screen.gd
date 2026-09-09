@@ -16,7 +16,7 @@
 extends Control
 
 ## O texto e de A.C. e nao se toca: nem uma virgula, nem uma quebra de
-## linha. `CONTENT_pt.md` manda.
+## linha. `CONTENT.pt.md` manda.
 const RITUAL := """Você entrará rápido neste reino e sairá rápido —
 transformado em outro alguém, ou em outra coisa.
 Antes de entrar, responsabilize-se pela sua escolha.

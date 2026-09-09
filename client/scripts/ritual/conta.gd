@@ -1,27 +1,4 @@
-## A identidade de quem esta a usar o app.
-##
-## Anonima, e de proposito: nao ha registo, nao ha email, nao ha
-## palavra-passe, nao ha ecra de entrar. O app pede uma identidade ao
-## servidor na primeira vez que abre e guarda-a; a pessoa nunca ve nada
-## disto. Pedir uma conta para riscar um `ponto` era pedir uma coisa a
-## troco de nada, e o app so pede o que precisa.
-##
-## Serve UMA coisa: ligar um pagamento a quem o fez. Sem ela o dinheiro
-## entra e o Ko-fi nao sabe a quem dar o acto — o pagamento fica na fila
-## manual (SPEC.md §10.4).
-##
-## NUNCA TRAVA O RITUAL. Riscar os `pontos`, atravessar o eclipse, queimar
-## o passado, depor oferendas e escrever `pedidos` sao tudo coisas que
-## acontecem no aparelho e que tem de funcionar sem rede nenhuma. Se o
-## servidor nao responder, isto falha em silencio e o app segue: so o
-## pagamento e que fica por fazer, e o pagamento e a unica parte que
-## precisa de servidor.
-##
-## O QUE ISTO NAO E: uma conta a serio. Uma identidade anonima vive no
-## aparelho — quem limpar os dados do site, trocar de browser ou de
-## computador fica sem ela, e sem os creditos que tinha por gastar. E o
-## preco de nao pedir nada a ninguem. Ligar um email a esta identidade
-## para a poder recuperar e o passo seguinte, e ainda nao existe.
+## Identidade Supabase; email com OTP permite recuperar compras.
 extends Node
 
 const REGISTO := "user://conta.json"
@@ -37,6 +14,20 @@ var _token := ""
 var _renovar := ""
 var _expira := 0.0
 var _a_falar := false
+var _email := ""
+var _confirmada := false
+var _email_otp := ""
+var _tipo_otp := "email"
+var _dono_otp := ""
+var erro := ""
+
+
+func recuperavel() -> bool:
+	return ha() and _confirmada
+
+
+func email() -> String:
+	return _email
 
 
 func _ready() -> void:
@@ -53,7 +44,7 @@ func id() -> String:
 
 ## Ha identidade utilizavel?
 func ha() -> bool:
-	return _id != "" and _token != ""
+	return _id != "" and _token != "" and Time.get_unix_time_from_system() < _expira
 
 
 ## Garante uma identidade. Chamar a vontade: nao repete o que ja esta
@@ -69,49 +60,134 @@ func entrar() -> void:
 		return
 	if _servidor == null or _servidor.url == "":
 		return
+	# Nao se vende nada: nao ha pagamento nenhum para ligar a ninguem, e
+	# entao nao ha identidade nenhuma para criar.
+	#
+	# Isto e o `Servidor.vende` a fechar a ULTIMA porta, e e a que se via
+	# de fora: com o balcao fechado mas isto aberto, cada pessoa que
+	# abrisse a pagina deixava uma linha permanente em `auth.users` do
+	# projecto a serio — uma identidade criada para servir um pagamento
+	# que nao pode acontecer. Numa pagina publica isso e lixo a crescer
+	# sozinho, e sao dados de pessoas guardados sem nada em troca.
+	#
+	# Fica AQUI, e nao em cada sitio que chama `entrar`, por ser o unico
+	# sitio por onde uma identidade nasce.
+	if not _servidor.vende_aqui():
+		return
 	if ha() and Time.get_unix_time_from_system() < _expira - MARGEM_DE_RENOVACAO:
 		return
 	_a_falar = true
 	if _renovar != "":
 		await _pedir("/auth/v1/token?grant_type=refresh_token",
 			{"refresh_token": _renovar})
-		# Um `refresh_token` recusado nao e um erro: e uma identidade que
-		# caducou. Pede-se outra em vez de deixar a pessoa sem nenhuma.
-		if not ha():
-			_renovar = ""
-			await _pedir("/auth/v1/signup", {})
-	else:
+	elif _id == "" and not OS.has_feature("web"):
 		await _pedir("/auth/v1/signup", {})
+	# Preserva a identidade e o refresh token quando a rede falha.
 	_a_falar = false
-	if ha():
-		entrou.emit(_id)
 
 
-func _pedir(caminho: String, corpo: Dictionary) -> void:
+## Sem redirects: o jogador escreve no app o codigo recebido por email.
+func enviar_codigo(endereco: String, ligar := false) -> bool:
+	if _a_falar:
+		return false
+	var limpo := endereco.strip_edges().to_lower()
+	if not limpo.contains("@"):
+		erro = "verifica o email"
+		return false
+	if ligar:
+		await entrar()
+		if not ha():
+			erro = "não foi possível abrir a sessão deste aparelho"
+			return false
+	_a_falar = true
+	var d: Dictionary
+	if ligar:
+		d = await _http("/auth/v1/user", {"email": limpo}, HTTPClient.METHOD_PUT, true)
+	else:
+		d = await _http("/auth/v1/otp", {"email": limpo, "create_user": true})
+	_a_falar = false
+	if not d.get("_ok", false):
+		return false
+	_email_otp = limpo
+	_tipo_otp = "email_change" if ligar else "email"
+	_dono_otp = _id if ligar else ""
+	return true
+
+
+func confirmar_codigo(codigo: String) -> bool:
+	if _a_falar or _email_otp == "" or codigo.strip_edges() == "":
+		return false
+	_a_falar = true
+	var d := await _http("/auth/v1/verify",
+		{"email": _email_otp, "token": codigo.strip_edges(), "type": _tipo_otp})
+	var certo := false
+	if d.get("_ok", false):
+		var u: Dictionary = d.get("user", {})
+		if _dono_otp == "" or str(u.get("id", "")) == _dono_otp:
+			certo = _aceitar_sessao(d)
+		else:
+			erro = "a confirmação não corresponde à conta deste aparelho"
+	_a_falar = false
+	if certo:
+		_email_otp = ""
+	return certo and recuperavel()
+
+
+func ligar_email(endereco: String) -> bool:
+	return await enviar_codigo(endereco, true)
+
+
+func _http(caminho: String, corpo: Dictionary,
+		metodo := HTTPClient.METHOD_POST, autenticado := false) -> Dictionary:
+	erro = ""
+	if _servidor == null or _servidor.url == "":
+		erro = "servidor indisponível"
+		return {}
 	var pedido := HTTPRequest.new()
+	pedido.timeout = 20.0
 	add_child(pedido)
-	var erro := pedido.request(
-		_servidor.url + caminho,
-		["apikey: " + _servidor.chave_publica, "Content-Type: application/json"],
-		HTTPClient.METHOD_POST,
-		JSON.stringify(corpo))
-	if erro != OK:
+	var headers := PackedStringArray([
+		"apikey: " + _servidor.chave_publica, "Content-Type: application/json"])
+	if autenticado:
+		headers.append("Authorization: Bearer " + _token)
+	var e := pedido.request(_servidor.url + caminho, headers, metodo, JSON.stringify(corpo))
+	if e != OK:
 		pedido.queue_free()
-		return
+		erro = "sem ligação — tenta novamente"
+		return {}
 	var r: Array = await pedido.request_completed
 	pedido.queue_free()
 	if int(r[1]) < 200 or int(r[1]) >= 300:
-		return
+		erro = "não foi possível confirmar — verifica o email ou código"
+		if int(r[1]) == 429:
+			erro = "aguarda antes de pedir outro código"
+		elif int(r[1]) == 0:
+			erro = "sem ligação — tenta novamente"
+		return {}
 	var d = JSON.parse_string((r[3] as PackedByteArray).get_string_from_utf8())
-	if typeof(d) != TYPE_DICTIONARY or not d.has("access_token"):
-		return
-	_token = str(d.get("access_token", ""))
+	if not d is Dictionary:
+		d = {}
+	d["_ok"] = true
+	return d
+
+
+func _pedir(caminho: String, corpo: Dictionary) -> void:
+	_aceitar_sessao(await _http(caminho, corpo))
+
+
+func _aceitar_sessao(d: Dictionary) -> bool:
+	var u: Dictionary = d.get("user", {})
+	if str(d.get("access_token", "")) == "" or str(u.get("id", "")) == "":
+		return false
+	_id = str(u["id"])
+	_token = str(d["access_token"])
 	_renovar = str(d.get("refresh_token", ""))
 	_expira = Time.get_unix_time_from_system() + float(d.get("expires_in", 3600))
-	var u = d.get("user", {})
-	if typeof(u) == TYPE_DICTIONARY:
-		_id = str(u.get("id", ""))
+	_email = str(u.get("email", ""))
+	_confirmada = u.get("email_confirmed_at") != null and not u.get("is_anonymous", true)
 	_guardar()
+	entrou.emit(_id)
+	return true
 
 
 ## Os cabecalhos para falar com a base em nome desta pessoa.
@@ -142,7 +218,8 @@ func _ler() -> void:
 	_id = str(d.get("id", ""))
 	_token = str(d.get("token", ""))
 	_renovar = str(d.get("renovar", ""))
-	_expira = float(d.get("expira", 0.0))
+	# Revalida no servidor apos cada arranque.
+	_expira = 0.0
 
 
 func _guardar() -> void:

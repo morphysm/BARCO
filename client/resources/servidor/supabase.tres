@@ -7,3 +7,5 @@ script = ExtResource("1_serv")
 url = "https://awlwysjbgiijfnceieog.supabase.co"
 chave_publica = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3bHd5c2piZ2lpamZuY2VpZW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MjA5NDAsImV4cCI6MjEwNDM5Njk0MH0.ljBgIgUnzXZjk8DdSMOskB_5XxJ6ocYUpG7e_puCUnk"
 kofi_url = "https://ko-fi.com/alexandercripple"
+vende = true
+vende_na_web = true

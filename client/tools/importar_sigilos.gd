@@ -128,6 +128,6 @@ func _importar(slug: String, meta: Dictionary) -> Entidade:
 	e.animal_tradicional = meta["animal"]
 	e.oferendas_aceitas = _texto(meta["oferendas"])
 	e.dominio = _texto(meta["dominio"])
-	e.texto_apresentacao = ""     # CONTENT_pt.md §3: [ a escrever ]
+	e.texto_apresentacao = ""     # CONTENT.pt.md §3: [ a escrever ]
 	assert(ResourceSaver.save(e, "res://resources/entities/%s.tres" % slug) == OK)
 	return e

@@ -12,8 +12,8 @@
 # Nao se faz contra producao porque o Ko-fi nao deixa pagar a si proprio —
 # passa pelo PayPal, que o bloqueia. Aqui o pagamento e simulado: um POST
 # ao webhook com o token local e o codigo verdadeiro que o app emitiu.
-# O que NAO se prova assim e o transporte do Ko-fi, e esse ja esta provado
-# a serio: duas entregas verdadeiras chegaram e foram parar a fila certa.
+# O que NAO se prova assim e o transporte do Ko-fi nem o pagamento pelo
+# processador. Esses ficam para uma transaccao real feita por outra pessoa.
 set -euo pipefail
 
 RAIZ="$(cd "$(dirname "$0")/../.." && pwd)"

@@ -44,6 +44,33 @@ Deno.test("o codigo aparece no meio do que a pessoa escreveu", () => {
     assertEquals(codigoNaMensagem("BAR-7X2"), null);
 });
 
+Deno.test("codigo: o separador que a mao escreveu", () => {
+    // Tudo isto e a mesma coisa. Chega escrito a mao no Ko-fi, por quem
+    // esta a ler o codigo de outro ecra.
+    assertEquals(codigoNaMensagem("BAR 7X2K"), "BAR-7X2K");
+    assertEquals(codigoNaMensagem("BAR_7X2K"), "BAR-7X2K");
+    assertEquals(codigoNaMensagem("BAR.7X2K"), "BAR-7X2K");
+    assertEquals(codigoNaMensagem("BAR \u2013 7X2K"), "BAR-7X2K");
+    assertEquals(codigoNaMensagem("obrigado BAR - 7X2K axe"), "BAR-7X2K");
+});
+
+Deno.test("codigo: sem separador nao e codigo — senao 'barcode' era um", () => {
+    // Depois da normalizacao, "CODE" viraria "C0DE", que pode ser um
+    // codigo emitido a serio. Um separador obrigatorio fecha essa porta.
+    assertEquals(codigoNaMensagem("barcode"), null);
+    assertEquals(codigoNaMensagem("BAR7X2K"), null);
+});
+
+Deno.test("codigo: o I e o O que o gerador nunca emite", () => {
+    // O `pedir_codigo` escolhe de 34 letras: digitos e alfabeto sem I e
+    // sem O. Um I escrito so pode ter sido o 1 do ecra.
+    assertEquals(codigoNaMensagem("BAR-I2CY"), "BAR-12CY");
+    assertEquals(codigoNaMensagem("BAR-O2CY"), "BAR-02CY");
+    assertEquals(codigoNaMensagem("bar-io2c"), "BAR-102C");
+    // O L ESTA no alfabeto: nao se lhe toca.
+    assertEquals(codigoNaMensagem("BAR-L2CY"), "BAR-L2CY");
+});
+
 Deno.test("codigo: diz de quem e, e o cesto diz o resto", async () => {
     const c = await casar(pagamento({ mensagem: "BAR-7X2K" }), REGISTO);
     assertEquals(c.por, "codigo");

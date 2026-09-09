@@ -31,12 +31,39 @@ import type { Casamento, Pagamento, Registo } from "./pagamento.ts";
 /// Procura-se dentro da mensagem e nao no principio dela, porque a pessoa
 /// escreve o que quiser a volta. Sem sensibilidade a maiusculas, que e o
 /// telemovel a corrigir sozinho.
-const CODIGO = /\bBAR-[0-9A-Z]{4}\b/i;
+///
+/// O SEPARADOR e frouxo de proposito. Isto nao chega aqui copiado por uma
+/// maquina: chega escrito a mao na caixa de mensagem do Ko-fi, por quem
+/// esta a ler o codigo de outro ecra. O travessao do corrector
+/// automatico, o sublinhado, o ponto e o espaco sao todos a mesma coisa
+/// que o hifen.
+///
+/// O que NAO se aceita e a ausencia de separador. `BAR-` colado a quatro
+/// letras faz de "barcode" um codigo — e, depois da normalizacao la em
+/// baixo, "CODE" vira "C0DE", que e um codigo que pode existir mesmo. Um
+/// separador obrigatorio custa nada a quem escreve e fecha essa porta.
+const CODIGO = /\bBAR(?:\s*[-_.‐-―]\s*|\s+)([0-9A-Z]{4})\b/i;
+
+/// Os pares que se leem mal, e que sao seguros de desfazer.
+///
+/// O gerador (`pedir_codigo`) escolhe de 34 letras: os digitos todos e o
+/// alfabeto sem `I` e sem `O`. E POR ISSO que isto e seguro e nao um
+/// palpite: um `I` num codigo escrito nunca pode ter sido um `I` emitido,
+/// porque nunca se emite nenhum — so pode ter sido o `1` que estava no
+/// ecra. O mesmo para `O` e `0`.
+///
+/// Nao se toca no `L`: esse ESTA no alfabeto, e trocar `L` por `1` seria
+/// estragar codigos verdadeiros para salvar os de quem se enganou.
+const CONFUSOES: Record<string, string> = { I: "1", O: "0" };
 
 export function codigoNaMensagem(mensagem: string | null): string | null {
     if (!mensagem) return null;
     const achado = mensagem.match(CODIGO);
-    return achado ? achado[0].toUpperCase() : null;
+    if (!achado) return null;
+    const letras = achado[1]
+        .toUpperCase()
+        .replace(/[IO]/g, (c) => CONFUSOES[c]);
+    return `BAR-${letras}`;
 }
 
 export async function casar(p: Pagamento, r: Registo): Promise<Casamento> {

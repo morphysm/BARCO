@@ -14,12 +14,17 @@
 # reenvio nao credita duas vezes.
 set -euo pipefail
 
-CAIXA=barco_prova_pg
+# Testes nao devem remover um contentor de outra sessao.
+CAIXA="barco_prova_pg_$$_$RANDOM"
 AQUI="$(cd "$(dirname "$0")" && pwd)"
 
+if ! docker info >/dev/null 2>&1; then
+    echo "Docker indisponivel nesta sessao. Executa docker info no terminal normal." >&2
+    echo "Nao alteres as permissoes do socket para contornar o isolamento da sessao." >&2
+    exit 1
+fi
 limpar() { docker rm -f "$CAIXA" >/dev/null 2>&1 || true; }
 trap limpar EXIT
-limpar
 
 docker run --rm -d --name "$CAIXA" -e POSTGRES_PASSWORD=x postgres:16-alpine >/dev/null
 for _ in $(seq 1 30); do
@@ -54,3 +59,15 @@ docker exec "$CAIXA" psql -U postgres -d barco -q -v ON_ERROR_STOP=1 \
     -f /tmp/99_permissoes.sql
 docker cp "$AQUI/rls.sql" "$CAIXA:/tmp/" >/dev/null
 docker exec "$CAIXA" psql -U postgres -d barco -v ON_ERROR_STOP=1 -f /tmp/rls.sql
+
+docker cp "$AQUI/alfabeto.sql" "$CAIXA:/tmp/" >/dev/null
+docker exec "$CAIXA" psql -U postgres -d barco -v ON_ERROR_STOP=1 -f /tmp/alfabeto.sql
+
+docker cp "$AQUI/email.sql" "$CAIXA:/tmp/" >/dev/null
+docker exec "$CAIXA" psql -U postgres -d barco -v ON_ERROR_STOP=1 -f /tmp/email.sql
+
+docker cp "$AQUI/validar_pagamento.sql" "$CAIXA:/tmp/" >/dev/null
+docker exec "$CAIXA" psql -U postgres -d barco -v ON_ERROR_STOP=1 -f /tmp/validar_pagamento.sql
+
+docker cp "$AQUI/compras_recuperaveis.sql" "$CAIXA:/tmp/" >/dev/null
+docker exec "$CAIXA" psql -U postgres -d barco -v ON_ERROR_STOP=1 -f /tmp/compras_recuperaveis.sql

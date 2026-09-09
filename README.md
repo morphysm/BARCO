@@ -9,24 +9,42 @@ Antes de mexer em qualquer coisa:
 | `AGENTS.md` | Invariantes. Nao sao preferencias. |
 | `GLOSSARY.md` | Vocabulario de dominio. Nunca traduzido. |
 | `SPEC.md` | Contrato de implementacao. |
-| `CONTENT_pt.md` | Texto autoral. Nao gerar, nao traduzir, nao reescrever. |
-| `GDD barco.md` | Racional de design (pt). |
+| `CONTENT.pt.md` | Texto autoral. Nao gerar, nao traduzir, nao reescrever. |
+| `docs/GDD_barco.md` | Racional de design (pt). |
+
+## Estrutura
+
+| Pasta | O que guarda |
+|---|---|
+| `client/` | Projecto Godot: cenas, scripts, recursos, shaders e provas do cliente. |
+| `server/` | Fonte do Supabase: migracoes, Edge Functions, provas SQL e templates. |
+| `supabase/` | Configuracao do CLI; `functions/` e `migrations/` apontam para `server/`. |
+| `tools/` | Ferramentas do repositorio e provas que nao pertencem ao runtime. |
+| `references/` | Referencias de origem usadas para construir os recursos. |
+| `textures/` | Fontes de modelos e texturas anteriores a importacao no Godot. |
+| `build/` | Exportacoes locais, fora do git. |
+| `capturas/` | Capturas e quadros gerados localmente, fora do git. |
+| `.serena/` | Configuracao do projecto e memorias; cache e configuracao local ficam fora do git. |
 
 ## Estado
 
 Fatia vertical em andamento (SPEC.md §12): a `irmandade` da
-`calunga_pequena` — `Exu Aranha`, `Rosa Negra`, `Exu Caveira`.
+`calunga_pequena` — `Exu Aranha`, `Rosa Negra`, `Exu Caveira`. O estado
+alojado e os passos exactos para publicar estao em
+[`server/KO_FI_LAUNCH.md`](server/KO_FI_LAUNCH.md).
 
 - [x] `ponto_riscado` — captura e `firmeza`
 - [x] reconhecimento de `assinatura` dentro de uma `irmandade`
 - [x] tres assinaturas fieis: `Exu Caveira` (143 tracos), `Rosa Negra`
       (58), `Exu Aranha` (72)
 - [x] `abandonado` vs traco instintivo, e a inversao sob `hora_asmodeica`
-- [ ] `assentamento`
+- [x] `assentamento`, `pedidos` e `oferendas` persistentes
+- [x] checkout Ko-fi, creditos nomeados e recuperacao da conta por email
+- [x] migracoes e webhook alojados no Supabase
+- [ ] prova de um pagamento Ko-fi real, de ponta a ponta
+- [ ] vista de administracao da fila de reconciliacao
 - [ ] vela e `permanencia`
 - [ ] `caderno`
-
-Sem pagamento e sem servidor nesta fatia, por desenho.
 
 Cada entidade tem a sua `assinatura`: o `ponto_riscado` inteiro dela, como
 foi desenhado. **O ponto e uma copia fiel do desenho** — nada e resumido

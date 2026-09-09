@@ -129,6 +129,11 @@ var _lista: Label
 var _folhas: HFlowContainer
 var _faixa: ColorRect
 var _coluna_da_tira: VBoxContainer
+var _laterais: Array[ScrollContainer] = []
+var _oferenda_a_pegar: Oferenda
+var _botao_a_pegar: Button
+var _inicio_arrasto := Vector2.ZERO
+var _suprimir_clique_oferenda := false
 ## As folhas desenhadas no menu, para se irem queimando enquanto o menu
 ## esta aberto em vez de ficarem paradas no instante em que abriu.
 var _folhas_vivas: Array[Dictionary] = []
@@ -157,6 +162,11 @@ var _oferenda_na_mao: Oferenda
 ## chegou ao `assentamento`.
 const ALCANCE_DO_CHAO := 0.62
 var _tempo := 0.0
+var _depositos_servidor: Dictionary = {}
+var _dono_depositos := ""
+var _a_sincronizar := false
+var _gesto_pendente: Dictionary = {}
+var _aviso_pagamento: Label
 
 
 func _ready() -> void:
@@ -171,14 +181,24 @@ func _ready() -> void:
 		_montar_menu()
 		_por_a_andar()
 		_carregar_pedidos()
-		# A altura da faixa depende de quantas linhas as oferendas ocupam,
-		# e isso so se sabe depois de o contentor as ter arrumado — por
-		# isso e adiado, e refeito sempre que a janela muda de largura.
+		# Mede as colunas depois da primeira disposicao e volta a medir
+		# quando a janela muda de tamanho.
 		call_deferred("_ajustar_faixa")
 		get_viewport().size_changed.connect(_ajustar_faixa)
 		# O que ja esta comprado e por gastar. Silencioso: sem rede o
 		# ritual segue, so nao se depoe o que se paga.
 		Creditos.actualizar()
+		Conta.entrou.connect(_sessao_compras)
+		_aviso_pagamento = Pagina.texto("", 18)
+		var avisos := CanvasLayer.new()
+		avisos.add_child(_aviso_pagamento)
+		add_child(avisos)
+		var verificar := Timer.new()
+		verificar.wait_time = 10.0
+		verificar.timeout.connect(_sincronizar_compras)
+		add_child(verificar)
+		verificar.start()
+		call_deferred("_sincronizar_compras")
 	_vestir()
 	if not Engine.is_editor_hint() and Passagem.iris_a_abrir:
 		Passagem.iris_a_abrir = false
@@ -407,10 +427,11 @@ func acender_pedido(texto: String) -> void:
 ## Os `.tres` guardam `cafes` — a unidade do Ko-fi (SPEC.md §10.1). O que
 ## se mostra e dinheiro a serio, porque AGENTS.md proibe moeda de faz de
 ## conta. Trocar de moeda e trocar estas duas linhas e mais nada.
-## A altura da faixa preta de baixo, em pixeis da viewport.
-## A altura MINIMA da faixa preta de baixo, em pixeis da viewport. Cresce
-## se as oferendas nao couberem numa linha so.
-const ALTURA_DA_FAIXA := 150
+## O rodape guarda apenas as accoes; as oferendas usam colunas laterais.
+const ALTURA_DA_FAIXA := 112
+const LARGURA_LATERAL := 232
+const ALTURA_OFERENDA := 66
+const ESPACO_OFERENDA := 14
 
 const POR_CAFE := 2
 const MOEDA := "US$"
@@ -448,51 +469,67 @@ func _montar_tira() -> void:
 	_coluna_da_tira = coluna
 
 	# Ninguem adivinha que se arrasta. TODO(CONTENT.pt.md): texto autoral.
-	var como := Pagina.texto("arrasta uma oferenda para o assentamento", 19)
-	como.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	como.modulate = Color(1, 1, 1, 0.62)
-	coluna.add_child(como)
+	#
+	# Com o balcao fechado nao ha nada para arrastar, e mandar arrastar
+	# era mandar fazer uma coisa que nao existe.
+	if Creditos.vende():
+		var como := Pagina.texto("arrasta uma oferenda para o assentamento", 19)
+		como.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		como.modulate = Color(1, 1, 1, 0.62)
+		coluna.add_child(como)
 
 	# O que e gratis, primeiro e a parte.
 	var linha_livre := HBoxContainer.new()
 	linha_livre.alignment = BoxContainer.ALIGNMENT_CENTER
+	linha_livre.add_theme_constant_override("separation", 20)
 	coluna.add_child(linha_livre)
 	# O ESC continua a servir, mas ninguem adivinha uma tecla que nao
 	# esta escrita em lado nenhum.
 	# TODO(CONTENT.pt.md): rotulo autoral.
-	var comprar := Pagina.botao("comprar", 20)
-	comprar.pressed.connect(abrir_balcao)
-	linha_livre.add_child(comprar)
+	if Creditos.vende():
+		var comprar := Pagina.botao("comprar", 20)
+		comprar.pressed.connect(abrir_balcao)
+		linha_livre.add_child(comprar)
 
 	var escrever := Pagina.botao("escrever um pedido · grátis", 20)
 	escrever.pressed.connect(_alternar_menu)
 	linha_livre.add_child(escrever)
 
-	# E o que se paga, com o preco a vista. Numa linha so.
-	#
-	# A letra e a folga sao contidas de proposito: com `aspect=expand` a
-	# viewport passa a ser a janela de verdade, entao a tira tem de caber
-	# na mais estreita que alguem venha a usar — nao nos 1600 do projeto.
-	# `HFlowContainer` e nao uma fila. Oito oferendas ja enchiam quase os
-	# 1600 do viewport; a nona saía pela borda e nao havia como lhe tocar.
-	# Assim, quando nao cabem numa linha, passam a duas — e acrescentar
-	# uma oferenda deixa de ser uma decisao sobre a largura do ecra.
-	var tira := HFlowContainer.new()
-	tira.alignment = FlowContainer.ALIGNMENT_CENTER
-	tira.add_theme_constant_override("h_separation", 6)
-	tira.add_theme_constant_override("v_separation", 6)
-	coluna.add_child(tira)
+	if not Creditos.vende():
+		return
 
-	for caminho in _oferendas_disponiveis():
-		var o: Oferenda = load(caminho)
+	# Duas colunas deixam o centro livre para o gesto. Os nomes e precos
+	# continuam a vir dos recursos; nao ha uma lista de actos na UI.
+	for lado in range(2):
+		var rolo := ScrollContainer.new()
+		rolo.name = "OferendasEsquerda" if lado == 0 else "OferendasDireita"
+		rolo.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		rolo.mouse_force_pass_scroll_events = false
+		var fundo_lateral := StyleBoxFlat.new()
+		fundo_lateral.bg_color = Color.BLACK
+		rolo.add_theme_stylebox_override("panel", fundo_lateral)
+		folha.add_child(rolo)
+		_laterais.append(rolo)
+		var itens := VBoxContainer.new()
+		itens.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		itens.add_theme_constant_override("separation", ESPACO_OFERENDA)
+		rolo.add_child(itens)
+
+	var caminhos := _oferendas_disponiveis()
+	var metade := ceili(caminhos.size() / 2.0)
+	for i in caminhos.size():
+		var o: Oferenda = load(caminhos[i])
 		if o == null:
 			continue
 		var rotulo := o.nome
 		if o.cafes > 0:
-			rotulo += "  %d %s" % [o.cafes * POR_CAFE, MOEDA]
-		var b := Pagina.botao(rotulo, 18)
-		b.button_down.connect(_comecar_a_depor.bind(o))
-		tira.add_child(b)
+			rotulo += "\n%d %s" % [o.cafes * POR_CAFE, MOEDA]
+		var botao := Pagina.botao(rotulo, 20)
+		botao.custom_minimum_size.y = ALTURA_OFERENDA
+		botao.mouse_force_pass_scroll_events = true
+		botao.button_down.connect(_preparar_arrasto.bind(o, botao))
+		botao.pressed.connect(_clicar_oferenda.bind(o))
+		_laterais[0 if i < metade else 1].get_child(0).add_child(botao)
 
 
 ## Largura da coluna do menu. Em paisagem, ocupar o ecra todo dava uma
@@ -546,7 +583,7 @@ func _montar_menu() -> void:
 	_escrita.add_theme_color_override("font_placeholder_color", Color(0.42, 0.38, 0.34))
 	_escrita.add_theme_color_override("selection_color", Color(0.62, 0.56, 0.44))
 	# Diz ONDE se escreve, nunca O QUE se escreve: o app nao insinua o que
-	# se pede (CONTENT_pt.md §2).
+	# se pede (CONTENT.pt.md §2).
 	_escrita.placeholder_text = "escreva aqui"
 	var papel := StyleBoxFlat.new()
 	papel.bg_color = Color(0.86, 0.82, 0.72)
@@ -646,7 +683,7 @@ func _deitar_ao_caldeirao() -> void:
 
 
 ## Quanto falta a cada pedido. Diz o que esta a acontecer, nunca o que vai
-## acontecer (CONTENT_pt.md §2).
+## acontecer (CONTENT.pt.md §2).
 func _actualizar_lista() -> void:
 	if _lista == null:
 		return
@@ -696,26 +733,28 @@ func _actualizar_lista() -> void:
 ## se ve depois de exportar.
 ##
 ## O `ResourceLoader` le o sistema de RECURSOS, que sabe do `.pck`.
-## A faixa cresce com o que tem dentro.
-##
-## Era fixa em 150 px, escolhidos quando as oferendas eram oito e cabiam
-## numa linha. A nona ja nao cabia, passava para uma segunda linha, e essa
-## ficava cortada por baixo da faixa: um botao que se via meio e em que
-## nao se conseguia carregar.
-##
-## Agora a faixa mede o que a coluna precisa e nunca encolhe abaixo dos
-## 150 — com poucas oferendas o enquadramento fica o mesmo de sempre.
-## Recalcula-se quando a janela muda de tamanho, porque e a largura que
-## decide se as oferendas cabem numa linha ou em duas.
+## O rodape tem apenas as accoes e a indicacao do gesto. As oferendas
+## ficam aos lados, deixando o centro livre mesmo em retrato.
+## A altura vem do VBox de botoes, nao do minimo de um HFlow que
+## ainda esta a mudar de linha: era isso que cortava a ultima oferenda.
 func _ajustar_faixa() -> void:
-	if _faixa == null or _coluna_da_tira == null:
-		return
 	if not is_instance_valid(_faixa) or not is_instance_valid(_coluna_da_tira):
 		return
-	var alto := maxf(
-		float(ALTURA_DA_FAIXA), _coluna_da_tira.get_combined_minimum_size().y + 22.0)
-	_faixa.offset_top = -alto
-	_coluna_da_tira.offset_top = -alto + 10.0
+	var tamanho := get_viewport().get_visible_rect().size
+	var rodape := maxf(float(ALTURA_DA_FAIXA),
+		_coluna_da_tira.get_combined_minimum_size().y + 28.0)
+	_faixa.offset_top = -rodape
+	_coluna_da_tira.offset_top = -rodape + 12.0
+	var margem := 24.0
+	for lado in _laterais.size():
+		var rolo := _laterais[lado]
+		var natural: float = rolo.get_child(0).get_combined_minimum_size().y
+		var largura := minf(float(LARGURA_LATERAL), tamanho.x * 0.26)
+		var disponivel := tamanho.y - rodape - margem * 2.0
+		var alto := minf(natural, maxf(80.0, disponivel))
+		rolo.size = Vector2(largura, alto)
+		rolo.position.x = margem if lado == 0 else tamanho.x - margem - largura
+		rolo.position.y = margem + (disponivel - alto) * 0.5
 
 
 ## O balcao. E outra sala: aqui compra-se, no `assentamento` depoe-se.
@@ -727,6 +766,11 @@ var _balcao: Comprar
 
 
 func abrir_balcao() -> void:
+	# O balcao fechado nao se abre por nenhuma porta. O botao ja nem
+	# chega a existir; isto e para as outras chamadas — o `portao` do
+	# `_comecar_a_depor`, e o que vier a seguir.
+	if not Creditos.vende():
+		return
 	if _balcao != null and is_instance_valid(_balcao):
 		_balcao.visible = true
 		return
@@ -743,6 +787,7 @@ func abrir_balcao() -> void:
 
 func _fechar_balcao() -> void:
 	if _balcao != null and is_instance_valid(_balcao):
+		_balcao._cancelar_copia()
 		_balcao.visible = false
 	# Ao sair do balcao, ve-se o que entretanto chegou.
 	Creditos.actualizar()
@@ -772,6 +817,9 @@ func _oferendas_disponiveis() -> Array[String]:
 ## isso quem decide a serio e o servidor, ao largar. Aqui so se evita
 ## comecar um gesto obviamente vao.
 func _comecar_a_depor(oferenda: Oferenda) -> void:
+	if not _gesto_pendente.is_empty():
+		_sincronizar_compras()
+		return
 	if _na_mao != null:
 		return
 	if oferenda.cafes > 0 and Creditos.quantos(oferenda.slug) <= 0:
@@ -784,6 +832,21 @@ func _comecar_a_depor(oferenda: Oferenda) -> void:
 	_assentar(_na_mao, Vector2.ZERO)
 
 
+func _preparar_arrasto(oferenda: Oferenda, botao: Button) -> void:
+	_suprimir_clique_oferenda = false
+	_oferenda_a_pegar = oferenda
+	_botao_a_pegar = botao
+	_inicio_arrasto = get_viewport().get_mouse_position()
+
+
+func _clicar_oferenda(oferenda: Oferenda) -> void:
+	# Um toque sem credito abre o balcao. Com credito, e preciso arrastar;
+	# tocar ou comecar a deslocar a lista nao deposita nada.
+	if not _suprimir_clique_oferenda and _na_mao == null \
+			and oferenda.cafes > 0 and Creditos.quantos(oferenda.slug) <= 0:
+		abrir_balcao()
+
+
 func _input(evento: InputEvent) -> void:
 	if Engine.is_editor_hint():
 		return
@@ -791,13 +854,31 @@ func _input(evento: InputEvent) -> void:
 		_alternar_menu()
 		get_viewport().set_input_as_handled()
 		return
+	if _oferenda_a_pegar != null:
+		if evento is InputEventMouseMotion or evento is InputEventScreenDrag:
+			var delta: Vector2 = evento.position - _inicio_arrasto
+			if delta.length() >= 12.0:
+				_suprimir_clique_oferenda = true
+				var rolo := _botao_a_pegar.get_parent().get_parent() as ScrollContainer
+				var barra := rolo.get_v_scroll_bar()
+				var desloca_lista := barra.max_value > barra.page \
+					and absf(delta.y) > absf(delta.x) \
+					and rolo.get_global_rect().has_point(evento.position)
+				var oferenda := _oferenda_a_pegar
+				_oferenda_a_pegar = null
+				if not desloca_lista:
+					_comecar_a_depor(oferenda)
+		elif (evento is InputEventMouseButton and evento.button_index == MOUSE_BUTTON_LEFT \
+				and not evento.pressed) or (evento is InputEventScreenTouch and not evento.pressed):
+			_oferenda_a_pegar = null
 	if _na_mao == null:
 		return
 	if evento is InputEventMouseMotion or evento is InputEventScreenDrag:
 		var onde: Variant = _no_chao(evento.position)
 		if onde != null:
 			_assentar(_na_mao, onde)
-	elif (evento is InputEventMouseButton and not evento.pressed) \
+	elif (evento is InputEventMouseButton and evento.button_index == MOUSE_BUTTON_LEFT
+			and not evento.pressed) \
 			or (evento is InputEventScreenTouch and not evento.pressed):
 		_largar(_no_chao(evento.position))
 
@@ -815,17 +896,23 @@ func _largar(onde: Variant) -> void:
 		na_mao.queue_free()
 		return
 
-	# GASTA-SE ANTES DE POUSAR. Quem marca o credito e o servidor, e se
-	# ele nao marcar — sem rede, sem sessao, ou porque o credito ja foi
-	# gasto noutro sitio — a oferenda nao fica. Pousar primeiro e cobrar
-	# depois era arriscar da-la de graca; e uma oferenda que aparece e
-	# desaparece e pior do que uma que nao chega a aparecer.
+	# O servidor gasta e regista na mesma transacao. Guarda-se a operacao
+	# antes de enviar: perder a resposta nao pode cobrar o gesto outra vez.
 	if oferenda != null and oferenda.cafes > 0:
-		var deu: bool = await Creditos.gastar(oferenda.slug)
-		if not deu:
+		var bytes := Crypto.new().generate_random_bytes(16).hex_encode()
+		var operacao := "%s-%s-%s-%s-%s" % [
+			bytes.substr(0, 8), bytes.substr(8, 4), bytes.substr(12, 4),
+			bytes.substr(16, 4), bytes.substr(20, 12)]
+		_gesto_pendente = {"operacao": operacao, "oferenda": oferenda.slug,
+			"x": onde.x, "y": onde.y}
+		if not _guardar_gesto():
+			_gesto_pendente.clear()
+			_aviso_pagamento.text = "não foi possível guardar — nenhum crédito gasto"
 			na_mao.queue_free()
-			abrir_balcao()
 			return
+		na_mao.queue_free()
+		await _sincronizar_compras()
+		return
 
 	_assentar(na_mao, onde)
 	_registar(oferenda, onde)
@@ -963,8 +1050,79 @@ func _carregar_depositos() -> void:
 
 func guardar_depositos() -> void:
 	var f := FileAccess.open(REGISTO, FileAccess.WRITE)
-	f.store_string(JSON.stringify(_depositos))
+	if f == null:
+		return
+	# Pagos vivem no servidor; o ficheiro antigo conserva apenas os locais.
+	f.store_string(JSON.stringify(_depositos.filter(func(d): return not d.has("servidor"))))
 	f.close()
+
+
+func _sessao_compras(_id: String) -> void:
+	call_deferred("_sincronizar_compras")
+
+
+func _ficheiro_gesto() -> String:
+	return "user://operacao_" + Conta.id() + ".json"
+
+
+func _guardar_gesto() -> bool:
+	var f := FileAccess.open(_ficheiro_gesto(), FileAccess.WRITE)
+	if f == null:
+		return false
+	f.store_string(JSON.stringify(_gesto_pendente))
+	f.flush()
+	return f.get_error() == OK
+
+
+func _sincronizar_compras() -> void:
+	if _a_sincronizar or not Conta.ha():
+		return
+	_a_sincronizar = true
+	var dono := Conta.id()
+	if _dono_depositos != dono:
+		for no in _depositos_servidor.values():
+			if is_instance_valid(no):
+				no.queue_free()
+		_depositos_servidor.clear()
+		_depositos = _depositos.filter(func(d): return not d.has("servidor"))
+		_gesto_pendente = {}
+		_dono_depositos = dono
+		if FileAccess.file_exists(_ficheiro_gesto()):
+			var f := FileAccess.open(_ficheiro_gesto(), FileAccess.READ)
+			if f != null:
+				var d = JSON.parse_string(f.get_as_text())
+				if d is Dictionary:
+					_gesto_pendente = d
+	if not _gesto_pendente.is_empty():
+		_aviso_pagamento.text = "a confirmar a oferenda no servidor"
+		var g := _gesto_pendente.duplicate()
+		var feito: Dictionary = await Creditos.depor(str(g.get("oferenda", "")),
+			Vector2(float(g.get("x", 0)), float(g.get("y", 0))), str(g.get("operacao", "")))
+		if Conta.id() != dono:
+			_a_sincronizar = false
+			return
+		if feito.has("id") or feito.get("recusado", false):
+			_gesto_pendente.clear()
+			_guardar_gesto()
+			_aviso_pagamento.text = "" if feito.has("id") else "oferenda não deposta — verifica os créditos"
+		else:
+			_aviso_pagamento.text = "sem confirmação — a compra será verificada novamente"
+	var resposta: Dictionary = await Creditos.depositos()
+	if Conta.id() == dono and resposta.get("dados") is Array:
+		_a_repor = true
+		for d in resposta["dados"]:
+			var chave := str(d["id"])
+			if _depositos_servidor.has(chave):
+				continue
+			var o: Oferenda = load("res://resources/oferendas/%s.tres" % str(d["oferenda_slug"]))
+			if o == null:
+				continue
+			var no := depor(o, Vector2(float(d["position_x"]), float(d["position_y"])))
+			if no != null:
+				_depositos[-1]["servidor"] = chave
+				_depositos_servidor[chave] = no
+		_a_repor = false
+	_a_sincronizar = false
 
 
 func _process(delta: float) -> void:

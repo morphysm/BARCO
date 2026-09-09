@@ -1,8 +1,13 @@
 # server
 
+> Estado actual do checkout web, provas alojadas e passos de publicacao:
+> [KO_FI_LAUNCH.md](KO_FI_LAUNCH.md). Este ficheiro descreve a arquitectura
+> e as provas locais; o outro regista o estado observado em producao.
+
 Supabase. Postgres com RLS, Edge Functions em Deno.
 
-Nada disto esta ligado a uma conta ainda. Ver **O que falta** ao fundo.
+O projecto alojado ja esta ligado e migrado. Ver **O que falta** ao fundo
+antes de publicar uma nova versao.
 
 ## Provar sem conta nenhuma
 
@@ -32,11 +37,11 @@ uma de seu lado: o cliente pedia codigos, o servidor creditava
 pagamentos, e ninguem tinha visto um codigo emitido pelo app ser pago e
 voltar como credito gastavel.
 
-Nao se faz contra producao porque o **Ko-fi nao deixa pagar a si
-proprio** — passa pelo PayPal, que o bloqueia. La o pagamento e simulado:
-um POST ao webhook local com o codigo verdadeiro que o app emitiu. O que
-isso NAO prova e o transporte do Ko-fi, e esse ja esta provado a serio —
-duas entregas verdadeiras chegaram e foram parar a fila certa.
+Nao se faz um pagamento real contra producao com a conta do criador porque o
+**Ko-fi nao deixa pagar a si proprio**. Na prova local, o pagamento e
+simulado: um POST ao webhook com o codigo que o app emitiu. O Ko-fi tambem
+permite enviar um pagamento de teste na pagina de Webhooks. Nenhuma das duas
+provas substitui uma transaccao real feita por outra pessoa.
 
 O terceiro e o que prova o que os outros nao alcancam: a Edge Function a
 correr, o corpo em `form-urlencoded` a ser desembrulhado, o token a ser
@@ -66,6 +71,19 @@ O SPEC.md §2 poe o servidor em `server/`. O CLI do Supabase so olha para
 `supabase/migrations` e `supabase/functions`. Os dois sao symlinks para
 `server/`, e e o `server/` que manda.
 
+### O codigo mal copiado
+
+O codigo nao chega aqui copiado por uma maquina: chega escrito a mao na
+caixa de mensagem do Ko-fi, por quem o leu de outro ecra. A
+`_shared/cascata.ts` conta com isso — separador frouxo (`BAR 7X2K`,
+`BAR_7X2K`, o travessao do corrector) e `I` lido como `1`, `O` como `0`.
+
+A segunda metade so e segura porque o gerador nunca emite `I` nem `O`.
+Sao dois ficheiros que nao se conhecem a concordar, e por isso ha uma
+prova a segurar o acordo: `prova/alfabeto.sql`. Se alguem devolver o `I`
+ao alfabeto, ela rebenta — em vez de os pagamentos comecarem a cair na
+fila manual sem explicacao.
+
 ### A sonda
 
 `functions/sonda/` responde com os NOMES das variaveis `SUPABASE_*` e o
@@ -87,7 +105,7 @@ functions/
   _shared/pagamento.ts        o tipo `Pagamento`. Nao sabe o que e o Ko-fi (§10.5)
   _shared/cascata.ts          de quem e, e o que paga. Nunca adivinha
   _shared/ambiente.ts         as chaves, lidas com verificacao
-  kofi_webhook/kofi.ts        a traducao do payload. NOMES POR CONFIRMAR
+  kofi_webhook/kofi.ts        a traducao do payload do Ko-fi
   kofi_webhook/index.ts       o handler
 ```
 
@@ -105,26 +123,17 @@ nenhuma.
 
 ## O que falta, e nada disto e detalhe
 
-1. ~~Um payload de um pagamento a serio.~~ **FEITO, 08-09-2026.** Duas
-   entregas do Ko-fi chegaram ao endereco a serio, uma doacao e uma
-   compra, e foram lidas campo a campo do `pagamentos.raw`. Todos os
-   nomes e tipos que o parser assume batem certo, incluindo o `quantity`
-   dentro do `shop_items`, que veio a 5 numa das linhas da compra.
+1. **Um pagamento real de ponta a ponta.** Outra pessoa tem de pagar o valor
+   exacto com um codigo desta versao na mensagem. Confirmar HTTP 200,
+   creditos nomeados, estado recebido, deposito, recarregamento do browser e
+   repeticao segura da entrega e da operacao de deposito.
 
-   As duas foram para a fila manual, como devia ser: nao ha conta com
-   aquele email, nao foi emitido codigo nenhum e ainda nao ha `kofi_sku`
-   mapeado.
+   Uma inspeccao alojada encontrou duas linhas por resolver. A origem nao foi
+   estabelecida e os payloads nao foram lidos; nao contam como prova de um
+   pagamento real. Examina-las antes da publicacao sem adivinhar, creditar ou
+   marcar como resolvidas.
 
-   Os ficheiros em `payloads/` continuam a ser os exemplos da
-   documentacao e nao as entregas observadas — essas trazem um email a
-   serio, identificadores de Discord e uma morada postal, e o feitio dos
-   campos e igual, que era o que faltava confirmar.
-
-2. **Criar os artigos na loja do Ko-fi** e escrever o `kofi_sku` de cada
-   um na tabela `atos`. Sem isso o degrau do SKU nao existe e tudo
-   depende do codigo colado na mensagem.
-
-3. **A vista de administracao da fila** (§10.4: "a first-class feature
+2. **A vista de administracao da fila** (§10.4: "a first-class feature
    with a small admin view, not a TODO"). A tabela `reconciliacao` existe
    e enche-se sozinha; falta por onde a resolver.
 
@@ -133,5 +142,15 @@ nenhuma.
    `creditos_um_por_pagamento` trata de impedir o segundo clique. Nao lhe
    ponhas uma verificacao a mao por cima nem a contornes.
 
-4. **O lado do cliente**: pedir um codigo, mostra-lo, abrir o link do
-   Ko-fi, e esperar pelo credito.
+3. **Confirmar a recuperacao de creditos comprados.** O login por codigo de
+   email e a ligacao da identidade ja existem e foram provados em dois
+   browsers. Ainda falta confirmar, com o pagamento de ponta a ponta, que a
+   mesma pessoa recupera os creditos comprados depois de limpar a sessao.
+
+4. **Conferir a versao candidata no iframe.** A copia do codigo ja foi
+   confirmada pela operadora. A versao mais recente ainda precisa de prova de
+   disposicao, scroll e gesto no desktop e num viewport estreito da pagina
+   restrita do itch.io.
+
+O caminho actual usa apoio unico com valor exacto e codigo na mensagem. Os
+artigos da loja e o degrau por `kofi_sku` nao fazem parte desta publicacao.
