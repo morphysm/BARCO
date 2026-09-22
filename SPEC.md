@@ -527,8 +527,9 @@ achievement, or a hint, and never announce the hour (§6.2).
 Second layer of time, overlaid on the calendar. **00:00–04:00** in the user's
 declared timezone.
 
-Resolved **server-side** from UTC plus `profiles.tz`. The client renders what
-the server reports. A device clock change must not open the window.
+Resolved **on the device** from the computer's local clock and timezone
+(`Relogio.hora_asmodeica()`). There is no server (2026-09-22); a device
+clock change does open the window, and that is accepted.
 
 Requires `selos` to contain an opened `asmodeu` seal.
 

@@ -9,4 +9,4 @@ nome = "Sangue"
 tipo = "sangue"
 modelo = "res://resources/modelos/sangue.glb"
 tamanho = 0.85
-cafes = 7
+cafes = 0

@@ -9,4 +9,4 @@ nome = "Charuto"
 tipo = "fumo"
 modelo = "res://resources/modelos/charuto.glb"
 tamanho = 0.14
-cafes = 1
+cafes = 0

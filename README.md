@@ -17,8 +17,6 @@ Antes de mexer em qualquer coisa:
 | Pasta | O que guarda |
 |---|---|
 | `client/` | Projecto Godot: cenas, scripts, recursos, shaders e provas do cliente. |
-| `server/` | Fonte do Supabase: migracoes, Edge Functions, provas SQL e templates. |
-| `supabase/` | Configuracao do CLI; `functions/` e `migrations/` apontam para `server/`. |
 | `tools/` | Ferramentas do repositorio e provas que nao pertencem ao runtime. |
 | `references/` | Referencias de origem usadas para construir os recursos. |
 | `textures/` | Fontes de modelos e texturas anteriores a importacao no Godot. |
@@ -29,9 +27,12 @@ Antes de mexer em qualquer coisa:
 ## Estado
 
 Fatia vertical em andamento (SPEC.md §12): a `irmandade` da
-`calunga_pequena` — `Exu Aranha`, `Rosa Negra`, `Exu Caveira`. O estado
-alojado e os passos exactos para publicar estao em
-[`server/KO_FI_LAUNCH.md`](server/KO_FI_LAUNCH.md).
+`calunga_pequena` — `Exu Aranha`, `Rosa Negra`, `Exu Caveira`.
+
+Sem servidor e sem pagamentos desde 2026-09-22 (o Supabase foi
+desactivado). Tudo fica no aparelho; o tempo e o relogio local do
+computador. O codigo antigo do servidor e do Ko-fi esta no historico do
+git, ate ao commit `9eeaa6c`.
 
 - [x] `ponto_riscado` — captura e `firmeza`
 - [x] reconhecimento de `assinatura` dentro de uma `irmandade`
@@ -39,10 +40,7 @@ alojado e os passos exactos para publicar estao em
       (58), `Exu Aranha` (72)
 - [x] `abandonado` vs traco instintivo, e a inversao sob `hora_asmodeica`
 - [x] `assentamento`, `pedidos` e `oferendas` persistentes
-- [x] checkout Ko-fi, creditos nomeados e recuperacao da conta por email
-- [x] migracoes e webhook alojados no Supabase
-- [ ] prova de um pagamento Ko-fi real, de ponta a ponta
-- [x] vista de administracao da fila de reconciliacao
+- [x] `oferendas` gratis, guardadas no aparelho
 - [ ] vela e `permanencia`
 - [ ] `caderno`
 

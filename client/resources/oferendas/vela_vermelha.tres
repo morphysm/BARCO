@@ -11,4 +11,4 @@ modelo = "res://resources/modelos/vela_vermlha.glb"
 tamanho = 0.22
 e_vela = true
 sem_chama = true
-cafes = 1
+cafes = 0

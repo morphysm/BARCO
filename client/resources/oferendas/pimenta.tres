@@ -9,4 +9,4 @@ nome = "Pimenta"
 tipo = "botanica"
 modelo = "res://resources/modelos/chili_pepper.glb"
 tamanho = 0.09
-cafes = 1
+cafes = 0

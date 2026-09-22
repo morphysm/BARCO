@@ -1,29 +1,28 @@
 ## O caminho ate ao `assentamento` (SPEC.md §1.1).
 ##
 ## Tres `pontos` primeiro, um de cada vez, sempre com o guia por baixo; a
-## `fornalha` a seguir, uma vez so.
+## `fornalha` a seguir.
 ## Risca-se o
 ## que esta a frente e pergunta-se ao guia: posso passar? Se o desenho
 ## estiver riscado o suficiente, o guia poe o seguinte; senao diz que
 ## ainda nao.
 ##
-## Riscado o terceiro, o eclipse, e depois o `assentamento`. Atravessa-se
-## uma vez: dai em diante o app abre no `assentamento`.
+## Riscado o terceiro, o eclipse, e depois o `assentamento`.
+##
+## O caminho repete-se a cada abertura do app (decisao do dono,
+## 2026-09-22): o progresso vive so na memoria e esquece-se ao fechar.
+## O que foi deposto e os `pedidos` continuam guardados no aparelho.
 ##
 ## A ordem e a da `irmandade`, e nao ha escolha nenhuma pelo caminho —
 ## nao ha menu, ha o ponto que esta a frente.
 ##
-## Isto vive no aparelho e e provisorio. O `caderno` e o registo a serio e
-## e do servidor (AGENTS.md, SPEC.md §3.3).
 class_name Passagem
 extends RefCounted
 
-## Onde o progresso fica.
-##
-## Nao e `const` para as provas poderem apontar para outro sitio. Uma
-## prova que escreva aqui mexe no progresso de quem esta a usar o app —
-## ja aconteceu com os `pedidos`, e voltou a acontecer aqui.
-static var REGISTO := "user://passagem.json"
+## Onde o progresso fica. Vazio: so na memoria, e o caminho recomeca a
+## cada abertura. As provas podem apontar para um ficheiro.
+static var REGISTO := ""
+static var _memoria: Dictionary = {}
 
 ## A iris que fecha na `fornalha` tem de abrir no `assentamento`. Vive so
 ## na memoria e so entre as duas cenas: nao se guarda, porque nao e
@@ -92,7 +91,7 @@ static func atravessar() -> void:
 	_guardar(d)
 
 
-## Ja se queimou o passado na `fornalha`? Atravessa-se uma vez.
+## Ja se queimou o passado na `fornalha`, nesta abertura?
 static func queimou() -> bool:
 	return _ler().get("queimou", false)
 
@@ -104,6 +103,8 @@ static func queimar() -> void:
 
 
 static func _ler() -> Dictionary:
+	if REGISTO == "":
+		return _memoria.duplicate(true)
 	if not FileAccess.file_exists(REGISTO):
 		return {}
 	var f := FileAccess.open(REGISTO, FileAccess.READ)
@@ -115,6 +116,9 @@ static func _ler() -> Dictionary:
 
 
 static func _guardar(d: Dictionary) -> void:
+	if REGISTO == "":
+		_memoria = d.duplicate(true)
+		return
 	var f := FileAccess.open(REGISTO, FileAccess.WRITE)
 	if f == null:
 		return
@@ -124,5 +128,6 @@ static func _guardar(d: Dictionary) -> void:
 
 ## So para provas. Nao ha caminho nenhum para isto a partir do app.
 static func esquecer() -> void:
-	if FileAccess.file_exists(REGISTO):
+	_memoria.clear()
+	if REGISTO != "" and FileAccess.file_exists(REGISTO):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(REGISTO))

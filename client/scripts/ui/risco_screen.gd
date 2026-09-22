@@ -57,11 +57,10 @@ var _ponto: Entidade
 const LETRA_DO_ROTULO := 26
 const LETRA_DO_FIM := 42
 
-## SPEC.md §6.2: quem resolve a `hora_asmodeica` e o servidor, a partir de
-## UTC mais `profiles.tz`. O cliente so exibe o que o servidor reporta.
-## Enquanto nao ha servidor, isto fica falso — e a chave de depuracao
-## abaixo nunca existe fora de build de debug.
-var _hora_asmodeica := false
+## SPEC.md §6.2: a `hora_asmodeica` resolve-se pelo relogio local do
+## computador (ver `Relogio`). Lida ao abrir o ecra.
+## TODO: ainda ninguem a le — o risco nao passa por `RiscoScoring.avaliar`.
+var _hora_asmodeica := Relogio.hora_asmodeica()
 
 
 func _ready() -> void:

@@ -10,4 +10,4 @@ tipo = "luz"
 modelo = "res://resources/modelos/vela_branca.glb"
 tamanho = 0.22
 e_vela = true
-cafes = 1
+cafes = 0

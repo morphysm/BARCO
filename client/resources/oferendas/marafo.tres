@@ -9,4 +9,4 @@ nome = "Marafo"
 tipo = "bebida"
 modelo = "res://resources/modelos/bottle_to_paloo.glb"
 tamanho = 0.18
-cafes = 1
+cafes = 0

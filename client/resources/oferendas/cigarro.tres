@@ -9,4 +9,4 @@ nome = "Cigarro"
 tipo = "fumo"
 modelo = "res://resources/modelos/cigarro.glb"
 tamanho = 0.10
-cafes = 1
+cafes = 0

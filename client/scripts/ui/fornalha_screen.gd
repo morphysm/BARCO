@@ -309,6 +309,21 @@ func _montar_painel() -> void:
 func _responder_nao() -> void:
 	if _fase != PERGUNTA:
 		return
+	# Na web o `quit()` nao faz nada: uma pagina nao pode fechar o proprio
+	# separador. Apaga-se tudo — ecra preto, sem som, sem entrada, parado.
+	if OS.has_feature("web"):
+		var preto := ColorRect.new()
+		preto.color = Color.BLACK
+		preto.set_anchors_preset(Control.PRESET_FULL_RECT)
+		preto.mouse_filter = Control.MOUSE_FILTER_STOP
+		var camada := CanvasLayer.new()
+		camada.layer = 128
+		camada.add_child(preto)
+		get_tree().root.add_child(camada)
+		AudioServer.set_bus_mute(0, true)
+		get_tree().paused = true
+		JavaScriptBridge.eval("window.close()")
+		return
 	get_tree().quit()
 
 

@@ -9,4 +9,4 @@ nome = "Rosas negras"
 tipo = "botanica"
 modelo = "res://resources/modelos/black_rose.glb"
 tamanho = 0.13
-cafes = 1
+cafes = 0

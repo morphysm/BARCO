@@ -8,4 +8,4 @@ slug = "navalha"
 nome = "Navalha"
 modelo = "res://resources/modelos/knife.glb"
 tamanho = 0.2
-cafes = 1
+cafes = 0

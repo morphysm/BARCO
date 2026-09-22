@@ -23,27 +23,30 @@ say so instead of implementing it.
   it, do not add a way to force it, and do not let anything in the ritual
   flow call it.
 
+- The path to the `assentamento` (Porta, the three `pontos`, eclipse,
+  `fornalha`) **replays on every launch** — owner's decision, 2026-09-22.
+  `Passagem` keeps progress in memory only. Replaying is not an undo:
+  `depositos` and `pedidos` stay saved and are never removed.
+
 ### Money
-- Closing a `trabalho` in `PENDENTE` state is **always free**. No exceptions.
-- Never gate the `hora_asmodeica` behind payment.
-- Never sell access outside a `dormente` window. No "open now" purchase.
-- No subscriptions, no loot boxes, no randomised rewards, no intermediate
-  soft currency. Prices are fixed and shown in USD — the currency Ko-fi
-  charges in, so the number on the button is the number at checkout.
+- **No payments in this build.** No server, no Ko-fi, no credits, no
+  prices. Every `oferenda` is free. Do not add a purchase path back without
+  the owner asking; the old payment code is in git history up to `9eeaa6c`.
+- If payments ever return: closing a `trabalho` in `PENDENTE` is always
+  free, the `hora_asmodeica` is never gated, no access is sold outside a
+  `dormente` window, and no subscriptions, loot boxes, randomised rewards
+  or soft currency.
 - Never write copy that promises an outcome. Copy describes the act performed,
   never its effect. This is a legal constraint, not a stylistic one.
 
 ### Time
-- All timers are **server-authoritative**. Never trust the device clock for
-  candle burn, `sacrificio` husbandry cycles, or `hora_asmodeica` windows.
-- Client-side time is display only.
-
-### Payments
-- The Ko-fi webhook handler must be idempotent, keyed on the payment's unique
-  message identifier. A retried delivery must never credit twice.
-- Always return HTTP 200 on successful processing, including duplicates.
-- Unmatched payments go to a manual reconciliation queue. Never auto-credit
-  on a guess.
+- There is no server. The **device clock, in the user's local timezone**,
+  is the source of time for candle burn, `sacrificio` cycles and the
+  `hora_asmodeica` window (00:00–04:00 local). Owner's decision,
+  2026-09-22: a user who changes their clock changes the app's time, and
+  that is accepted.
+- Read time through `client/scripts/ritual/relogio.gd` (`Relogio`), not
+  ad hoc.
 
 ### Content
 - No figurative depiction of the `sacrificio`. The death is an ellipsis:
@@ -73,6 +76,6 @@ say so instead of implementing it.
   ritual text, entity descriptions, or `ponto_cantado` lyrics. You may add
   structural placeholders and flag gaps.
 - Prefer adding to `resources/entities/*.tres` over hardcoding entity data.
-- Server code lives in `server/`. Never move a timer into `client/`.
+- There is no server. All state lives on the device (`user://`).
 - When unsure whether something is a design choice or an invariant, assume
   invariant and ask.
