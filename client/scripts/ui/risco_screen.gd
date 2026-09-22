@@ -295,7 +295,7 @@ func _fechar_risco() -> void:
 	_guia.queue_redraw()
 	_marcas.queue_redraw()
 	# TODO(CONTENT.pt.md): texto autoral. Este e estrutural.
-	_rotulo.text = "agora o ponto de %s" % seguinte.nome
+	_rotulo.text = tr("agora o ponto de %s") % seguinte.nome
 
 
 ## Atravessar. Daqui nao se volta: o eclipse ve-se uma vez.
@@ -313,7 +313,7 @@ func _ler(r: RiscoResultado) -> String:
 	if not r.indefinida and not r.abandonado and r.entidade_slug != "":
 		e = irmandade.entidade_por_slug(r.entidade_slug)
 	_titulo.text = e.nome if e != null else ""
-	return "firmeza %d" % r.firmeza
+	return tr("firmeza %d") % r.firmeza
 
 
 func _limpar() -> void:

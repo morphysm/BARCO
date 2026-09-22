@@ -32,6 +32,19 @@ Decisoes do dono:
 - `AGENTS.md` (Money/Time/Payments), `SPEC.md` §6.2, `README.md`
   actualizados.
 
+### Versao inglesa (2026-09-22, depois do commit 95aeeb0)
+- `client/resources/traducao/textos.csv` (keys = texto pt, colunas pt/en):
+  39 linhas. Idioma pelo sistema: pt -> portugues, resto -> ingles
+  (`locale/fallback="en"`). Nomes de entidades e "Calunga Pequena" ficam
+  em portugues. Os `.translation` geram-se ao importar (ignorados no git).
+- `tr()` explicito onde o texto e composto ou animado: `porta_screen.gd`
+  (RITUAL, opcoes, arranque), `fornalha_screen.gd` (boas-vindas),
+  `risco_screen.gd` (formatos). O resto traduz-se sozinho (Controls).
+- Pergunta da fornalha em ingles: "Do you renounce your past / and every
+  lie you have served?" (escolha do dono).
+- Builds: `build/itch-20260922-en/barco-{linux,windows}.zip`.
+- `CONTENT.pt.md` nao traduzido (nao aparece no app).
+
 ### Verificado
 - Headless: todas as cenas carregam sem erro de script; `teste_risco.gd`
   passa; `prova_layout_oferendas.tscn` 0 falhas; prova ad hoc: 10

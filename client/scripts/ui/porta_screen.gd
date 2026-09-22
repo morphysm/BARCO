@@ -140,7 +140,9 @@ func _montar() -> void:
 	_texto.bbcode_enabled = false
 	_texto.scroll_active = false
 	_texto.fit_content = true
-	_texto.text = RITUAL
+	# `tr()` e nao o texto cru: o corte da pausa mede-se no texto que se
+	# ve, e noutra lingua o `\n` da penultima linha cai noutro sitio.
+	_texto.text = tr(RITUAL)
 	_texto.visible_ratio = 0.0
 	_texto.add_theme_font_override("normal_font", letra)
 	_texto.add_theme_font_size_override("normal_font_size", CORPO)
@@ -191,6 +193,9 @@ func _montar() -> void:
 ## — dois espacos quando nao esta escolhida, para nada saltar de sitio.
 func _opcao(rotulo: String, letra: FontFile) -> Button:
 	var b := Button.new()
+	# Traduz-se ja: o marcador reescreve o texto com `[ ]` a volta, e isso
+	# ja nao e a chave que a traducao automatica procura.
+	rotulo = tr(rotulo)
 	b.text = "  [ %s ]" % rotulo
 	# O rotulo fica guardado no proprio botao: o marcador reescreve o
 	# texto a cada piscar e tem de saber o que la estava sem o ir buscar
@@ -260,7 +265,7 @@ func _correr() -> void:
 func _arrancar() -> void:
 	var ate_agora := ""
 	for linha in ARRANQUE:
-		ate_agora += ("\n" if ate_agora != "" else "") + linha
+		ate_agora += ("\n" if ate_agora != "" else "") + tr(linha)
 		_arranque.text = ate_agora
 		_arranque.modulate.a = 1.0
 		var lampejo := create_tween()
@@ -282,12 +287,13 @@ func _escrever() -> void:
 	if total <= 0:
 		_texto.visible_ratio = 1.0
 		return
-	var antes := RITUAL.substr(0, RITUAL.rfind("\n"))
+	var ritual := tr(RITUAL)
+	var antes := ritual.substr(0, ritual.rfind("\n"))
 	# Conta-se o prefixo com a MESMA regua: poe-se-o no rotulo, pergunta-se
 	# quantos caracteres tem, e volta-se a por o texto todo.
 	_texto.text = antes
 	var ate_ao_fim: float = float(_texto.get_total_character_count()) / float(total)
-	_texto.text = RITUAL
+	_texto.text = ritual
 
 	var t := create_tween()
 	t.tween_property(_texto, "visible_ratio", ate_ao_fim,

@@ -69,7 +69,13 @@ say so instead of implementing it.
 
 ## Working rules
 
-- Domain terms in `GLOSSARY.md` are **never translated**, in code or in prose.
+- **English version (owner's decision, 2026-09-22):** player-facing text is
+  translated to English in `client/resources/traducao/textos.csv`, domain
+  terms included. Only entity names (Exu Aranha, Rosa Negra, Exu Caveira…)
+  and the `irmandade` name stay in Portuguese. The Portuguese text in code
+  is the source and is not changed by translation work.
+- Outside that table, domain terms in `GLOSSARY.md` are **never translated**,
+  in code or in prose.
   Use `assentamento`, not `shrine`. Use `firmeza`, not `strength`.
 - Identifiers are ASCII: `hora_asmodeica`, not `hora_asmodéica`.
 - `CONTENT.pt.md` is authored by hand. Do not generate, rewrite, or translate

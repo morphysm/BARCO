@@ -569,10 +569,11 @@ func _process(delta: float) -> void:
 		# Letra a letra. Corta-se o TEXTO e nao o `visible_ratio`: assim o
 		# cursor anda com a ultima letra escrita, como num terminal, em vez
 		# de ficar parado no fim da frase inteira.
-		var quantas := int(boas_vindas.length() * clampf(
+		var frase := tr(boas_vindas)
+		var quantas := int(frase.length() * clampf(
 			_tempo / maxf(demora_a_escrever, 0.001), 0.0, 1.0))
 		var pisca: bool = fmod(_tempo, 0.9) < 0.55
-		_saudacao.text = boas_vindas.substr(0, quantas) + (cursor if pisca else "")
+		_saudacao.text = frase.substr(0, quantas) + (cursor if pisca else "")
 
 	if _fase == A_SAUDAR and _tempo >= demora_das_boas_vindas:
 		_fase = A_FECHAR
