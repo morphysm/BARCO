@@ -80,3 +80,16 @@ Decisoes do dono:
 ### Proximo passo
 Dono decide sobre `fornalha.tscn`. Testar o zip de Windows numa maquina
 Windows. Limpar os segredos antigos do Supabase no disco.
+
+## 2026-10-20 — Ecra de arranque (boot splash)
+
+### Feito
+- `client/resources/imagens/morph-sig.png` (copia de `~/Pictures/morph-sig.png`):
+  substitui o icone do Godot no arranque.
+- `client/project.godot` `[application]`: `boot_splash/image`,
+  `boot_splash/bg_color` preto, `boot_splash/stretch_mode=0` (tamanho
+  natural, centrado, sem esticar).
+
+### Por testar
+- Abrir o jogo e ver o ecra de arranque. Nos exports (Windows/web) so
+  aparece depois de voltar a exportar.
