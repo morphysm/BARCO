@@ -93,3 +93,14 @@ Windows. Limpar os segredos antigos do Supabase no disco.
 ### Por testar
 - Abrir o jogo e ver o ecra de arranque. Nos exports (Windows/web) so
   aparece depois de voltar a exportar.
+- Web exportado de novo (Godot 4.7.2): `build/itch-20261020-en/barco-web.zip`,
+  com o sigilo. O zip de 22-09 fica em `build/itch-20260922-en/`.
+  Nota: exportar dentro do sandbox do Claude falha em silencio
+  (`Couldn't save project.binary at /tmp`) — exportar fora do sandbox.
+
+## 2026-10-20 — W/S na sala da fornalha seguem o olhar
+
+- `client/scripts/ui/jogador.gd`: W/S eram fixos na sala (W = sempre para a
+  fornalha). Depois de passar a cruz e virar para ela, ficavam ao contrario.
+  Agora W = para onde se olha, ao longo da mesma linha; de lado conta o
+  lado mais visto. Limites e barreira da cruz iguais. Por testar a jogar.

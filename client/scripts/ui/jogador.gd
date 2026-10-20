@@ -104,12 +104,16 @@ func _process(delta: float) -> void:
 
 	if not solto:
 		return
-	# Em linha reta e so em linha reta: a frente e a fornalha, atras e a
-	# entrada. Nao ha andar de lado.
+	# Em linha reta e so em linha reta, entre a fornalha e a entrada. Nao ha
+	# andar de lado.
 	var passo := (Input.get_action_strength("andar_frente")
 		- Input.get_action_strength("andar_tras"))
 	if is_zero_approx(passo):
 		return
+	# Em frente e para onde se olha: quem se vira para a cruz, depois de a
+	# passar, anda para ela com W. De lado, conta o lado da linha que se ve
+	# mais; a direito de lado conta a fornalha.
+	var sentido := 1.0 if global_transform.basis.z.z >= 0.0 else -1.0
 	# Passar a barreira aperta o recuo: dai em diante ela fica sempre a
 	# frente, e nao se volta atras dela.
 	if barreira != null and is_instance_valid(barreira):
@@ -118,5 +122,5 @@ func _process(delta: float) -> void:
 			recuo_possivel = minf(recuo_possivel, z_barreira)
 
 	position.z = clampf(
-		position.z - passo * velocidade * delta,
+		position.z - sentido * passo * velocidade * delta,
 		minf(z_avancado, recuo_possivel), maxf(z_avancado, recuo_possivel))
